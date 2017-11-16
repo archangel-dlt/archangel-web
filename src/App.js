@@ -4,6 +4,10 @@ import './App.css';
 import './bootstrap/css/bootstrap.css'
 import Search from './Search'
 
+import Guardtime from './driver/Guardtime'
+
+const driver = new Guardtime()
+
 class App extends Component {
   render() {
     return (
@@ -13,8 +17,12 @@ class App extends Component {
           <h1 className="App-title">Archangel-DLT</h1>
           <p>For all your long time archive validation needs ...</p>
         </header>
-        <p className="App-body">
-          <Search/>
+        <p className="App-body row">
+          <div className="col-md-2"/>
+          <div className="col-md-8">
+            <Search driver={driver}/>
+          </div>
+          <div className="col-md-2"/>
         </p>
       </div>
     );
