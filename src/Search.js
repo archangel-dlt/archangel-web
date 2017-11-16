@@ -42,17 +42,43 @@ class SearchBox extends Component {
 class SearchResults extends Component {
   constructor(props) {
     super(props);
-    this.state = {results: []}
+    this.state = {results: null}
   }
+
   setResults(results) {
     this.setState({results: results})
   } // setResults
 
   render() {
+    const results = this.state.results;
+
+    if (!results)
+      return (<div/>)
+
     return (
-      <div class="row">
-        <div className="col-md-10"></div>
-        <div className="col-md-2">{this.state.results.length} results found</div>
+      <div>
+        {
+          results.map(record => {
+            return (
+              <div className="row" key={record.timestamp}>
+                <div className="col-md-9">{record.payload}</div>
+                <div className="col-md-3">{record.timestamp}</div>
+              </div>
+            )
+          })
+        }
+        <div className="row">
+          <hr className="col-md-12"/>
+        </div>
+        <div className="row">
+          <div className="col-md-10"></div>
+          <div className="col-md-2">
+            {results.length ?
+              `${results.length} records found` :
+              "No records found"
+            }
+          </div>
+        </div>
       </div>
     )
   } // render
@@ -68,15 +94,18 @@ class Search extends Component {
 
   onSearch(searchTerm) {
     this.driver.fetch(searchTerm)
-      .then(results => this.results.setResults(results))
+      .then(results => {
+        console.log(results);
+        this.results.setResults(results)
+      })
   } // onSearch
 
   render() {
     return (
-      [
-        <SearchBox onSearch={this.onSearch}/>,
+      <div>
+        <SearchBox onSearch={this.onSearch}/>
         <SearchResults ref={results => this.results = results}/>
-      ]
+      </div>
     )
   } // render
 } // Search
