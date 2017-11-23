@@ -61,7 +61,8 @@ class SearchResults extends Component {
           results.map(record => {
             return (
               <div className="row" key={record.timestamp}>
-                <div className="col-md-9">{record.payload}</div>
+                <div className="col-md-2">{record.id}</div>
+                <div className="col-md-7">{record.payload}</div>
                 <div className="col-md-3">{record.timestamp}</div>
               </div>
             )
@@ -71,12 +72,13 @@ class SearchResults extends Component {
           <hr className="col-md-12"/>
         </div>
         <div className="row">
-          <div className="col-md-10"></div>
-          <div className="col-md-2">
+          <div className="col-md-12">
+            <span className="float-right">
             {results.length ?
               `${results.length} records found` :
               "No records found"
             }
+            </span>
           </div>
         </div>
       </div>
