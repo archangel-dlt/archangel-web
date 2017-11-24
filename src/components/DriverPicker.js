@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 
-import GuardtimeV2 from '../driver/Guardtime';
+import GuardtimeDriver from '../driver/Guardtime';
 
 class DriverPicker extends Component {
   constructor(props) {
     super(props);
 
     this.drivers = {
-      'Guardtime': new GuardtimeV2('username', 'password')
+      'Guardtime': GuardtimeDriver()
     };
 
     this.onNewDriver = props.onNewDriver;

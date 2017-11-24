@@ -1,14 +1,14 @@
 import unirest from 'unirest';
 import sha256 from './sha256-digest';
 
-class GuardtimeBase {
-  constructor(username, password, url) {
-    this.guardtime_url = url;
+class GuardtimeV2 {
+  constructor(username, password) {
     this.username = username;
     this.password = password;
-  }
+    this.guardtime_url = 'https://tryout-catena-db.guardtime.net/api/v2/signatures';
+  } // constructor
 
-  async gt_store_(id, payload, timestamp) {
+  async store(id, payload, timestamp) {
     const hash = await sha256(`${id}-${payload}`)
     const gt_payload = {
       metadata: {
@@ -22,8 +22,24 @@ class GuardtimeBase {
       },
       level: 0
     } // upload
-    this.gt_write_(gt_payload);
-  }
+
+    return this.gt_write_(gt_payload);
+  } // store
+
+  async fetch(id) {
+    const results = await this.gt_search_(id);
+    const gt_ids = results.ids;
+    if (!gt_ids || gt_ids.length === 0)
+      return [];
+
+    const records = await Promise.all(gt_ids.map(id => this.gt_fetch_(id)));
+    return records.map(record => record.metadata)
+  } // fetch
+
+  //////////////////////////////////////
+  gt_fetch_(gt_id) {
+    return this.gt_get_(`/${gt_id}`)
+  } // gt_fetch_
 
   gt_search_(id) {
     return this.gt_get_(`?metadata.id=${id}`);
@@ -58,34 +74,10 @@ class GuardtimeBase {
         });
     })
   } // gt_
-} // GuardtimeBase
+} // GuardtimeV2
 
-class GuardtimeV2 extends GuardtimeBase {
-  constructor(username, password) {
-    super(
-      username,
-      password,
-      'https://tryout-catena-db.guardtime.net/api/v2/signatures'
-    )
-  }
+function createGuardtimeDriver() {
+  return new GuardtimeV2('username', 'password');
+} // createGuardtimeDriver
 
-  async store(id, payload, time) {
-    return this.gt_store_(id, payload, time);
-  } // store
-
-  async fetch(id) {
-    const results = await this.gt_search_(id);
-    const gt_ids = results.ids;
-    if (!gt_ids || gt_ids.length === 0)
-      return [];
-
-    const records = await Promise.all(gt_ids.map(id => this.gt_fetch_(id)));
-    return records.map(record => record.metadata)
-  } // fetch
-
-  gt_fetch_(gt_id) {
-    return this.gt_get_(`/${gt_id}`)
-  }
-}
-
-export default GuardtimeV2
+export default createGuardtimeDriver;
