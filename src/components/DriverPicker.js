@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+import EthereumDriver from '../driver/Ethereum';
 import GuardtimeDriver from '../driver/Guardtime';
 
 class DriverPicker extends Component {
@@ -7,7 +8,8 @@ class DriverPicker extends Component {
     super(props);
 
     this.drivers = {
-      'Guardtime': GuardtimeDriver()
+      'Guardtime': GuardtimeDriver(),
+      'Ethereum': EthereumDriver()
     };
 
     this.onNewDriver = props.onNewDriver;
@@ -27,8 +29,12 @@ class DriverPicker extends Component {
 
   render() {
     return (
-      <label>Driver&nbsp;&nbsp;
-        <select onChange={event => this.onDriverChange(event.target.value)}>
+      <div className="row">
+        <label className="col-md-4 form-text">
+          <span className="float-right">Driver</span>
+        </label>
+        <select className="col-md-8 form-control"
+                onChange={event => this.onDriverChange(event.target.value)}>
           {
             Object.keys(this.drivers).map(
               label => { return (
@@ -37,7 +43,7 @@ class DriverPicker extends Component {
             )
           }
         </select>
-      </label>
+      </div>
     );
   } // render
 } // class DriverPicker
