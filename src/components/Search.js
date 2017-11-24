@@ -3,7 +3,9 @@ import React, {Component} from 'react'
 class SearchBox extends Component {
   constructor(props) {
     super(props);
-    this.state = {searchTerm: ''};
+    this.state = {
+      searchTerm: ''
+    };
     this.onSearch = props.onSearch;
 
     this.handleChange = this.handleChange.bind(this);
@@ -18,7 +20,7 @@ class SearchBox extends Component {
     if (this.state.searchTerm)
       this.onSearch(this.state.searchTerm);
     event.preventDefault();
-  }
+  } // handleSubmit
 
   render() {
     return (

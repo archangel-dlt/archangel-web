@@ -5,9 +5,10 @@ import './bootstrap/css/bootstrap.css'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
-import Search from './components/Search'
+import Search from './components/Search';
+import Upload from './components/Upload';
 
-import GuardtimeV2 from './driver/Guardtime'
+import GuardtimeV2 from './driver/Guardtime';
 
 const driver = new GuardtimeV2('username', 'password');
 
@@ -23,7 +24,7 @@ class Body extends Component {
           <Search driver={driver}/>
         </TabPanel>
         <TabPanel>
-          <p>Upload goes here</p>
+          <Upload driver={driver}/>
         </TabPanel>
       </Tabs>
     )
