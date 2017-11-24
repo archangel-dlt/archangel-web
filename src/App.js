@@ -2,11 +2,33 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import './bootstrap/css/bootstrap.css'
-import Search from './Search'
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
+
+import Search from './components/Search'
 
 import GuardtimeV2 from './driver/Guardtime'
 
 const driver = new GuardtimeV2('username', 'password');
+
+class Body extends Component {
+  render() {
+    return (
+      <Tabs>
+        <TabList>
+          <Tab>Search</Tab>
+          <Tab>Upload</Tab>
+        </TabList>
+        <TabPanel>
+          <Search driver={driver}/>
+        </TabPanel>
+        <TabPanel>
+          <p>Upload goes here</p>
+        </TabPanel>
+      </Tabs>
+    )
+  }
+}
 
 class App extends Component {
   render() {
@@ -20,7 +42,7 @@ class App extends Component {
         <div className="App-body row">
           <div className="col-md-2"/>
           <div className="col-md-8">
-            <Search driver={driver}/>
+            <Body/>
           </div>
           <div className="col-md-2"/>
         </div>
