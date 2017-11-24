@@ -37,7 +37,7 @@ class UploadBox extends Component {
           </span>
           <input
             type="text"
-            className="form-control col-md-8"
+            className="form-control col-md-10"
             placeholder="Archangel ID"
             value={this.state.id}
             onChange={this.handleIDChange}
@@ -48,7 +48,7 @@ class UploadBox extends Component {
             Payload
           </span>
           <textarea
-            className="form-control col-md-8"
+            className="form-control col-md-10"
             value={this.state.payload}
             onChange={this.handlePayloadChange}
             />
@@ -57,8 +57,7 @@ class UploadBox extends Component {
           <div className="col-md-10"/>
           <button
             type="submit"
-            className="btn btn-primary col-md-2"
-            onClick={this.handleSubmit}>Upload
+            className="btn btn-primary col-md-2">Upload
           </button>
         </div>
       </form>
@@ -73,6 +72,10 @@ class Upload extends Component {
 
     this.onUpload = this.onUpload.bind(this);
   } // constructor
+
+  componentWillReceiveProps(props) {
+    this.driver = props.driver;
+  } // componentWillReceiveProps
 
   onUpload(id, payload) {
     this.driver.store(id, payload, DateTime.local().toISO())

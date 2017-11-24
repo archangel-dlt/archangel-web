@@ -25,17 +25,21 @@ class SearchBox extends Component {
   render() {
     return (
       <form className="form-group row" onSubmit={this.handleSubmit}>
-        <input
-          type="text"
-          className="form-control col-md-10"
-          placeholder="Search Archangel"
-          value={this.state.value}
-          onChange={this.handleChange}/>
-        <button
-          type="submit"
-          className="btn btn-primary col-md-2"
-          onClick={this.handleSubmit}>Search
-        </button>
+        <div className="row col-md-12">
+          <input
+            type="text"
+            className="form-control col-md-12"
+            placeholder="Search Archangel"
+            value={this.state.value}
+            onChange={this.handleChange}/>
+        </div>
+        <div className="row col-md-12">
+          <div className="col-md-10"/>
+          <button
+            type="submit"
+            className="btn btn-primary col-md-2">Search
+          </button>
+        </div>
       </form>
     )
   } // react
@@ -96,10 +100,13 @@ class Search extends Component {
     this.onSearch = this.onSearch.bind(this);
   } // constructors
 
+  componentWillReceiveProps(props) {
+    this.driver = props.driver;
+  } // componentWillReceiveProps
+
   onSearch(searchTerm) {
     this.driver.fetch(searchTerm)
       .then(results => {
-        console.log(results);
         this.results.setResults(results)
       })
   } // onSearch

@@ -1,5 +1,5 @@
 function base64(arrayBuffer) {
-  const array = []
+  const array = [];
   const view = new DataView(arrayBuffer);
   for (let i = 0; i !== view.byteLength; ++i) {
     const ch = view.getUint8(i);
