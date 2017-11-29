@@ -7,18 +7,30 @@ class GuardtimeLoginBox extends Component {
     super(props);
 
     this.state = {
-      visible: false
+      visible: false,
+      credentials: {
+        username: '',
+        password: '',
+        url: ''
+      }
     };
   } // constructor
 
-  solicitCredentials() {
+  solicitCredentials(username, password, url) {
     return new Promise((resolve, reject) => {
       this.resolve = resolve;
       this.reject = reject;
 
+      this.setState({
+        credentials: {
+          username: username,
+          password: password,
+          url: url
+        }
+      });
       this.show();
-    })
-  }
+    });
+  } // solicitCredentials
 
   show() { this.visible(true); }
   hide() { this.visible(false); }
@@ -28,17 +40,30 @@ class GuardtimeLoginBox extends Component {
 
   login() {
     this.hide();
-    this.resolve({
-      username: this.username,
-      password: this.password,
-      url: this.url
-    });
+    this.resolve(this.state.credentials);
   } // login
 
   cancel() {
     this.hide();
     this.reject(new Error("Login cancelled"));
   } // cancel
+
+  textBox(fieldName, type="text") {
+    return (
+      <input name={fieldName}
+             className="form-control"
+             type={type}
+             value={this.state.credentials[fieldName]}
+             onChange={ e => this.updateField(fieldName, e.target.value)}
+      />
+    )
+  } // textBox
+
+  updateField(fieldName, value) {
+    const credentials = this.state.credentials
+    credentials[fieldName] = value;
+    this.setState({ credentials: credentials });
+  } // updateField
 
   render() {
     return (
@@ -49,8 +74,9 @@ class GuardtimeLoginBox extends Component {
           onOK={() => this.login()}
           onClose={() => this.cancel()}
           labelOK="Login">
-        <DialogRow title="Username">username</DialogRow>
-        <DialogRow title="Password">password</DialogRow>
+        <DialogRow title="Username">{ this.textBox('username') }</DialogRow>
+        <DialogRow title="Password">{ this.textBox('password', 'password') }</DialogRow>
+        <DialogRow title="Guardtime URL">{ this.textBox('url') }</DialogRow>
       </DialogBox>
     )
   }
@@ -63,7 +89,10 @@ class ReactGuardtime extends Guardtime {
 
   async solicitCredentials() {
     const {username, password, url} =
-      await this.loginBox.solicitCredentials();
+      await this.loginBox.solicitCredentials(this.username, this.password, this.guardtime_url);
+    this.username = username;
+    this.password = password;
+    this.guardtime_url = url;
   } // solicitCredentials
 
   async gt_(method, params, payload) {
