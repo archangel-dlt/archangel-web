@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import EthereumDriver from '../driver/Ethereum';
-import GuardtimeDriver from '../driver/Guardtime';
+import GuardtimeDriver from '../driver-components/Guardtime';
 
 class DriverPicker extends Component {
   constructor(props) {

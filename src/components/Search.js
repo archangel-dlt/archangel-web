@@ -49,25 +49,52 @@ class SearchResults extends Component {
   constructor(props) {
     super(props);
     this.state = {results: null}
-  }
+  } // constructor
 
   clear() {
     this.setResults(null, null);
-  }
+    this.setErrors(null);
+  } // clear
 
   setResults(searchTerm, results) {
     this.setState({
       searchTerm: searchTerm,
       results: results
-    })
+    });
   } // setResults
 
-  render() {
-    const { searchTerm, results } = this.state;
+  setErrors(errors) {
+    this.setState({
+      errors: errors
+    });
+  } // setErrors
 
-    if (!results)
+  render() {
+    const {searchTerm, results, errors} = this.state;
+
+    if (!results && !errors)
       return (<div/>)
 
+    if (errors)
+      return this.renderErrors(errors);
+
+    return this.renderResults(searchTerm, results);
+  } // render
+
+  renderErrors(errors) {
+    return (
+      <div>
+        <div className="row">
+          <div className="col-md-12"><strong>Search failed</strong></div>
+        </div>
+        <div className="row">
+          <div className="col-md-12">{ errors.message || errors.error }</div>
+        </div>
+      </div>
+    )
+  } // renderErrors
+
+  renderResults(searchTerm, results) {
     return (
       <div>
         <div className="row">
@@ -106,34 +133,48 @@ class SearchResults extends Component {
         </div>
       </div>
     )
-  } // render
+  } // renderResults
 } // SearchResults
 
 class Search extends Component {
   constructor(props) {
     super(props);
-    this.driver = props.driver;
+    this.state = {
+      driver: props.driver
+    };
 
     this.onSearch = this.onSearch.bind(this);
   } // constructors
 
   componentWillReceiveProps(props) {
-    this.driver = props.driver;
+    this.setState({
+      driver: props.driver
+    });
   } // componentWillReceiveProps
 
   onSearch(searchTerm) {
     this.resultsBox.clear();
-    this.driver.fetch(searchTerm)
-      .then(results => this.resultsBox.setResults(searchTerm, results));
+    this.state.driver.fetch(searchTerm)
+      .then(results => this.resultsBox.setResults(searchTerm, results))
+      .catch(error => this.resultsBox.setErrors(error));
   } // onSearch
+
+  driverUI() {
+    const driver = this.state.driver;
+    if (!driver)
+      return null;
+
+    return driver.render ? driver.render() : null;
+  } // driverUI
 
   render() {
     return (
       <div>
+        { this.driverUI() }
         <SearchBox onSearch={this.onSearch}/>
         <SearchResults ref={resultsBox => this.resultsBox = resultsBox}/>
       </div>
-    )
+    );
   } // render
 } // Search
 

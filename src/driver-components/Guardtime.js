@@ -1,0 +1,86 @@
+import React, { Component } from 'react'
+import Guardtime from '../driver/Guardtime';
+import { DialogBox, DialogRow } from "./Dialog";
+
+class GuardtimeLoginBox extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      visible: false
+    };
+  } // constructor
+
+  solicitCredentials() {
+    return new Promise((resolve, reject) => {
+      this.resolve = resolve;
+      this.reject = reject;
+
+      this.show();
+    })
+  }
+
+  show() { this.visible(true); }
+  hide() { this.visible(false); }
+  visible(state) {
+    this.setState({ visible: state });
+  } // visible
+
+  login() {
+    this.hide();
+    this.resolve({
+      username: this.username,
+      password: this.password,
+      url: this.url
+    });
+  } // login
+
+  cancel() {
+    this.hide();
+    this.reject(new Error("Login cancelled"));
+  } // cancel
+
+  render() {
+    return (
+      <DialogBox
+          show={this.state.visible}
+          title="Guardtime Login"
+          canOK={() => true}
+          onOK={() => this.login()}
+          onClose={() => this.cancel()}
+          labelOK="Login">
+        <DialogRow title="Username">username</DialogRow>
+        <DialogRow title="Password">password</DialogRow>
+      </DialogBox>
+    )
+  }
+} // class GuardtimeLoginBox
+
+class ReactGuardtime extends Guardtime {
+  hasCreds_() {
+    return this.username && this.password && this.guardtime_url;
+  } // hasCreds
+
+  async solicitCredentials() {
+    const {username, password, url} =
+      await this.loginBox.solicitCredentials();
+  } // solicitCredentials
+
+  async gt_(method, params, payload) {
+    if (!this.hasCreds_())
+      await this.solicitCredentials();
+
+    return super.gt_(method, params, payload)
+  } // gt_
+
+  ////////////////////
+  render() {
+    return <GuardtimeLoginBox ref={loginBox => this.loginBox = loginBox}/>
+  }
+} // ReactGuardtime
+
+function createGuardtimeDriver(username, password, url = 'https://tryout-catena-db.guardtime.net/api/v2/signatures') {
+  return new ReactGuardtime(username, password, url);
+} // createGuardtimeDriver
+
+export default createGuardtimeDriver;

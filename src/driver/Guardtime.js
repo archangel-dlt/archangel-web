@@ -1,11 +1,12 @@
 import unirest from 'unirest';
 import sha256 from './sha256-digest';
+import Boom from 'boom';
 
 class GuardtimeV2 {
-  constructor(username, password) {
+  constructor(username, password, url) {
     this.username = username;
     this.password = password;
-    this.guardtime_url = 'https://tryout-catena-db.guardtime.net/api/v2/signatures';
+    this.guardtime_url = url;
   } // constructor
 
   static get name() { return "Guardtime"; }
@@ -69,17 +70,13 @@ class GuardtimeV2 {
           if (!resp.error)
             return resolve(resp.body)
 
-          console.log(resp.error);
-          console.log(resp.code);
-          console.log(resp.body);
-          reject();
+          reject(new Boom(resp.error, {
+            statusCode: resp.code,
+            data: resp.body
+          }));
         });
     })
   } // gt_
 } // GuardtimeV2
 
-function createGuardtimeDriver() {
-  return new GuardtimeV2('username', 'password');
-} // createGuardtimeDriver
-
-export default createGuardtimeDriver;
+export default GuardtimeV2;
