@@ -51,18 +51,35 @@ class SearchResults extends Component {
     this.state = {results: null}
   }
 
-  setResults(results) {
-    this.setState({results: results})
+  clear() {
+    this.setResults(null, null);
+  }
+
+  setResults(searchTerm, results) {
+    this.setState({
+      searchTerm: searchTerm,
+      results: results
+    })
   } // setResults
 
   render() {
-    const results = this.state.results;
+    const { searchTerm, results } = this.state;
 
     if (!results)
       return (<div/>)
 
     return (
       <div>
+        <div className="row">
+          <div className="col-md-12">Searched for <strong>{searchTerm}</strong></div>
+        </div>
+        { results.length ?
+            <div className="row">
+              <hr className="col-md-12"/>
+            </div>
+          :
+            null
+        }
         {
           results.map(record => {
             return (
@@ -105,17 +122,16 @@ class Search extends Component {
   } // componentWillReceiveProps
 
   onSearch(searchTerm) {
+    this.resultsBox.clear();
     this.driver.fetch(searchTerm)
-      .then(results => {
-        this.results.setResults(results)
-      })
+      .then(results => this.resultsBox.setResults(searchTerm, results));
   } // onSearch
 
   render() {
     return (
       <div>
         <SearchBox onSearch={this.onSearch}/>
-        <SearchResults ref={results => this.results = results}/>
+        <SearchResults ref={resultsBox => this.resultsBox = resultsBox}/>
       </div>
     )
   } // render
