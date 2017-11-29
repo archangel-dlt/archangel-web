@@ -8,6 +8,8 @@ class GuardtimeV2 {
     this.guardtime_url = 'https://tryout-catena-db.guardtime.net/api/v2/signatures';
   } // constructor
 
+  static get name() { return "Guardtime"; }
+
   async store(id, payload, timestamp) {
     const hash = await sha256(`${id}-${payload}`)
     const gt_payload = {

@@ -38,6 +38,8 @@ function archangelContract() {
 } // archangelContract
 
 class Ethereum {
+  static get name() { return "Ethereum"; }
+
   async store(id, payload, timestamp) {
     const slug = {
       id: id,
