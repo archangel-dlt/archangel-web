@@ -30,7 +30,7 @@ class SearchBox extends Component {
             type="text"
             className="form-control col-md-12"
             placeholder="Search Archangel"
-            value={this.state.value}
+            value={this.state.searchTerm}
             onChange={this.handleChange}/>
         </div>
         <div className="row col-md-12">

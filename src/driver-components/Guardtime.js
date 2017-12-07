@@ -7,11 +7,20 @@ class GuardtimeLoginBox extends Component {
     super(props);
 
     this.state = {
-      visible: false
+      visible: false,
+      username: '',
+      password: '',
+      url: ''
     };
   } // constructor
 
-  solicitCredentials() {
+  solicitCredentials(username, password, url) {
+    this.setState({
+      username: username,
+      password: password,
+      url: url
+    });
+
     return new Promise((resolve, reject) => {
       this.resolve = resolve;
       this.reject = reject;
@@ -29,9 +38,9 @@ class GuardtimeLoginBox extends Component {
   login() {
     this.hide();
     this.resolve({
-      username: this.username,
-      password: this.password,
-      url: this.url
+      username: this.state.username,
+      password: this.state.password,
+      url: this.state.url
     });
   } // login
 
@@ -39,6 +48,24 @@ class GuardtimeLoginBox extends Component {
     this.hide();
     this.reject(new Error("Login cancelled"));
   } // cancel
+
+  textBox(fieldName, type = "text") {
+    return (
+      <input
+        name={fieldName}
+        className="form-control"
+        type={type}
+        value={this.state[fieldName]}
+        onChange={ e => this.updateField(fieldName, e.target.value) }
+      />
+    );
+  } // textBox
+
+  updateField(fieldName, value) {
+    this.setState({
+      [fieldName]: value
+    });
+  } // updateField
 
   render() {
     return (
@@ -49,8 +76,9 @@ class GuardtimeLoginBox extends Component {
           onOK={() => this.login()}
           onClose={() => this.cancel()}
           labelOK="Login">
-        <DialogRow title="Username">username</DialogRow>
-        <DialogRow title="Password">password</DialogRow>
+        <DialogRow title="Username">{this.textBox('username')}</DialogRow>
+        <DialogRow title="Password">{this.textBox('password', 'password')}</DialogRow>
+        <DialogRow title="URL">{this.textBox('url')}</DialogRow>
       </DialogBox>
     )
   }
@@ -63,7 +91,14 @@ class ReactGuardtime extends Guardtime {
 
   async solicitCredentials() {
     const {username, password, url} =
-      await this.loginBox.solicitCredentials();
+      await this.loginBox.solicitCredentials(
+        this.username,
+        this.password,
+        this.guardtime_url
+      );
+    this.username = username;
+    this.password = password;
+    this.guardtime_url = url;
   } // solicitCredentials
 
   async gt_(method, params, payload) {
