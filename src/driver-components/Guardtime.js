@@ -109,7 +109,15 @@ class ReactGuardtime extends Guardtime {
     if (!this.hasCreds_())
       await this.solicitCredentials();
 
-    return super.gt_(method, params, payload)
+    try {
+      return await super.gt_(method, params, payload)
+    } catch (err) {
+      if (err.status === 401) {
+        this.username = '';
+        this.password = '';
+      }
+      throw err;
+    }
   } // gt_
 
   ////////////////////
