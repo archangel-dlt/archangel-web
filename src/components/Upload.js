@@ -57,7 +57,8 @@ class UploadBox extends Component {
           <div className="col-md-10"/>
           <button
             type="submit"
-            className="btn btn-primary col-md-2">Upload
+            className="btn btn-primary col-md-2"
+            disabled={!(this.state.id && this.state.payload)}>Upload
           </button>
         </div>
       </form>

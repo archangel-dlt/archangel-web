@@ -67,12 +67,16 @@ class GuardtimeLoginBox extends Component {
     });
   } // updateField
 
+  hasCreds() {
+    return this.state.username && this.state.password && this.state.url;
+  } // hasCreds
+
   render() {
     return (
       <DialogBox
           show={this.state.visible}
           title="Guardtime Login"
-          canOK={() => true}
+          canOK={() => this.hasCreds()}
           onOK={() => this.login()}
           onClose={() => this.cancel()}
           labelOK="Login">
