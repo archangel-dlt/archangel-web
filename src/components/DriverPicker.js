@@ -27,6 +27,14 @@ class DriverPicker extends Component {
     this.onNewDriver(driver);
   } // onDriverChange
 
+  driverUI() {
+    const driver = this.state.driver;
+    if (!driver)
+      return null;
+
+    return driver.render ? driver.render() : null;
+  } // driverUI
+
   render() {
     return (
       <div className="row">
@@ -43,6 +51,8 @@ class DriverPicker extends Component {
             )
           }
         </select>
+        <br/>
+        { this.driverUI() }
       </div>
     );
   } // render

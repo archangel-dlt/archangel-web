@@ -160,18 +160,9 @@ class Search extends Component {
       .catch(error => this.resultsBox.setErrors(error));
   } // onSearch
 
-  driverUI() {
-    const driver = this.state.driver;
-    if (!driver)
-      return null;
-
-    return driver.render ? driver.render() : null;
-  } // driverUI
-
   render() {
     return (
       <div>
-        { this.driverUI() }
         <SearchBox onSearch={this.onSearch}/>
         <SearchResults ref={resultsBox => this.resultsBox = resultsBox}/>
       </div>
