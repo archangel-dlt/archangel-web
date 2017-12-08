@@ -57,13 +57,82 @@ class UploadBox extends Component {
           <div className="col-md-10"/>
           <button
             type="submit"
-            className="btn btn-primary col-md-2">Upload
+            className="btn btn-primary col-md-2"
+            disabled={!(this.state.id && this.state.payload)}>Upload
           </button>
         </div>
       </form>
     )
   } // render
 } // class UploadBox
+
+class UploadResults extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {id: null, errors: null}
+  } // constructor
+
+  clear() {
+    this.setState({
+      id: null,
+      errors: null
+    })
+  } // clear
+
+  uploadComplete(id) {
+    this.setState({
+      id: id
+    });
+  } // setResults
+
+  setErrors(errors) {
+    this.setState({
+      errors: errors
+    });
+  } // setErrors
+
+  render() {
+    const {id, errors} = this.state;
+
+    if (!id && !errors)
+      return (<div/>)
+
+    if (errors)
+      return this.renderErrors(errors);
+
+    return this.renderResults(id);
+  } // render
+
+  renderErrors(errors) {
+    return (
+      <div>
+        <div className="row">
+          <div className="col-md-12"><strong>Search failed</strong></div>
+        </div>
+        <div className="row">
+          <div className="col-md-12">{ errors.message || errors.error }</div>
+        </div>
+      </div>
+    )
+  } // renderErrors
+
+  renderResults(id) {
+    return (
+      <div>
+        <div className="row">
+          <hr className="col-md-12"/>
+        </div>
+        <div className="row">
+          <div className="col-md-12">
+            {id} uploaded.
+          </div>
+        </div>
+      </div>
+    )
+  } // renderResults
+} // UploadResults
+
+
 
 class Upload extends Component {
   constructor(props) {
@@ -78,16 +147,17 @@ class Upload extends Component {
   } // componentWillReceiveProps
 
   onUpload(id, payload) {
+    this.resultsBox.clear();
     this.driver.store(id, payload, DateTime.local().toISO())
-      .then(results => {
-        console.log(results);
-      })
-  }
+      .then(() => this.resultsBox.uploadComplete(id))
+      .catch(error => this.resultsBox.setErrors(error));
+  } // onUpload
 
   render() {
     return (
       <div>
         <UploadBox onUpload={this.onUpload}/>
+        <UploadResults ref={resultsBox => this.resultsBox = resultsBox}/>
       </div>
     )
   } // render

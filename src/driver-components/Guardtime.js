@@ -65,12 +65,17 @@ class GuardtimeLoginBox extends Component {
     this.setState({ credentials: credentials });
   } // updateField
 
+  hasCreds() {
+    const credentials = this.state.credentials;
+    return credentials.username && credentials.password && credentials.url;
+  } // hasCreds
+
   render() {
     return (
       <DialogBox
           show={this.state.visible}
           title="Guardtime Login"
-          canOK={() => true}
+          canOK={() => this.hasCreds()}
           onOK={() => this.login()}
           onClose={() => this.cancel()}
           labelOK="Login">
@@ -89,7 +94,11 @@ class ReactGuardtime extends Guardtime {
 
   async solicitCredentials() {
     const {username, password, url} =
-      await this.loginBox.solicitCredentials(this.username, this.password, this.guardtime_url);
+      await this.loginBox.solicitCredentials(
+        this.username,
+        this.password,
+        this.guardtime_url
+      );
     this.username = username;
     this.password = password;
     this.guardtime_url = url;
@@ -99,7 +108,15 @@ class ReactGuardtime extends Guardtime {
     if (!this.hasCreds_())
       await this.solicitCredentials();
 
-    return super.gt_(method, params, payload)
+    try {
+      return await super.gt_(method, params, payload)
+    } catch (err) {
+      if (err.status === 401) {
+        this.username = '';
+        this.password = '';
+      }
+      throw err;
+    }
   } // gt_
 
   ////////////////////

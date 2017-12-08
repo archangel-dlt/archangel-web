@@ -34,7 +34,7 @@ function DialogBox(props) {
         <hr/>
         <div className="row">
           <div className="col-lg-6">
-            <button className="btn btn-block" onClick={onClose}>Cancel</button>
+            <button className="btn btn-block btn-secondary" onClick={onClose}>Cancel</button>
           </div>
           <div className="col-lg-6">
             <button

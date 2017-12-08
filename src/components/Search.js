@@ -30,14 +30,15 @@ class SearchBox extends Component {
             type="text"
             className="form-control col-md-12"
             placeholder="Search Archangel"
-            value={this.state.value}
+            value={this.state.searchTerm}
             onChange={this.handleChange}/>
         </div>
         <div className="row col-md-12">
           <div className="col-md-10"/>
           <button
             type="submit"
-            className="btn btn-primary col-md-2">Search
+            className="btn btn-primary col-md-2"
+            disabled={!this.state.searchTerm}>Search
           </button>
         </div>
       </form>
@@ -159,18 +160,9 @@ class Search extends Component {
       .catch(error => this.resultsBox.setErrors(error));
   } // onSearch
 
-  driverUI() {
-    const driver = this.state.driver;
-    if (!driver)
-      return null;
-
-    return driver.render ? driver.render() : null;
-  } // driverUI
-
   render() {
     return (
       <div>
-        { this.driverUI() }
         <SearchBox onSearch={this.onSearch}/>
         <SearchResults ref={resultsBox => this.resultsBox = resultsBox}/>
       </div>
