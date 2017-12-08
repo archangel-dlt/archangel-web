@@ -1,6 +1,5 @@
 import unirest from 'unirest';
 import sha256 from './sha256-digest';
-import Boom from 'boom';
 
 class GuardtimeV2 {
   constructor(username, password, url) {
@@ -70,13 +69,17 @@ class GuardtimeV2 {
           if (!resp.error)
             return resolve(resp.body)
 
-          reject(new Boom(resp.error, {
-            statusCode: resp.code,
-            data: resp.body
-          }));
+          reject(gtError(resp));
         });
     })
   } // gt_
 } // GuardtimeV2
+
+function gtError(resp) {
+  const error = new Error(resp.error)
+  error.status = resp.code;
+  error.data = resp.body;
+  return error;
+} // gtError
 
 export default GuardtimeV2;
