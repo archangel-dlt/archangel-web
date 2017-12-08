@@ -10,7 +10,7 @@
     "react-scripts": "1.0.17",
     "react-tabs": "^2.1.1",
     "unirest": "^0.5.1",
-    "web3": "^0.20.1"
+    "web3": "^0.20.2"
   },
   "scripts": {
     "start": "react-scripts start",
