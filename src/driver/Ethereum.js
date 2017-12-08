@@ -2,7 +2,8 @@ import Web3 from 'web3';
 import ArchangelABI from './ethereum/Archangel';
 import { DateTime } from 'luxon';
 
-const ArchangelAddress = '0x40aa476f8ae7105d9094e8293b633273c085a3d5';
+const ArchangelAddress = '0x3507dCef171f6B7F36c56e35013d0785B150584F';
+const FromBlock = 1378500;
 const NullId = '0x0000000000000000000000000000000000000000000000000000000000000000';
 
 function missingMetaMask() {
@@ -10,11 +11,13 @@ function missingMetaMask() {
   return null;
 } // missingMetaMask
 
+
 let web3_;
 function web3() {
   if (web3_)
     return web3_;
   web3_ = new Web3(window.web3.currentProvider);
+  //web3_ = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
   return web3_;
 } // web3
 
@@ -25,13 +28,13 @@ function createContract() {
 
 let contractInst = null;
 
-function archangelContract() {
+function archangelContract(silent) {
   if (contractInst)
     return contractInst;
 
   if (typeof window.web3 !== 'undefined')
     contractInst = createContract();
-  else
+  else if (!silent)
     missingMetaMask();
 
   return contractInst;
@@ -39,6 +42,16 @@ function archangelContract() {
 
 class Ethereum {
   static get name() { return "Ethereum"; }
+
+  constructor() {
+    const contract = archangelContract(true);
+    if (contract) {
+      this.allEvents = contract.allEvents(
+        { fromBlock: FromBlock },
+        (error, logs) => console.log("allEvents", logs)
+      );
+    }
+  }
 
   async store(id, payload, timestamp) {
     const slug = {
@@ -65,21 +78,59 @@ class Ethereum {
   } // fetch
 
   ////////////////////////
-  eth_store(id, slug) {
+  async eth_store(id, slug) {
     const contract = archangelContract();
     const slugStr = JSON.stringify(slug);
 
-    return new Promise((resolve, reject) => {
+    return new Promise(async (pResolve, pReject) => {
+      const accounts = web3().eth.accounts;
+      if (accounts.length === 0)
+        pReject(new Error('No Ethereum account available.  Have you unlocked MetaMask?'))
+      const account = accounts[0].toLowerCase();
+
+      let stopped = false;
+      const currentBlock = await this.currentBlockNumber();
+      const noPermissionEvent = contract.NoWritePermission({ fromBlock: currentBlock-1 });
+      const registration = contract.Registration({}, { fromBlock: currentBlock-1 });
+
+      const resolve = (results) => {
+        noPermissionEvent.stopWatching();
+        registration.stopWatching();
+        pResolve(results);
+      } // resolve
+
+      const reject = (err) => {
+        noPermissionEvent.stopWatching();
+        registration.stopWatching();
+        pReject(err);
+      } // reject
+
+      noPermissionEvent.watch(
+        (error, result) => {
+          if (!error && result) {
+            stopped = true;
+            reject(new Error(`Sorry, account ${account} does not have permission to write to Archangel`));
+          }
+        });
+
+      registration.watch(
+        (error, result) => {
+          if (!error && result) {
+            stopped = true;
+            resolve(`${id} written to Ethereum`)
+          }
+        });
+
       const onCommitted = (tx, timeout) => {
         web3().eth.getTransactionReceipt(tx, (err, result) => {
-          if (err)
-            return reject(err);
+          if (stopped)
+            return;
 
           if (result)
-            return resolve({
-              tx: tx,
-              receipt: result
-            });
+            return resolve(`Transaction ${tx} complete, but may not have succeeded.`);
+
+          if (err)
+            return reject(err);
 
           const diff = timeout.diff(DateTime.local(), 'seconds').values.seconds;
           if (diff <= 0)
@@ -91,7 +142,10 @@ class Ethereum {
 
       const timeout = DateTime.local().plus({seconds: 60});
       contract.store(id, slugStr,
-        { from: web3().eth.accounts[0].toLowerCase() },
+        {
+          from: account,
+          gas: 200000
+        },
         (err, tx) => {
           if (err)
             return reject(err);
@@ -120,6 +174,16 @@ class Ethereum {
         });
     }); // eth_fetch
   } // eth_call_fetch
+
+  currentBlockNumber() {
+    return new Promise((resolve, reject) => {
+      web3().eth.getBlockNumber((err, result) => {
+        if(err)
+          return reject(err);
+        resolve(result);
+      })
+    })
+  } // currentBlockNumber
 } // class Ethereum
 
 function createEthereumDriver() {

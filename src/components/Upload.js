@@ -79,11 +79,11 @@ class UploadResults extends Component {
     })
   } // clear
 
-  uploadComplete(id) {
+  uploadComplete(msg) {
     this.setState({
-      id: id
+      msg: msg
     });
-  } // setResults
+  } // uploadComplete
 
   setErrors(errors) {
     this.setState({
@@ -92,15 +92,15 @@ class UploadResults extends Component {
   } // setErrors
 
   render() {
-    const {id, errors} = this.state;
+    const {msg, errors} = this.state;
 
-    if (!id && !errors)
+    if (!msg && !errors)
       return (<div/>)
 
     if (errors)
       return this.renderErrors(errors);
 
-    return this.renderResults(id);
+    return this.renderResults(msg);
   } // render
 
   renderErrors(errors) {
@@ -116,16 +116,14 @@ class UploadResults extends Component {
     )
   } // renderErrors
 
-  renderResults(id) {
+  renderResults(msg) {
     return (
       <div>
         <div className="row">
           <hr className="col-md-12"/>
         </div>
         <div className="row">
-          <div className="col-md-12">
-            {id} uploaded.
-          </div>
+          <div className="col-md-12">{ msg }</div>
         </div>
       </div>
     )
@@ -149,7 +147,7 @@ class Upload extends Component {
   onUpload(id, payload) {
     this.resultsBox.clear();
     this.driver.store(id, payload, DateTime.local().toISO())
-      .then(() => this.resultsBox.uploadComplete(id))
+      .then(msg => this.resultsBox.uploadComplete(msg))
       .catch(error => this.resultsBox.setErrors(error));
   } // onUpload
 
