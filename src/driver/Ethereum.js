@@ -2,7 +2,7 @@ import Web3 from 'web3';
 import ArchangelABI from './ethereum/Archangel';
 import { DateTime } from 'luxon';
 
-const ArchangelAddress = '0x3507dCef171f6B7F36c56e35013d0785B150584F';
+const ArchangelAddress = '0x3507dCef171f6B7F36c56e35013d0785B150584F'.toLowerCase();
 const FromBlock = 1378500;
 const NullId = '0x0000000000000000000000000000000000000000000000000000000000000000';
 
@@ -46,12 +46,13 @@ class Ethereum {
   constructor() {
     const contract = archangelContract(true);
     if (contract) {
-      this.allEvents = contract.allEvents(
-        { fromBlock: FromBlock },
-        (error, logs) => console.log("allEvents", logs)
+      this.registrations = contract.Registration(
+        { },
+        {fromBlock: FromBlock},
+        () => {}
       );
-    }
-  }
+    } // if ...
+  } // constructor
 
   async store(id, payload, timestamp) {
     const slug = {
@@ -77,6 +78,24 @@ class Ethereum {
     return results;
   } // fetch
 
+  async search(phrase) {
+    const search = phrase.toLowerCase();
+    const registrations = await this.registrationLog();
+    return registrations.filter(
+      r => r.payload.toLowerCase().indexOf(search) !== -1
+    )
+  } // search
+
+  registrationLog() {
+    return new Promise((resolve, reject) => {
+      this.registrations.get((error, logs) => {
+        if (error)
+          return reject(error);
+        return resolve(logs.map(l => JSON.parse(l.args._payload)));
+      })
+    });
+  } // registrations
+
   ////////////////////////
   async eth_store(id, slug) {
     const contract = archangelContract();
@@ -85,7 +104,7 @@ class Ethereum {
     return new Promise(async (pResolve, pReject) => {
       const accounts = web3().eth.accounts;
       if (accounts.length === 0)
-        pReject(new Error('No Ethereum account available.  Have you unlocked MetaMask?'))
+        return pReject(new Error('No Ethereum account available.  Have you unlocked MetaMask?'))
       const account = accounts[0].toLowerCase();
 
       let stopped = false;

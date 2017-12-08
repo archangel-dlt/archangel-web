@@ -38,6 +38,10 @@ class GuardtimeV2 {
     return records.map(record => record.metadata)
   } // fetch
 
+  async search(phrase) {
+    return [];
+  }
+
   //////////////////////////////////////
   gt_fetch_(gt_id) {
     return this.gt_get_(`/${gt_id}`)

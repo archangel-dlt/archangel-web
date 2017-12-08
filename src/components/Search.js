@@ -49,20 +49,30 @@ class SearchBox extends Component {
 class SearchResults extends Component {
   constructor(props) {
     super(props);
-    this.state = {results: null}
+    this.state = {
+      fetchResults: null,
+      searchResults: null
+    }
   } // constructor
 
   clear() {
-    this.setResults(null, null);
+    this.setFetchResults(null, null);
     this.setErrors(null);
   } // clear
 
-  setResults(searchTerm, results) {
+  setFetchResults(searchTerm, results) {
     this.setState({
       searchTerm: searchTerm,
-      results: results
+      fetchResults: results
     });
-  } // setResults
+  } // setFetchResults
+
+  setSearchResults(searchTerm, results) {
+    this.setState({
+      searchTerm: searchTerm,
+      searchResults: results
+    });
+  } // setSearchResults
 
   setErrors(errors) {
     this.setState({
@@ -71,15 +81,15 @@ class SearchResults extends Component {
   } // setErrors
 
   render() {
-    const {searchTerm, results, errors} = this.state;
+    const {searchTerm, fetchResults, searchResults, errors} = this.state;
 
-    if (!results && !errors)
+    if (!fetchResults && !searchResults && !errors)
       return (<div/>)
 
     if (errors)
       return this.renderErrors(errors);
 
-    return this.renderResults(searchTerm, results);
+    return this.renderResults(searchTerm, fetchResults, searchResults);
   } // render
 
   renderErrors(errors) {
@@ -95,38 +105,58 @@ class SearchResults extends Component {
     )
   } // renderErrors
 
-  renderResults(searchTerm, results) {
+  renderResults(searchTerm, fetchResults, searchResults) {
+    fetchResults = fetchResults || []
+    searchResults = searchResults || []
+
+    const found = fetchResults.length + searchResults.length;
+    const formatResult = record => {
+      return (
+        <div className="row" key={record.timestamp}>
+          <div className="col-md-2">{record.id}</div>
+          <div className="col-md-7">{record.payload}</div>
+          <div className="col-md-3">{record.timestamp}</div>
+        </div>
+      )
+    };
+
     return (
       <div>
         <div className="row">
           <div className="col-md-12">Searched for <strong>{searchTerm}</strong></div>
         </div>
-        { results.length ?
+          {
+            fetchResults.length ?
+              <div className="row">
+                <hr className="col-md-12"/>
+                <div className="col-md-12">With matching key</div>
+              </div>
+            :
+              null
+          }
+          {
+            fetchResults.map(formatResult)
+          }
+          {
+            searchResults.length ?
             <div className="row">
               <hr className="col-md-12"/>
+              <div className="col-md-12">With matching payload</div>
             </div>
-          :
+            :
             null
-        }
-        {
-          results.map(record => {
-            return (
-              <div className="row" key={record.timestamp}>
-                <div className="col-md-2">{record.id}</div>
-                <div className="col-md-7">{record.payload}</div>
-                <div className="col-md-3">{record.timestamp}</div>
-              </div>
-            )
-          })
-        }
+          }
+          {
+            searchResults.map(formatResult)
+          }
         <div className="row">
           <hr className="col-md-12"/>
         </div>
         <div className="row">
           <div className="col-md-12">
             <span className="float-right">
-            {results.length ?
-              `${results.length} records found` :
+            {found ?
+              `${found} records found` :
               "No records found"
             }
             </span>
@@ -156,7 +186,10 @@ class Search extends Component {
   onSearch(searchTerm) {
     this.resultsBox.clear();
     this.state.driver.fetch(searchTerm)
-      .then(results => this.resultsBox.setResults(searchTerm, results))
+      .then(results => this.resultsBox.setFetchResults(searchTerm, results))
+      .catch(error => this.resultsBox.setErrors(error));
+    this.state.driver.search(searchTerm)
+      .then(results => this.resultsBox.setSearchResults(searchTerm, results))
       .catch(error => this.resultsBox.setErrors(error));
   } // onSearch
 
