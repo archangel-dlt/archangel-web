@@ -29,26 +29,31 @@ class GuardtimeV2 {
   } // store
 
   async fetch(id) {
-    const results = await this.gt_search_(id);
+    return this.findRecords('id', id);
+  } // fetch
+
+  async search(phrase) {
+    return this.findRecords('payload', phrase)
+  } // search
+
+  //////////////////////////////////////
+  async findRecords(field, value) {
+    const results = await this.gt_search_(field, value);
     const gt_ids = results.ids;
     if (!gt_ids || gt_ids.length === 0)
       return [];
 
     const records = await Promise.all(gt_ids.map(id => this.gt_fetch_(id)));
     return records.map(record => record.metadata)
-  } // fetch
-
-  async search(phrase) {
-    return [];
-  }
+  } // findRecord
 
   //////////////////////////////////////
   gt_fetch_(gt_id) {
     return this.gt_get_(`/${gt_id}`)
   } // gt_fetch_
 
-  gt_search_(id) {
-    return this.gt_get_(`?metadata.id=${id}`);
+  gt_search_(field, value) {
+    return this.gt_get_(`?metadata.${field}=${value}`);
   } // gt_search_
 
   gt_write_(gt_payload) {
