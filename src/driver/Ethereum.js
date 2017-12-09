@@ -205,8 +205,4 @@ class Ethereum {
   } // currentBlockNumber
 } // class Ethereum
 
-function createEthereumDriver() {
-  return new Ethereum();
-} // createEthereumDriver
-
-export default createEthereumDriver;
+export default Ethereum;

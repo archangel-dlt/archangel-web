@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import Guardtime from '../driver/Guardtime';
 import { DialogBox, DialogRow } from "./Dialog";
 
