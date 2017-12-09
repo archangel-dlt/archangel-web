@@ -25,7 +25,8 @@ class GuardtimeV2 {
       level: 0
     } // upload
 
-    return this.gt_write_(gt_payload);
+    return this.gt_write_(gt_payload)
+      .then(() => `${id} written to Guardtime`);
   } // store
 
   async fetch(id) {

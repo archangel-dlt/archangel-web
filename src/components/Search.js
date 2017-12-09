@@ -57,6 +57,7 @@ class SearchResults extends Component {
 
   clear() {
     this.setFetchResults(null, null);
+    this.setSearchResults(null, null);
     this.setErrors(null);
   } // clear
 
