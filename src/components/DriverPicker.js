@@ -38,20 +38,19 @@ class DriverPicker extends Component {
   render() {
     return (
       <div className="row">
-        <label className="col-md-4 form-text">
-          <span className="float-right">Driver</span>
-        </label>
-        <select className="col-md-8 form-control"
-                onChange={event => this.onDriverChange(event.target.value)}>
-          {
-            Object.keys(this.drivers).map(
-              label => { return (
-                <option key={label} value={label}>{label}</option>
-              ); }
-            )
-          }
-        </select>
-        <br/>
+        <div className="row col-md-12">
+          <label className="col-md-4 form-text">
+            <span className="float-right">Driver</span>
+          </label>
+          <select className="col-md-8 form-control"
+                  onChange={event => this.onDriverChange(event.target.value)}>
+            {
+              Object.keys(this.drivers).map(
+                label => <option key={label} value={label}>{label}</option>
+              )
+            }
+          </select>
+        </div>
         { this.driverUI() }
       </div>
     );

@@ -1,4 +1,3 @@
-import Web3 from 'web3';
 import ArchangelABI from './ethereum/Archangel';
 import { DateTime } from 'luxon';
 
@@ -6,54 +5,34 @@ const ArchangelAddress = '0x3507dCef171f6B7F36c56e35013d0785B150584F'.toLowerCas
 const FromBlock = 1378500;
 const NullId = '0x0000000000000000000000000000000000000000000000000000000000000000';
 
-function missingMetaMask() {
-  alert('The Ethereum Driver requires MetaMask.');
-  return null;
-} // missingMetaMask
-
-
-let web3_;
-function web3() {
-  if (web3_)
-    return web3_;
-  web3_ = new Web3(window.web3.currentProvider);
-  //web3_ = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-  return web3_;
-} // web3
-
-function createContract() {
-  const contractClass = web3().eth.contract(ArchangelABI);
-  return contractClass.at(ArchangelAddress);
-} // archangelContract
-
-let contractInst = null;
-
-function archangelContract(silent) {
-  if (contractInst)
-    return contractInst;
-
-  if (typeof window.web3 !== 'undefined')
-    contractInst = createContract();
-  else if (!silent)
-    missingMetaMask();
-
-  return contractInst;
-} // archangelContract
-
 class Ethereum {
   static get name() { return "Ethereum"; }
 
-  constructor() {
-    const contract = archangelContract(true);
-    if (contract) {
-      this.registrations = contract.Registration(
-        { },
-        {fromBlock: FromBlock},
-        () => {}
-      );
-    } // if ...
+  constructor(web3) {
+    this.setup(web3);
   } // constructor
 
+  ////////////////////////////////////////////
+  setup(web3) {
+    this.web3_ = web3;
+    this.loadContract();
+    this.watchRegistrations();
+  } // setup
+
+  loadContract() {
+    const contractClass = this.web3_.eth.contract(ArchangelABI);
+    this.contract_ = contractClass.at(ArchangelAddress);
+  } // loadContract
+
+  watchRegistrations() {
+    this.registrations = this.contract_.Registration(
+      { },
+      { fromBlock: FromBlock },
+      () => {}
+    );
+  } // watchRegistrations
+
+  ////////////////////////////////////////////
   async store(id, payload, timestamp) {
     const slug = {
       id: id,
@@ -86,6 +65,7 @@ class Ethereum {
     )
   } // search
 
+  ////////////////////////////////////////////
   registrationLog() {
     return new Promise((resolve, reject) => {
       this.registrations.get((error, logs) => {
@@ -98,19 +78,18 @@ class Ethereum {
 
   ////////////////////////
   async eth_store(id, slug) {
-    const contract = archangelContract();
     const slugStr = JSON.stringify(slug);
 
     return new Promise(async (pResolve, pReject) => {
-      const accounts = web3().eth.accounts;
+      const accounts = this.web3_.eth.accounts;
       if (accounts.length === 0)
         return pReject(new Error('No Ethereum account available.  Have you unlocked MetaMask?'))
       const account = accounts[0].toLowerCase();
 
       let stopped = false;
       const currentBlock = await this.currentBlockNumber();
-      const noPermissionEvent = contract.NoWritePermission({ fromBlock: currentBlock-1 });
-      const registration = contract.Registration({}, { fromBlock: currentBlock-1 });
+      const noPermissionEvent = this.contract_.NoWritePermission({ fromBlock: currentBlock-1 });
+      const registration = this.contract_.Registration({}, { fromBlock: currentBlock-1 });
 
       const resolve = (results) => {
         noPermissionEvent.stopWatching();
@@ -141,7 +120,7 @@ class Ethereum {
         });
 
       const onCommitted = (tx, timeout) => {
-        web3().eth.getTransactionReceipt(tx, (err, result) => {
+        this.web3_.eth.getTransactionReceipt(tx, (err, result) => {
           if (stopped)
             return;
 
@@ -160,7 +139,7 @@ class Ethereum {
       }; // onCommitted
 
       const timeout = DateTime.local().plus({seconds: 60});
-      contract.store(id, slugStr,
+      this.contract_.store(id, slugStr,
         {
           from: account,
           gas: 200000
@@ -183,9 +162,8 @@ class Ethereum {
   } // eth_fetch
 
   eth_call_fetch(methodName, id) {
-    const contract = archangelContract();
     return new Promise((resolve, reject) => {
-      contract[methodName].call(id,
+      this.contract_[methodName].call(id,
         (err, results) => {
           if (err)
             return reject(err);
@@ -196,7 +174,7 @@ class Ethereum {
 
   currentBlockNumber() {
     return new Promise((resolve, reject) => {
-      web3().eth.getBlockNumber((err, result) => {
+      this.web3_.eth.getBlockNumber((err, result) => {
         if(err)
           return reject(err);
         resolve(result);
