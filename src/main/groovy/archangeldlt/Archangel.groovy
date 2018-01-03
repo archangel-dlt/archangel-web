@@ -46,11 +46,19 @@ class Archangel {
   static private def convertExportToJson(String csvExport) {
     def csvReader = new CSVReader(new StringReader(csvExport), ',' as Character, '"' as Character)
     def columnNames = csvReader.readNext().collect { it.toString().trim() }
+    def desiredColumns = ['ID', 'PARENT_ID', 'NAME', 'SIZE', 'TYPE', 'LAST_MODIFIED', 'SHA256_HASH', 'PUID']
 
     def json = csvReader.readAll().collect { line ->
       def index = 0
-      columnNames.inject([:]) { map, key -> map << ["$key" : line[index++] ]}
+      columnNames.inject([:]) { map, key ->
+        if (desiredColumns.contains(key))
+          map << [ "$key": line[index] ]
+        ++index
+        return map
+      }
     }
+
+    
 
     return json
   } // convertExportToJson
