@@ -17,7 +17,8 @@ class Archangel {
     def csvExport = characterizeFile(args[0])
     def jsonExport = convertExportToJson(csvExport)
 
-    println(jsonExport)
+    jsonExport.each { println it }
+
     System.exit(0)
   }
 
@@ -26,7 +27,7 @@ class Archangel {
     def profileName = "${passName}.droid"
     def exportName ="${passName}.csv"
 
-    droid(["-a", "\"${file}\"", "-A", "-p", "\"${profileName}\""])
+    droid(["-A", "-a", "\"${file}\"", "-p", "\"${profileName}\""])
     droid(["-p", "\"${profileName}\"", "-e", "\"${exportName}\""])
 
     def exportFile = new File(exportName)
@@ -67,11 +68,16 @@ class Archangel {
     def idToHash = jsonArray.collectEntries {
       [ (it['ID']): it['SHA256_HASH']]
     }
+    jsonArray.findAll { it['TYPE'] == 'Folder' }.each {
+      idToHash[it['ID']] = idToHash[it['PARENT_ID']]
+    }
 
     for (def line : jsonArray) {
       def parent = line['PARENT_ID']
       line << [ PARENT_SHA256_HASH : parent ? idToHash[parent] : '' ]
     }
+
+    jsonArray.removeAll { it['TYPE'] == 'Folder' }
 
     return jsonArray
   } // fixupJson
