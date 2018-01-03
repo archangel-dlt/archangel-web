@@ -52,16 +52,29 @@ class Archangel {
       def index = 0
       columnNames.inject([:]) { map, key ->
         if (desiredColumns.contains(key))
-          map << [ "$key": line[index] ]
+          map << [ ("$key" as String): line[index] ]
         ++index
         return map
       }
     }
 
-    
+    json = fixupJson(json)
 
     return json
   } // convertExportToJson
+
+  static private def fixupJson(def jsonArray) {
+    def idToHash = jsonArray.collectEntries {
+      [ (it['ID']): it['SHA256_HASH']]
+    }
+
+    for (def line : jsonArray) {
+      def parent = line['PARENT_ID']
+      line << [ PARENT_SHA256_HASH : parent ? idToHash[parent] : '' ]
+    }
+
+    return jsonArray
+  } // fixupJson
 
   static private String uniqueName() {
     long millis = System.currentTimeMillis()
