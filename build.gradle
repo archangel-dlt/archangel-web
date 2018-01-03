@@ -1,5 +1,7 @@
-apply plugin: 'groovy'
-apply plugin: 'application'
+plugins {
+  id 'groovy'
+  id 'application'
+}
 
 repositories {
   mavenCentral()
@@ -8,7 +10,10 @@ repositories {
 dependencies {
   compile 'org.codehaus.groovy:groovy-all:2.4.13'
   compile 'org.apache.ant:ant-compress:1.5' // 1.4 has a bad pom
-  compile 'uk.gov.nationalarchives:droid-results:6.4'
+  compile 'uk.gov.nationalarchives:droid:6.4'
+  compile 'uk.gov.nationalarchives:droid-command-line:6.4'
 }
 
-mainClassName = 'archangeldlt.Archangel'
+jar {
+  mainClassName = 'archangeldlt.Archangel'
+}
