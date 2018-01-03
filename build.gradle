@@ -12,6 +12,7 @@ dependencies {
   compile 'org.apache.ant:ant-compress:1.5' // 1.4 has a bad pom
   compile 'uk.gov.nationalarchives:droid:6.4'
   compile 'uk.gov.nationalarchives:droid-command-line:6.4'
+  compile 'com.xlson.groovycsv:groovycsv:1.2'
 }
 
 jar {

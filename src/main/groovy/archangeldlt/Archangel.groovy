@@ -1,5 +1,7 @@
 package archangeldlt
 
+import au.com.bytecode.opencsv.CSVReader
+import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.RandomStringUtils
 import uk.gov.nationalarchives.droid.command.DroidCommandLine
 
@@ -12,13 +14,46 @@ class Archangel {
 
     DroidCommandLine.systemExit = false
 
-    def profileName = uniqueName()
-    DroidCommandLine.main(["-a", "\"${args[0]}\"", "-A", "-p", "\"${profileName}.droid\""] as String[]);
-    DroidCommandLine.main(["-p", "\"${profileName}.droid\"", "-e", "\"${profileName}.csv\""] as String[]);
+    def csvExport = characterizeFile(args[0])
+    def jsonExport = convertExportToJson(csvExport)
 
-    println("Welp, let's see what we've got")
+    println(jsonExport)
     System.exit(0)
   }
+
+  static private String characterizeFile(String file) {
+    def passName = uniqueName()
+    def profileName = "${passName}.droid"
+    def exportName ="${passName}.csv"
+
+    droid(["-a", "\"${file}\"", "-A", "-p", "\"${profileName}\""])
+    droid(["-p", "\"${profileName}\"", "-e", "\"${exportName}\""])
+
+    def exportFile = new File(exportName)
+    def csvExport = exportFile.getText('utf8')
+
+    FileUtils.deleteQuietly(new File(profileName))
+    FileUtils.deleteQuietly(exportFile)
+
+    return csvExport
+  } // characterizeFile
+
+  static private void droid(def args) {
+    DroidCommandLine.systemExit = false
+    DroidCommandLine.main(args as String[])
+  } // droid
+
+  static private def convertExportToJson(String csvExport) {
+    def csvReader = new CSVReader(new StringReader(csvExport), ',' as Character, '"' as Character)
+    def columnNames = csvReader.readNext().collect { it.toString().trim() }
+
+    def json = csvReader.readAll().collect { line ->
+      def index = 0
+      columnNames.inject([:]) { map, key -> map << ["$key" : line[index++] ]}
+    }
+
+    return json
+  } // convertExportToJson
 
   static private String uniqueName() {
     long millis = System.currentTimeMillis()
