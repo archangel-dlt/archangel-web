@@ -4,6 +4,9 @@ import au.com.bytecode.opencsv.CSVReader
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.RandomStringUtils
 import uk.gov.nationalarchives.droid.command.DroidCommandLine
+import uk.gov.nationalarchives.droid.core.interfaces.config.RuntimeConfig
+import uk.gov.nationalarchives.droid.core.interfaces.config.DroidGlobalProperty
+
 
 class Archangel {
   static void main(String[] args) {
@@ -12,7 +15,7 @@ class Archangel {
       return
     }
 
-    DroidCommandLine.systemExit = false
+    setupDroid()
 
     def csvExport = characterizeFile(args[0])
     def jsonExport = convertExportToJson(csvExport)
@@ -20,7 +23,23 @@ class Archangel {
     jsonExport.each { println it }
 
     System.exit(0)
-  }
+  } // main
+
+  static private void setupDroid() {
+    RuntimeConfig.configureRuntimeEnvironment()
+
+    // Don't kill the process when we've finished a Droid command
+    DroidCommandLine.systemExit = false
+
+    // Make sure we're generating the SHA256 hash
+    def cmdLine = new DroidCommandLine([] as String[])
+    def globalContext = cmdLine.context
+    def globalConfig = globalContext.globalConfig
+    def props = globalConfig.properties
+    props.setProperty(DroidGlobalProperty.GENERATE_HASH.getName(), true)
+    props.setProperty(DroidGlobalProperty.HASH_ALGORITHM.getName(), "sha256")
+    props.save()
+  } // setupDroid
 
   static private String characterizeFile(String file) {
     def passName = uniqueName()
@@ -40,8 +59,8 @@ class Archangel {
   } // characterizeFile
 
   static private void droid(def args) {
-    DroidCommandLine.systemExit = false
-    DroidCommandLine.main(args as String[])
+    def cmdLine = new DroidCommandLine(args as String[])
+    cmdLine.processExecution()
   } // droid
 
   static private def convertExportToJson(String csvExport) {
