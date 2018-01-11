@@ -7,7 +7,7 @@ import static ratpack.groovy.Groovy.ratpack
 
 ratpack {
   handlers {
-    get {
+    get ("form") {
       render htmlBuilder {
         html {
           head {
@@ -39,9 +39,12 @@ ratpack {
 
           file.delete()
 
-          render jsonExport.toString()
+          render jsonExport
         }
       }
     } // post
+    files {
+      dir "public" indexFiles "index.html"
+    }
   }
 }
