@@ -1,8 +1,14 @@
 task bootstrap(type: Exec) {
+  group 'Front-end'
+  description 'Install node modules'
+
   commandLine 'npm', 'install'
 }
 
 task build(type: Exec,
            dependsOn: [bootstrap]) {
+  group 'Front-end'
+  description 'Build production front-end application'
+
   commandLine 'npm', 'run', 'build'
 }
