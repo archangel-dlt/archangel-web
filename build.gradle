@@ -1,10 +1,19 @@
 
 
-task buildFrontForDist(type: Copy, dependsOn: ':front-end:build') {
+task buildFrontForDist(type: Copy, dependsOn: [':front-end:build', ':back-end:clean']) {
+  group 'Top'
+  description 'Build front-end, ready to be bundled into back-end distribution package'
+
   from 'front-end/build'
   into 'back-end/src/ratpack/front-end'
 }
 
-task buildDist(dependsOn: [buildFrontForDist, ':back-end:distTar']) { }
+task buildDist(dependsOn: [buildFrontForDist, ':back-end:distTar']) {
+  group 'Top'
+  description 'Build front-end and back-end, create distribution package'
+}
 
-task clean (dependsOn: [':back-end:clean', ':front-end:clean'])
+task clean (dependsOn: [':back-end:clean', ':front-end:clean']) {
+  group 'Top'
+  description 'Clean everything'
+}
