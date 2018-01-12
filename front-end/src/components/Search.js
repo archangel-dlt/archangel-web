@@ -112,6 +112,22 @@ class SearchResults extends Component {
 
     const found = fetchResults.length + searchResults.length;
     const formatResult = record => {
+      if (record.sha256_hash)
+        return (
+          <div className="row" key={record.sha256_hash}>
+            <div className="row col-md-12">
+              <div className="col-md-8">{record.name}</div>
+              <div className="col-md-2">{record.puid}</div>
+              <div className="col-md-2">{record.size}</div>
+            </div>
+            <div className="row col-md-12">
+              <div className="col-md-2"/>
+              <div className="col-md-7">{record.comment}</div>
+              <div className="col-md-3">{record.timestamp}</div>
+            </div>
+          </div>
+        )
+
       return (
         <div className="row" key={record.timestamp}>
           <div className="col-md-2">{record.id}</div>
