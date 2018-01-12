@@ -4,6 +4,8 @@ import static archangeldlt.DroidWrapper.characterizeFile
 import static archangeldlt.DroidWrapper.convertExportToJson
 import static ratpack.groovy.Groovy.htmlBuilder
 import static ratpack.groovy.Groovy.ratpack
+import static ratpack.jackson.Jackson.json
+
 
 ratpack {
   handlers {
@@ -39,7 +41,7 @@ ratpack {
 
           file.delete()
 
-          render jsonExport
+          render json(jsonExport)
         }
       }
     } // post
