@@ -59,10 +59,16 @@ class Ethereum {
   } // fetch
 
   async search(phrase) {
+    const matches = (field, search) =>
+      field && field.toLowerCase().indexOf(search) !== -1;
+
     const search = phrase.toLowerCase();
     const registrations = await this.registrationLog();
     return registrations.filter(
-      r => r.payload.toLowerCase().indexOf(search) !== -1
+      r =>
+        matches(r.payload, search) ||
+        matches(r.name, search) ||
+        matches(r.comment, search)
     )
   } // search
 
