@@ -1,30 +1,37 @@
 import React, { Component } from 'react';
+import Dropzone from 'react-dropzone';
 import { DateTime } from 'luxon';
 
 class UploadBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: '',
-      payload: ''
+      file: '',
+      comment: ''
     };
 
     this.onUpload = props.onUpload;
 
-    this.handleIDChange = (event) => this.handleUpdate('id', event.target.value);
-    this.handlePayloadChange = (event) => this.handleUpdate('payload', event.target.value);
+    this.handleFileDrop = this.handleFileDrop.bind(this);
+    this.handleCommentChange = this.handleCommentChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   } // constructor
 
-  handleUpdate(key, value) {
+  handleFileDrop(files) {
     this.setState({
-      [key]: value
+      'file': files
+    })
+  } // handleFileDrop
+
+  handleCommentChange(event) {
+    this.setState({
+      'comment': event.target.value
     });
   } // update
 
   handleSubmit(event) {
-    if (this.state.id && this.state.payload)
-      this.onUpload(this.state.id, this.state.payload);
+    if (this.state.id && this.state.comment)
+      this.onUpload(this.state.id, this.state.comment);
     event.preventDefault();
   } // handleSubmit
 
@@ -32,25 +39,22 @@ class UploadBox extends Component {
     return (
       <form className="form-group row" onSubmit={this.handleSubmit}>
         <div className="row col-md-12">
-          <span
-            className="form-text col-md-2">ID
+          <span className="form-text col-md-2">
+            File
           </span>
-          <input
-            type="text"
-            className="form-control col-md-10"
-            placeholder="Archangel ID"
-            value={this.state.id}
-            onChange={this.handleIDChange}
-            />
+          <Dropzone onDrop={this.handleFileDrop} className="form-control col-md-10">
+            Drop a file here, or click to select a file
+          </Dropzone>
+          { this.state.file && 'File Dropped' }
         </div>
         <div className="row col-md-12">
           <span className="form-text col-md-2">
-            Payload
+            Comment
           </span>
           <textarea
             className="form-control col-md-10"
-            value={this.state.payload}
-            onChange={this.handlePayloadChange}
+            value={this.state.comment}
+            onChange={this.handleCommentChange}
             />
         </div>
         <div className="row col-md-12">
@@ -58,7 +62,7 @@ class UploadBox extends Component {
           <button
             type="submit"
             className="btn btn-primary col-md-2"
-            disabled={!(this.state.id && this.state.payload)}>Upload
+            disabled={!(this.state.id && this.state.comment)}>Upload
           </button>
         </div>
       </form>
@@ -144,9 +148,9 @@ class Upload extends Component {
     this.driver = props.driver;
   } // componentWillReceiveProps
 
-  onUpload(id, payload) {
+  onUpload(id, comment) {
     this.resultsBox.clear();
-    this.driver.store(id, payload, DateTime.local().toISO())
+    this.driver.store(id, comment, DateTime.local().toISO())
       .then(msg => this.resultsBox.uploadComplete(msg))
       .catch(error => this.resultsBox.setErrors(error));
   } // onUpload
