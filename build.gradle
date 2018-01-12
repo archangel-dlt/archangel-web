@@ -6,3 +6,5 @@ task buildFrontForDist(type: Copy, dependsOn: ':front-end:build') {
 }
 
 task buildDist(dependsOn: [buildFrontForDist, ':back-end:distTar']) { }
+
+task clean (dependsOn: [':back-end:clean', ':front-end:clean'])

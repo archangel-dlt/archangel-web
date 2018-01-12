@@ -12,3 +12,10 @@ task build(type: Exec,
 
   commandLine 'npm', 'run', 'build'
 }
+
+task clean(type: Delete) {
+  group 'Front-end'
+  description 'Cleans up'
+
+  delete 'build'
+}
