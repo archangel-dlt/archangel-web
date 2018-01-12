@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
+import superagent from 'superagent';
 import { DateTime } from 'luxon';
 
 class UploadBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      file: '',
-      comment: ''
+      disableUpload: false,
+      message: ''
     };
 
     this.onUpload = props.onUpload;
@@ -19,9 +20,30 @@ class UploadBox extends Component {
 
   handleFileDrop(files) {
     this.setState({
-      'file': files
+      'disableUpload': true,
+      'message': 'Sending file to DROID for characterization ...'
     })
+
+    superagent
+      .post('/upload')
+      .attach('candidate', files[0])
+      .then(json => this.fileCharacterised(json))
+      .catch(err => this.fileCharacterisationFailed(err))
   } // handleFileDrop
+
+  fileCharacterised(json) {
+    this.setState({
+      'disableUpload': false,
+      'message': ''
+    })
+  } // fileCharacterised
+
+  fileCharacterisationFailed(err) {
+    this.setState({
+      'disableUpload': false,
+      'message': `File characterisation failed : ${err}`
+    })
+  } // fileCharacterisationFailed
 
   handleCommentChange(event) {
     this.setState({
@@ -42,10 +64,14 @@ class UploadBox extends Component {
           <span className="form-text col-md-2">
             File
           </span>
-          <Dropzone onDrop={this.handleFileDrop} className="form-control col-md-10">
+          <Dropzone onDrop={this.handleFileDrop}
+                    disabled={this.state.disableUpload}
+                    className="form-control col-md-10">
             Drop a file here, or click to select a file
           </Dropzone>
-          { this.state.file && 'File Dropped' }
+        </div>
+        <div className="row col-md-12">
+          <span className="col-md-12 text-center"><strong>{this.state.message}</strong></span>
         </div>
         <div className="row col-md-12">
           <span className="form-text col-md-2">
