@@ -1,0 +1,8 @@
+task bootstrap(type: Exec) {
+  commandLine 'npm', 'install'
+}
+
+task build(type: Exec,
+           dependsOn: [bootstrap]) {
+  commandLine 'npm', 'run', 'build'
+}

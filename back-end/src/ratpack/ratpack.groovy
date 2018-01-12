@@ -44,7 +44,7 @@ ratpack {
       }
     } // post
     files {
-      dir "public" indexFiles "index.html"
+      dir "front-end" indexFiles "index.html"
     }
   }
 }
