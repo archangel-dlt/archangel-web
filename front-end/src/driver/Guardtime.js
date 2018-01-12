@@ -30,17 +30,19 @@ class GuardtimeV2 {
       .then(() => `${droid_payload.name} written to Guardtime`);  } // store
 
   async fetch(id) {
-    return this.findRecords('id', id);
+    return this.findRecords(id, 'id');
   } // fetch
 
   async search(phrase) {
-    return this.findRecords('payload', phrase)
+    return this.findRecords(phrase, 'payload', 'name', 'comment')
   } // search
 
   //////////////////////////////////////
-  async findRecords(field, value) {
-    const results = await this.gt_search_(field, value);
-    const gt_ids = results.ids;
+  async findRecords(value, ...fields) {
+    const searches = fields.map(field => this.gt_search_(field, value))
+    const results = await Promise.all(searches)
+    const gt_ids = []
+    results.forEach(r => gt_ids.push(...r.ids));
     if (!gt_ids || gt_ids.length === 0)
       return [];
 
