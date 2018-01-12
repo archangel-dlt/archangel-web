@@ -132,7 +132,7 @@ class Ethereum {
             return;
 
           if (result)
-            return resolve(`Transaction ${tx} complete, but may not have succeeded.`);
+            return resolve(`Transaction ${tx} complete.`);
 
           if (err)
             return reject(err);
@@ -141,7 +141,7 @@ class Ethereum {
           if (diff <= 0)
             return reject(new Error(`Transaction ${tx} wasn't processed within ${this.txTimeout} seconds.`));
 
-          setTimeout(() => onCommitted(tx, timeout), 1000);
+          setTimeout(() => onCommitted(tx, timeout), 5000);
         });
       }; // onCommitted
 
