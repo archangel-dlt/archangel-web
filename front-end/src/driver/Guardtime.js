@@ -1,5 +1,6 @@
 import unirest from 'unirest';
 import sha256 from './sha256-digest';
+import {DateTime} from "luxon";
 
 class GuardtimeV2 {
   constructor(username, password, url) {
@@ -9,25 +10,24 @@ class GuardtimeV2 {
   } // constructor
 
   static get name() { return "Guardtime"; }
+  //const hash = await sha256(`${id}-${payload}`)
 
-  async store(id, payload, timestamp) {
-    const hash = await sha256(`${id}-${payload}`)
+  async store(droid_payload) {
+    const gt_hash = await sha256(droid_payload.sha256_hash);
+    const timestamp = DateTime.local().toISO();
+    droid_payload.timestamp = timestamp;
+
     const gt_payload = {
-      metadata: {
-        id: id,
-        payload: payload,
-        timestamp: timestamp
-      },
+      metadata: droid_payload,
       dataHash: {
-        value: hash,
+        value: gt_hash,
         algorithm: 'SHA-256'
       },
       level: 0
     } // upload
 
     return this.gt_write_(gt_payload)
-      .then(() => `${id} written to Guardtime`);
-  } // store
+      .then(() => `${droid_payload.name} written to Guardtime`);  } // store
 
   async fetch(id) {
     return this.findRecords('id', id);

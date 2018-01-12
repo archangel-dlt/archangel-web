@@ -21,20 +21,44 @@ class UploadBox extends Component {
   handleFileDrop(files) {
     this.setState({
       'disableUpload': true,
-      'message': 'Sending file to DROID for characterization ...'
+      'message': 'Sending file to DROID for characterization ...',
+      'payload': null
     })
+
+    const file = files[0]
 
     superagent
       .post('/upload')
-      .attach('candidate', files[0])
-      .then(json => this.fileCharacterised(json))
+      .attach('candidate', file)
+      .then(response => this.fileCharacterised(file, response.body))
       .catch(err => this.fileCharacterisationFailed(err))
   } // handleFileDrop
 
-  fileCharacterised(json) {
+  fileCharacterised(file, droidInfo) {
     this.setState({
       'disableUpload': false,
       'message': ''
+    })
+
+    const json = droidInfo.map(info => {
+      const j = {
+        name: info.NAME,
+        last_modified: info.LAST_MODIFIED,
+        puid: info.PUID,
+        sha256_hash: info.SHA256_HASH,
+        size: info.SIZE,
+        type: info.TYPE
+      };
+
+      if (info.PARENT_ID) {
+        j.parent_sha256_hash = info.PARENT_SHA256_HASH
+      }
+
+      return j;
+    })
+
+    this.setState({
+      'payload': json
     })
   } // fileCharacterised
 
@@ -52,10 +76,30 @@ class UploadBox extends Component {
   } // update
 
   handleSubmit(event) {
-    if (this.state.id && this.state.comment)
-      this.onUpload(this.state.id, this.state.comment);
+    if (this.state.payload)
+      this.onUpload(this.state.payload, this.state.comment);
     event.preventDefault();
   } // handleSubmit
+
+  renderFileInfo() {
+    if (!this.state.payload)
+      return
+
+    return ([
+      <div className="col-md-3"/>,
+      <div className="row col-md-8 form-control">
+        {
+          this.state.payload.map(item => (
+            <div id={item.name} className="row col-md-12 ">
+              <span className="col-md-8">{ item.name }</span>
+              <span className="col-md-2">{ item.puid }</span>
+              <span className="col-md-2">{ item.size }</span>
+            </div>
+          ))
+        }
+      </div>
+    ])
+  } // renderFileInfo
 
   render() {
     return (
@@ -70,9 +114,13 @@ class UploadBox extends Component {
             Drop a file here, or click to select a file
           </Dropzone>
         </div>
+
         <div className="row col-md-12">
           <span className="col-md-12 text-center"><strong>{this.state.message}</strong></span>
         </div>
+
+        { this.renderFileInfo() }
+
         <div className="row col-md-12">
           <span className="form-text col-md-2">
             Comment
@@ -88,7 +136,7 @@ class UploadBox extends Component {
           <button
             type="submit"
             className="btn btn-primary col-md-2"
-            disabled={!(this.state.id && this.state.comment)}>Upload
+            disabled={!(this.state.payload)}>Upload
           </button>
         </div>
       </form>
@@ -99,67 +147,87 @@ class UploadBox extends Component {
 class UploadResults extends Component {
   constructor(props) {
     super(props);
-    this.state = {id: null, errors: null}
+    this.state = {messages: [], errors: []}
   } // constructor
 
   clear() {
     this.setState({
-      id: null,
-      errors: null
+      messages: [],
+      errors: []
     })
   } // clear
 
-  uploadComplete(msg) {
+  message(msg) {
+    const messages = this.state.messages;
+    while (messages.length > 5)
+      messages.unshift()
+
+    messages.push(msg);
     this.setState({
-      msg: msg
+      messages: messages
     });
   } // uploadComplete
 
-  setErrors(errors) {
+  setErrors(error) {
+    const errors = this.state.errors;
+    while (errors.length > 5)
+      errors.unshift()
+
+    errors.push(error);
     this.setState({
       errors: errors
     });
   } // setErrors
 
   render() {
-    const {msg, errors} = this.state;
+    const {messages, errors} = this.state;
 
-    if (!msg && !errors)
+    if (!messages && !errors)
       return (<div/>)
 
-    if (errors)
-      return this.renderErrors(errors);
-
-    return this.renderResults(msg);
+    return ([
+      UploadResults.renderResults(messages),
+      UploadResults.renderErrors(errors)
+    ]);
   } // render
 
-  renderErrors(errors) {
+  static renderErrors(errors) {
+    if (errors.length === 0)
+      return;
+
     return (
       <div>
         <div className="row">
-          <div className="col-md-12"><strong>Search failed</strong></div>
+          <div className="col-md-12"><strong>Upload failed</strong></div>
         </div>
-        <div className="row">
-          <div className="col-md-12">{ errors.message || errors.error }</div>
-        </div>
+        {
+          errors.map(error => (
+            <div className="row">
+              <div className="col-md-12">{ error.message || error.error }</div>
+            </div>
+          ))
+        }
       </div>
     )
   } // renderErrors
 
-  renderResults(msg) {
+  static renderResults(messages) {
+    if (messages.length === 0)
+      return
+
     return (
       <div>
-        <div className="row">
-          <hr className="col-md-12"/>
-        </div>
-        <div className="row">
-          <div className="col-md-12">{ msg }</div>
-        </div>
+        {
+          messages.map(msg => (
+            <div className="row">
+              <div className="col-md-12">{msg}</div>
+            </div>
+          ))
+        }
       </div>
     )
   } // renderResults
 } // UploadResults
-
 
 
 class Upload extends Component {
@@ -174,11 +242,15 @@ class Upload extends Component {
     this.driver = props.driver;
   } // componentWillReceiveProps
 
-  onUpload(id, comment) {
+  onUpload(payload, comment) {
     this.resultsBox.clear();
-    this.driver.store(id, comment, DateTime.local().toISO())
-      .then(msg => this.resultsBox.uploadComplete(msg))
-      .catch(error => this.resultsBox.setErrors(error));
+    payload.forEach(item => {
+      item.comment = comment;
+      this.resultsBox.message(`Submitting ${item.name}`)
+      this.driver.store(item)
+        .then(msg => this.resultsBox.message(msg))
+        .catch(error => this.resultsBox.setErrors(error))
+    });
   } // onUpload
 
   render() {

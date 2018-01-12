@@ -33,13 +33,14 @@ class Ethereum {
   } // watchRegistrations
 
   ////////////////////////////////////////////
-  async store(id, payload, timestamp) {
-    const slug = {
-      id: id,
-      payload: payload,
-      timestamp: timestamp
-    };
-    return this.eth_store(id, slug);
+  async store(droid_payload) {
+    const timestamp = DateTime.local().toISO();
+    droid_payload.timestamp = timestamp
+
+    return this.eth_store(
+      droid_payload.sha256_hash,
+      droid_payload
+    );
   } // store
 
   async fetch(id) {
@@ -142,7 +143,7 @@ class Ethereum {
       this.contract_.store(id, slugStr,
         {
           from: account,
-          gas: 200000
+          gas: 500000
         },
         (err, tx) => {
           if (err)
