@@ -9,21 +9,6 @@ import static ratpack.jackson.Jackson.json
 
 ratpack {
   handlers {
-    get ("form") {
-      render htmlBuilder {
-        html {
-          head {
-            title "Hello"
-          }
-          body {
-            form (action: 'upload', method: 'post', enctype: 'multipart/form-data') {
-              input (type: 'file', name: 'candidate', id: 'candidate') { }
-              input (type: 'submit', value: 'Droid!', name: 'submit') { }
-            }
-          }
-        }
-      }
-    }
     post("upload") {
       def form = parse Form
       form.then {

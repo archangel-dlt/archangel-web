@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
 import superagent from 'superagent';
-import { DateTime } from 'luxon';
 
 class UploadBox extends Component {
   constructor(props) {
@@ -29,12 +28,13 @@ class UploadBox extends Component {
 
     superagent
       .post('/upload')
+      .field('lastModified', file.lastModified)
       .attach('candidate', file)
-      .then(response => this.fileCharacterised(file, response.body))
+      .then(response => this.fileCharacterised(response.body))
       .catch(err => this.fileCharacterisationFailed(err))
   } // handleFileDrop
 
-  fileCharacterised(file, droidInfo) {
+  fileCharacterised(droidInfo) {
     this.setState({
       'disableUpload': false,
       'message': ''
