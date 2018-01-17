@@ -5,7 +5,13 @@ import static archangeldlt.DroidWrapper.convertExportToJson
 import static ratpack.groovy.Groovy.ratpack
 import static ratpack.jackson.Jackson.json
 
+def tenMegs = 1048576 * 10
+
 ratpack {
+  serverConfig { conf ->
+    conf.maxContentLength(tenMegs)
+  }
+
   handlers {
     post("upload") {
       def form = parse Form
