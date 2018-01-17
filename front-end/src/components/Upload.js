@@ -243,15 +243,29 @@ class Upload extends Component {
   } // componentWillReceiveProps
 
   onUpload(payload, comment) {
-    this.resultsBox.clear();
     payload.forEach(item => {
       item.comment = comment;
-      this.resultsBox.message(`Submitting ${item.name}`)
-      this.driver.store(item)
-        .then(msg => this.resultsBox.message(msg))
-        .catch(error => this.resultsBox.setErrors(error))
     });
+
+    this.uploadItem(payload, 0);
   } // onUpload
+
+  uploadItem(payload, index) {
+    if (index === payload.length)
+      return;
+
+    const item = payload[index];
+    this.resultsBox.message(`Submitting ${item.name}`)
+    this.driver.store(item)
+      .then(msg => {
+        this.resultsBox.message(msg);
+        this.uploadItem(payload, index+1)
+      })
+      .catch(error => {
+        this.resultsBox.setErrors(error);
+        this.uploadItem(payload, index+1)
+      });
+  } // uploadItem
 
   render() {
     return (
