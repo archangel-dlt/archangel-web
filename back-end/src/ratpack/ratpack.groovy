@@ -16,6 +16,8 @@ ratpack {
           return
         }
 
+        def lastModified = it['lastModified']
+
         File.createTempDir('archangel-droid', 'tmp').with { dir ->
           println "Created directory ${dir.name}"
           def file = new File(dir, candidate.fileName)
@@ -24,6 +26,10 @@ ratpack {
           file.withOutputStream { os ->
             candidate.writeTo(os)
           }
+
+          if (lastModified)
+            file.setLastModified(Long.parseLong(lastModified))
+
           def csvExport = characterizeFile(file.absolutePath)
           def jsonExport = convertExportToJson(csvExport)
 
