@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import pretty from '../lib/prettysize'
 
 class SearchBox extends Component {
   constructor(props) {
@@ -116,11 +117,11 @@ class SearchResults extends Component {
         return (
           <div className="row" key={record.sha256_hash}>
             <div className="row col-md-12">
-              <div className="col-md-8">{record.name}</div>
+              <div className="col-md-8"><strong>{record.name}</strong></div>
               <div className="col-md-2">
                 <a href={`http://www.nationalarchives.gov.uk/pronom/${record.puid}`} target="_blank">{record.puid}</a>
               </div>
-              <div className="col-md-2">{record.size}</div>
+              <div className="col-md-2">{pretty(record.size, true)}</div>
             </div>
             <div className="row col-md-12">
               <div className="col-md-2"/>
