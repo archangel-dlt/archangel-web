@@ -127,8 +127,13 @@ class SearchResults extends Component {
               <div className="col-md-4">Last Modified: {record.last_modified}</div>
             </div>
             <div className="row col-md-12">
-              <div className="col-md-6">{record.comment}</div>
-              <div className="col-md-6">Uploaded: {record.timestamp}</div>
+              <div className="col-md-8">{record.comment}
+                { (record.parent_sha256_hash) && ([
+                  <br/>,
+                  <i>{ record.parent_sha256_hash }</i>
+                ])}
+              </div>
+              <div className="col-md-4">Uploaded: {record.timestamp}</div>
             </div>
           </div>
         )
