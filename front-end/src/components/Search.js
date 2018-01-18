@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import prettysize from '../lib/prettysize';
 import Puid from './Puid';
+import HashLink from './HashLink';
 
 class SearchBox extends Component {
   constructor(props) {
@@ -63,17 +64,19 @@ class SearchResults extends Component {
     this.setErrors(null);
   } // clear
 
-  setFetchResults(searchTerm, results) {
+  setFetchResults(searchTerm, results, searchFn) {
     this.setState({
       searchTerm: searchTerm,
-      fetchResults: results
+      fetchResults: results,
+      searchFn: searchFn
     });
   } // setFetchResults
 
-  setSearchResults(searchTerm, results) {
+  setSearchResults(searchTerm, results, searchFn) {
     this.setState({
       searchTerm: searchTerm,
-      searchResults: results
+      searchResults: results,
+      searchFn: searchFn
     });
   } // setSearchResults
 
@@ -123,18 +126,22 @@ class SearchResults extends Component {
               <div className="col-md-2">{ prettysize(record.size, true) }</div>
             </div>
             <div className="row col-md-12">
-              <div className="col-md-8">{record.sha256_hash}</div>
+              <div className="col-md-8"><HashLink hash={record.sha256_hash} searchFn={this.state.searchFn}/></div>
               <div className="col-md-4">Last Modified: {record.last_modified}</div>
             </div>
             <div className="row col-md-12">
-              <div className="col-md-8">{record.comment}
-                { (record.parent_sha256_hash) && ([
-                  <br/>,
-                  <i>{ record.parent_sha256_hash }</i>
-                ])}
-              </div>
+              <div className="col-md-8">{record.comment}</div>
               <div className="col-md-4">Uploaded: {record.timestamp}</div>
             </div>
+            {
+              record.parent_sha256_hash &&
+                <div className="row col-md-12">
+                  <div className="col-md-4"></div>
+                  <div className="col-md-8">
+                    Parent: <i><HashLink hash={record.parent_sha256_hash} searchFn={this.state.searchFn}/></i>
+                  </div>
+                </div>
+            }
           </div>
         )
 
@@ -213,10 +220,10 @@ class Search extends Component {
   onSearch(searchTerm) {
     this.resultsBox.clear();
     this.state.driver.fetch(searchTerm)
-      .then(results => this.resultsBox.setFetchResults(searchTerm, results))
+      .then(results => this.resultsBox.setFetchResults(searchTerm, results, this.onSearch))
       .catch(error => this.resultsBox.setErrors(error));
     this.state.driver.search(searchTerm)
-      .then(results => this.resultsBox.setSearchResults(searchTerm, results))
+      .then(results => this.resultsBox.setSearchResults(searchTerm, results, this.onSearch))
       .catch(error => this.resultsBox.setErrors(error));
   } // onSearch
 
