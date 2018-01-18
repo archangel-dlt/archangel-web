@@ -33,14 +33,14 @@ class Ethereum {
   } // watchRegistrations
 
   ////////////////////////////////////////////
-  async store(droid_payload) {
-    const timestamp = DateTime.utc().toFormat('yyyy-MM-dd\'T\'HH:mm:ssZZ');
-    droid_payload.timestamp = timestamp
-
-    return this.eth_store(
-      droid_payload.sha256_hash,
-      droid_payload
-    );
+  async store(droid_payloads, progress) {
+    const uploads = droid_payloads.map(droid_payload => {
+      progress.message(`Submitting ${droid_payload.name}`);
+      return this.eth_store(droid_payload.sha256_hash, droid_payload)
+        .then(msg => progress.message(msg))
+        .catch(msg => progress.error(msg));
+    });
+    return Promise.all(uploads);
   } // store
 
   async fetch(id) {
@@ -123,7 +123,7 @@ class Ethereum {
         (error, result) => {
           if (!error && result) {
             stopped = true;
-            resolve(`${id} written to Ethereum`)
+            resolve(`${slug.name} written to Ethereum`)
           }
         });
 
@@ -133,14 +133,14 @@ class Ethereum {
             return;
 
           if (result)
-            return resolve(`Transaction ${tx} complete.`);
+            return resolve(`Transaction for ${slug.name} complete`);
 
           if (err)
             return reject(err);
 
           const diff = timeout.diff(DateTime.local(), 'seconds').values.seconds;
           if (diff <= 0)
-            return reject(new Error(`Transaction ${tx} wasn't processed within ${this.txTimeout} seconds.`));
+            return reject(new Error(`Transaction for ${slug.name} wasn't processed within ${timeout} seconds`));
 
           setTimeout(() => onCommitted(tx, timeout), 5000);
         });
@@ -155,7 +155,6 @@ class Ethereum {
         (err, tx) => {
           if (err)
             return reject(err);
-          // transaction(tx);
           onCommitted(tx, timeout);
         });
     })

@@ -3,6 +3,7 @@ import Dropzone from 'react-dropzone';
 import superagent from 'superagent';
 import prettysize from '../lib/prettysize';
 import Puid from './Puid';
+import {DateTime} from "luxon";
 
 class UploadBox extends Component {
   constructor(props) {
@@ -45,16 +46,16 @@ class UploadBox extends Component {
     const json = droidInfo.map(info => {
       const j = {
         name: info.NAME,
-        last_modified: info.LAST_MODIFIED,
         puid: info.PUID,
         sha256_hash: info.SHA256_HASH,
         size: info.SIZE,
         type: info.TYPE
       };
 
-      if (info.PARENT_ID) {
-        j.parent_sha256_hash = info.PARENT_SHA256_HASH
-      }
+      if (info.LAST_MODIFIED)
+        j.last_modified = info.LAST_MODIFIED;
+      if (info.PARENT_ID)
+        j.parent_sha256_hash = info.PARENT_SHA256_HASH;
 
       return j;
     })
@@ -149,20 +150,19 @@ class UploadBox extends Component {
 class UploadResults extends Component {
   constructor(props) {
     super(props);
-    this.state = {messages: [], errors: []}
+    this.state = {messages: []}
   } // constructor
 
   clear() {
     this.setState({
-      messages: [],
-      errors: []
+      messages: []
     })
   } // clear
 
   message(msg) {
-    const messages = this.state.messages;
-    while (messages.length > 5)
-      messages.unshift()
+    let messages = this.state.messages;
+    while (messages.length >= 5)
+      messages.shift();
 
     messages.push(msg);
     this.setState({
@@ -170,53 +170,20 @@ class UploadResults extends Component {
     });
   } // uploadComplete
 
-  setErrors(error) {
-    const errors = this.state.errors;
-    while (errors.length > 5)
-      errors.unshift()
-
-    errors.push(error);
-    this.setState({
-      errors: errors
-    });
-  } // setErrors
+  error(msg) {
+    this.message(`${msg}`);
+  } // error
 
   render() {
-    const {messages, errors} = this.state;
+    const {messages} = this.state;
 
-    if (!messages && !errors)
+    if (messages.length === 0)
       return (<div/>)
 
-    return ([
-      UploadResults.renderResults(messages),
-      UploadResults.renderErrors(errors)
-    ]);
+    return UploadResults.renderResults(messages);
   } // render
 
-  static renderErrors(errors) {
-    if (errors.length === 0)
-      return;
-
-    return (
-      <div>
-        <div className="row">
-          <div className="col-md-12"><strong>Upload failed</strong></div>
-        </div>
-        {
-          errors.map(error => (
-            <div className="row">
-              <div className="col-md-12">{ error.message || error.error }</div>
-            </div>
-          ))
-        }
-      </div>
-    )
-  } // renderErrors
-
   static renderResults(messages) {
-    if (messages.length === 0)
-      return
-
     return (
       <div>
         {
@@ -244,15 +211,18 @@ class Upload extends Component {
     this.driver = props.driver;
   } // componentWillReceiveProps
 
-  onUpload(payload, comment) {
-    payload.forEach(item => {
+  onUpload(payloads, comment) {
+    const timestamp = DateTime.utc().toFormat('yyyy-MM-dd\'T\'HH:mm:ssZZ');
+
+    payloads.forEach(item => {
       item.comment = comment;
+      item.timestamp = timestamp;
     });
 
-    this.uploadItem(payload, 0);
+    this.driver.store(payloads, this.resultsBox);
   } // onUpload
 
-  uploadItem(payload, index) {
+  /*uploadItem(payload, index) {
     if (index === payload.length)
       return;
 
@@ -264,10 +234,11 @@ class Upload extends Component {
         this.uploadItem(payload, index+1)
       })
       .catch(error => {
-        this.resultsBox.setErrors(error);
+        this.resultsBox.error(error);
         this.uploadItem(payload, index+1)
       });
   } // uploadItem
+  */
 
   render() {
     return (

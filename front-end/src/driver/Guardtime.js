@@ -1,6 +1,5 @@
 import unirest from 'unirest';
 import sha256 from './sha256-digest';
-import {DateTime} from "luxon";
 
 class GuardtimeV2 {
   constructor(username, password, url) {
@@ -12,22 +11,10 @@ class GuardtimeV2 {
   static get name() { return "Guardtime"; }
   //const hash = await sha256(`${id}-${payload}`)
 
-  async store(droid_payload) {
-    const gt_hash = await sha256(droid_payload.sha256_hash);
-    const timestamp = DateTime.utc().toFormat('yyyy-MM-dd\'T\'HH:mm:ssZZ');
-    droid_payload.timestamp = timestamp;
-
-    const gt_payload = {
-      metadata: droid_payload,
-      dataHash: {
-        value: gt_hash,
-        algorithm: 'SHA-256'
-      },
-      level: 0
-    } // upload
-
-    return this.gt_write_(gt_payload)
-      .then(() => `${droid_payload.name} written to Guardtime`);  } // store
+  async store(droid_payloads, progress) {
+    for (const payload of droid_payloads)
+      await this.store_one(payload, progress);
+  } // store
 
   async fetch(id) {
     return this.findRecords(id, 'sha256_hash');
@@ -38,6 +25,26 @@ class GuardtimeV2 {
   } // search
 
   //////////////////////////////////////
+  async store_one(payload, progress) {
+    try {
+      const gt_hash = await sha256(payload.sha256_hash);
+
+      const gt_payload = {
+        metadata: payload,
+        dataHash: {
+          value: gt_hash,
+          algorithm: 'SHA-256'
+        },
+        level: 0
+      } // upload
+
+      await this.gt_write_(gt_payload);
+      progress.message(`${payload.name} written to Guardtime`);
+    } catch(err) {
+      progress.error(err);
+    } // catch
+  } // store_one
+
   async findRecords(value, ...fields) {
     const searches = fields.map(field => this.gt_search_(field, value))
     const results = await Promise.all(searches)
