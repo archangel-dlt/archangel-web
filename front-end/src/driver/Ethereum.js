@@ -34,7 +34,7 @@ class Ethereum {
 
   ////////////////////////////////////////////
   async store(droid_payload) {
-    const timestamp = DateTime.local().toISO();
+    const timestamp = DateTime.utc().toFormat('yyyy-MM-dd\'T\'HH:mm:ssZZ');
     droid_payload.timestamp = timestamp
 
     return this.eth_store(

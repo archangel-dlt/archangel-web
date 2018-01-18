@@ -14,7 +14,7 @@ class GuardtimeV2 {
 
   async store(droid_payload) {
     const gt_hash = await sha256(droid_payload.sha256_hash);
-    const timestamp = DateTime.local().toISO();
+    const timestamp = DateTime.utc().toFormat('yyyy-MM-dd\'T\'HH:mm:ssZZ');
     droid_payload.timestamp = timestamp;
 
     const gt_payload = {

@@ -124,9 +124,12 @@ class SearchResults extends Component {
               <div className="col-md-2">{pretty(record.size, true)}</div>
             </div>
             <div className="row col-md-12">
-              <div className="col-md-2"/>
-              <div className="col-md-7">{record.comment}</div>
-              <div className="col-md-3">{record.timestamp}</div>
+              <div className="col-md-8">{record.sha256_hash}</div>
+              <div className="col-md-4">Last Modified: {record.last_modified}</div>
+            </div>
+            <div className="row col-md-12">
+              <div className="col-md-6">{record.comment}</div>
+              <div className="col-md-6">Uploaded: {record.timestamp}</div>
             </div>
           </div>
         )
