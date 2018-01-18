@@ -21,7 +21,7 @@ class GuardtimeV2 {
   } // fetch
 
   async search(phrase) {
-    return this.findRecords(phrase, 'payload', 'name', 'comment', 'parent_sha256_hash')
+    return this.findRecords(phrase, 'payload', 'name', 'comment', 'parent_sha256_hash', 'puid')
   } // search
 
   //////////////////////////////////////

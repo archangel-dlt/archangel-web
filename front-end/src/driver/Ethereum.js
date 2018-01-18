@@ -61,6 +61,8 @@ class Ethereum {
   async search(phrase) {
     const matches = (field, search) =>
       field && field.toLowerCase().indexOf(search) !== -1;
+    const exact_match = (field, search) =>
+      field && field.toLowerCase() === search;
 
     const search = phrase.toLowerCase();
     const registrations = await this.registrationLog();
@@ -69,7 +71,8 @@ class Ethereum {
         matches(r.payload, search) ||
         matches(r.name, search) ||
         matches(r.comment, search) ||
-        matches(r.parent_sha256_hash, search)
+        matches(r.parent_sha256_hash, search) ||
+        exact_match(r.puid, search)
     )
   } // search
 
