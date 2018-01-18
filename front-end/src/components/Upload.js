@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
 import superagent from 'superagent';
+import prettysize from '../lib/prettysize';
+import Puid from './Puid';
 
 class UploadBox extends Component {
   constructor(props) {
@@ -92,8 +94,8 @@ class UploadBox extends Component {
           this.state.payload.map(item => (
             <div id={item.name} className="row col-md-12 ">
               <span className="col-md-8">{ item.name }</span>
-              <span className="col-md-2">{ item.puid }</span>
-              <span className="col-md-2">{ item.size }</span>
+              <span className="col-md-2"><Puid fmt={ item.puid }/></span>
+              <span className="col-md-2">{ prettysize(item.size, true) }</span>
             </div>
           ))
         }
