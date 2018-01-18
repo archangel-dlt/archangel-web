@@ -30,11 +30,11 @@ class GuardtimeV2 {
       .then(() => `${droid_payload.name} written to Guardtime`);  } // store
 
   async fetch(id) {
-    return this.findRecords(id, 'id');
+    return this.findRecords(id, 'sha256_hash');
   } // fetch
 
   async search(phrase) {
-    return this.findRecords(phrase, 'payload', 'name', 'comment')
+    return this.findRecords(phrase, 'payload', 'name', 'comment', 'parent_sha256_hash')
   } // search
 
   //////////////////////////////////////

@@ -68,7 +68,8 @@ class Ethereum {
       r =>
         matches(r.payload, search) ||
         matches(r.name, search) ||
-        matches(r.comment, search)
+        matches(r.comment, search) ||
+        matches(r.parent_sha256_hash, search)
     )
   } // search
 
