@@ -82,6 +82,7 @@ class Ethereum {
       this.registrations.get((error, logs) => {
         if (error)
           return reject(error);
+        console.log(logs);
         return resolve(logs.map(l => JSON.parse(l.args._payload)));
       })
     });
@@ -158,6 +159,7 @@ class Ethereum {
         (err, tx) => {
           if (err)
             return reject(err);
+          console.log(`${slug.name} submitted in transaction ${tx}`);
           onCommitted(tx, timeout);
         });
     })
