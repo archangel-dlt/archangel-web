@@ -1,5 +1,20 @@
+buildscript {
+	repositories {
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+	dependencies {
+		classpath "gradle.plugin.com.github.jlouns:gradle-cross-platform-exec-plugin:0.5.0"
+	}
+}
 
+apply plugin: "com.github.jlouns.cpe"
 
+def dockerOrgName = 'archangeldlt'
+def dockerImageName = "${dockerOrgName}/web"
+
+///////////////
 task buildFrontForDist(type: Copy, dependsOn: [':front-end:build', ':back-end:clean']) {
   group 'Top'
   description 'Build front-end, ready to be bundled into back-end distribution package'
@@ -16,4 +31,16 @@ task buildDist(dependsOn: [buildFrontForDist, ':back-end:distTar']) {
 task clean (dependsOn: [':back-end:clean', ':front-end:clean']) {
   group 'Top'
   description 'Clean everything'
+}
+
+task dockerBuild(type: CrossPlatformExec,
+                 dependsOn: [buildDist, ':back-end:installDist']) {
+  group 'Top'
+  description 'Build runnable Docker image'
+
+  commandLine 'docker', 'build', '--tag', dockerImageName, '.'
+}
+
+task dockerPush(type: CrossPlatformExec) {
+  commandLine 'docker', 'push', dockerImageName
 }
