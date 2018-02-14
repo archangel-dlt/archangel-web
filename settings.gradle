@@ -10,5 +10,6 @@
 
 include 'front-end'
 include 'back-end'
+include 'monitor'
 
 rootProject.name = 'archangel-web'

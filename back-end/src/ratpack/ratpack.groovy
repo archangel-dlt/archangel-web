@@ -50,5 +50,10 @@ ratpack {
     files {
       dir "front-end" indexFiles "index.html"
     }
+    prefix("monitor") {
+      files {
+        dir "monitor" indexFiles "index.html"
+      }
+    }
   }
 }

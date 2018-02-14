@@ -15,7 +15,8 @@ def dockerOrgName = 'archangeldlt'
 def dockerImageName = "${dockerOrgName}/web"
 
 ///////////////
-task buildFrontForDist(type: Copy, dependsOn: [':front-end:build', ':back-end:clean']) {
+task buildFrontForDist(type: Copy,
+                       dependsOn: [':front-end:build', ':back-end:clean']) {
   group 'Top'
   description 'Build front-end, ready to be bundled into back-end distribution package'
 
@@ -23,9 +24,18 @@ task buildFrontForDist(type: Copy, dependsOn: [':front-end:build', ':back-end:cl
   into 'back-end/src/ratpack/front-end'
 }
 
-task buildDist(dependsOn: [buildFrontForDist, ':back-end:distTar']) {
+task buildMonitorForDist(type: Copy,
+                         dependsOn: [':monitor:build', ':back-end:clean']) {
   group 'Top'
-  description 'Build front-end and back-end, create distribution package'
+  description 'Build front-end, ready to be bundled into back-end distribution package'
+
+  from 'monitor/build'
+  into 'back-end/src/ratpack/monitor'
+}
+
+task buildDist(dependsOn: [buildFrontForDist, buildMonitorForDist, ':back-end:distTar']) {
+  group 'Top'
+  description 'Build everything, create distribution package'
 }
 
 task start(type: CrossPlatformExec,
