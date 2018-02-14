@@ -28,6 +28,15 @@ task buildDist(dependsOn: [buildFrontForDist, ':back-end:distTar']) {
   description 'Build front-end and back-end, create distribution package'
 }
 
+task start(type: CrossPlatformExec,
+           dependsOn: ['buildDist', ':back-end:installDist']) {
+  group 'Top'
+  description 'Builds front-end and back-end, starts the server'
+
+  commandLine './archangel-web', '--web'
+  workingDir './back-end/build/install/archangel-web/bin/'
+}
+
 task clean (dependsOn: [':back-end:clean', ':front-end:clean']) {
   group 'Top'
   description 'Clean everything'
