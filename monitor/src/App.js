@@ -49,6 +49,9 @@ class Body extends Component {
     if(events.unshift(evt) > maxEvents)
       events.pop();
 
+    if (evt === ethereumDriver.resetEvent)
+      events.length = 0;
+
     this.setState({
       events: events
     })

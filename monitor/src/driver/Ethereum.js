@@ -4,6 +4,7 @@ const ArchangelAddress = '0x3507dCef171f6B7F36c56e35013d0785B150584F'.toLowerCas
 const FromBlock = 1378500;
 
 class Ethereum {
+  get resetEvent() { return "RESET"; }
   static get name() { return "Ethereum"; }
 
   constructor(web3) {
@@ -24,16 +25,21 @@ class Ethereum {
   } // loadContract
 
   watchEvents(callback) {
-    if (this.watcher_)
-      this.watcher_.stopWatching();
+    if (!this.watcher_)
+      return this.startWatching(callback);
 
+    this.watcher_.stopWatching(() => this.startWatching(callback));
+  } // watchEvents
+
+  startWatching(callback) {
     this.eventCallback_ = callback;
 
+    this.eventCallback_(this.resetEvent);
     this.watcher_ = this.contract_.allEvents(
       { fromBlock: FromBlock },
       (err, event) => { this.eventCallback_(event) }
     );
-  } // watchEvents
+  } // startWatching
 
   currentBlockNumber() {
     return new Promise((resolve, reject) => {

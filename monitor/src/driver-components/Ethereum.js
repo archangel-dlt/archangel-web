@@ -2,13 +2,18 @@ import React from 'react';
 import Ethereum from '../driver/Ethereum';
 import Web3 from "web3";
 
-const hasMetaMask = (typeof window.web3 !== 'undefined')
+const hasMetaMask = (typeof window.web3 !== 'undefined') &&
+  (window.web3.currentProvider.constructor.name.startsWith('Metamask'));
+const hasMist = (typeof window.web3 !== 'undefined') &&
+  (window.web3.currentProvider.constructor.name.startsWith('EthereumProvider'));
 
 function providers() {
   const p = []
 
   if (hasMetaMask)
     p.push({name: 'MetaMask', provider: window.web3.currentProvider});
+  if (hasMist)
+    p.push({name: 'Mist', provider: window.web3.currentProvider});
   p.push({name: 'Localhost', provider: new Web3.providers.HttpProvider('http://localhost:8545')});
 
   return p;
