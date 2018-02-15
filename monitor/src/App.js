@@ -30,6 +30,20 @@ function Header() {
 } // Header
 
 class Body extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      events: []
+    }
+
+    ethereumDriver.watchEvents((evt) => this.event(evt));
+  } // constructor
+
+  event(evt) {
+    console.log(evt);
+  } // event
+
   render() {
     return (<strong>Wahay!</strong>)
   }
