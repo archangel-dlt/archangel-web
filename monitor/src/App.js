@@ -97,7 +97,6 @@ class Body extends Component {
   render() {
     const events = this.state.events;
     return events.map(evt => {
-      console.log(evt)
       return (
         <div key={evt.transactionHash}>
           <div className="row">
