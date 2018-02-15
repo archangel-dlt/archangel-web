@@ -47,12 +47,20 @@ ratpack {
         } // File.createTempDir
       } // upload
     } // post
-    files {
-      dir "front-end" indexFiles "index.html"
+    get("monitor") {
+      redirect("/monitor/index.html")
+    }
+    get {
+      redirect("/front-end/index.html")
     }
     prefix("monitor") {
       files {
         dir "monitor" indexFiles "index.html"
+      }
+    }
+    prefix("front-end") {
+      files {
+        dir "front-end" indexFiles "index.html"
       }
     }
   }
