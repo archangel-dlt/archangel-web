@@ -3,8 +3,11 @@ import logo from './logo.svg';
 import './App.css';
 import './bootstrap/css/bootstrap.css';
 import ReactEthereum from './driver-components/Ethereum';
+import prettysize from "./lib/prettysize";
+import Puid from "./lib/Puid";
 
 const ethereumDriver = ReactEthereum();
+const maxEvents = 2000;
 
 function Logo() {
   return (
@@ -41,12 +44,80 @@ class Body extends Component {
   } // constructor
 
   event(evt) {
-    console.log(evt);
+    const events = this.state.events;
+
+    if(events.unshift(evt) > maxEvents)
+      events.pop();
+
+    this.setState({
+      events: events
+    })
   } // event
 
+  formatEvent(name, args) {
+    switch(name) {
+      case 'Registration':
+        return this.formatRegistration(args);
+      case 'NoWritePermission':
+        return this.formatNoWrite(args);
+      default:
+        return args.toString()
+    }
+  } // formatEvent
+
+  formatNoWrite(args) {
+    return (<div className="col-md-12">From {args._addr}</div>);
+  } // formatNoWrite
+
+  formatRegistration(args) {
+    const record = JSON.parse(args._payload);
+    return (
+      <div className="col-md-12 row">
+        <div className="row col-md-12">
+          <div className="col-md-8"><strong>{record.name}</strong></div>
+          <div className="col-md-2"><Puid fmt={record.puid}/></div>
+          <div className="col-md-2">{ prettysize(record.size, true) }</div>
+        </div>
+        <div className="row col-md-12">
+          <div className="col-md-8">{record.sha256_hash}</div>
+          <div className="col-md-4">Last Modified: {record.last_modified}</div>
+        </div>
+        <div className="row col-md-12">
+          <div className="col-md-8">{record.comment}</div>
+          <div className="col-md-4">Uploaded: {record.timestamp}</div>
+        </div>
+        {
+          record.parent_sha256_hash &&
+          <div className="col-md-12">Parent: <i>{record.parent_sha256_hash}</i></div>
+        }
+      </div>
+    )
+  } // formatRegistration
+
   render() {
-    return (<strong>Wahay!</strong>)
-  }
+    const events = this.state.events;
+    return events.map(evt => {
+      console.log(evt)
+      return (
+        <div key={evt.transactionHash}>
+          <div className="row">
+            <div className="col-md-2">Block <a href={`https://rinkeby.etherscan.io/txs?block=${evt.blockNumber}`}>{evt.blockNumber}</a></div>
+            <div className="col-md-2"><strong>{evt.event}</strong></div>
+            <div className="col-md-5"></div>
+            <div className="col-md-3">
+              <span className="float-right">
+                [<a href={`https://rinkeby.etherscan.io/tx/${evt.transactionHash}`}>Tx</a>]
+              </span>
+            </div>
+          </div>
+          <div className="row">
+            { this.formatEvent(evt.event, evt.args) }
+          </div>
+          <hr/>
+        </div>
+      );
+    });
+  } // events
 } // class Body
 
 class App extends Component {
