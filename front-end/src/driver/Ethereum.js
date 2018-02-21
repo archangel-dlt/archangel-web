@@ -66,14 +66,16 @@ class Ethereum {
 
     const search = phrase.toLowerCase();
     const registrations = await this.registrationLog();
-    return registrations.filter(
-      r =>
-        matches(r.payload, search) ||
-        matches(r.name, search) ||
-        matches(r.comment, search) ||
-        matches(r.parent_sha256_hash, search) ||
-        exact_match(r.puid, search)
-    )
+    return registrations
+      .filter(
+        r =>
+          matches(r.payload, search) ||
+          matches(r.name, search) ||
+          matches(r.comment, search) ||
+          matches(r.parent_sha256_hash, search) ||
+          exact_match(r.puid, search)
+      )
+      .sort((lhs, rhs) => rhs.timestamp.localeCompare(lhs.timestamp))
   } // search
 
   ////////////////////////////////////////////
