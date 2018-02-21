@@ -28,7 +28,7 @@ class Ethereum {
     this.registrations = this.contract_.Registration(
       { },
       { fromBlock: FromBlock },
-      () => {}
+      (err, evt) => console.log(evt)
     );
   } // watchRegistrations
 
@@ -82,7 +82,6 @@ class Ethereum {
       this.registrations.get((error, logs) => {
         if (error)
           return reject(error);
-        console.log(logs);
         return resolve(logs.map(l => JSON.parse(l.args._payload)));
       })
     });
@@ -99,6 +98,7 @@ class Ethereum {
       const account = accounts[0].toLowerCase();
 
       let stopped = false;
+      let txHash = null;
       const currentBlock = await this.currentBlockNumber();
       const noPermissionEvent = this.contract_.NoWritePermission({ fromBlock: currentBlock-1 });
       const registration = this.contract_.Registration({}, { fromBlock: currentBlock-1 });
@@ -117,7 +117,8 @@ class Ethereum {
 
       noPermissionEvent.watch(
         (error, result) => {
-          if (!error && result) {
+          console.log(result)
+          if (!error && result && result.transactionHash === txHash) {
             stopped = true;
             reject(new Error(`Sorry, account ${account} does not have permission to write to Archangel`));
           }
@@ -125,19 +126,23 @@ class Ethereum {
 
       registration.watch(
         (error, result) => {
-          if (!error && result) {
+          console.log(result)
+          if (!error && result && result.transactionHash === txHash) {
             stopped = true;
             resolve(`${slug.name} written to Ethereum`)
           }
         });
 
-      const onCommitted = (tx, timeout) => {
-        this.web3_.eth.getTransactionReceipt(tx, (err, result) => {
+      const onCommitted = (timeout) => {
+        this.web3_.eth.getTransactionReceipt(txHash, (err, result) => {
           if (stopped)
             return;
 
-          if (result)
-            return resolve(`Transaction for ${slug.name} complete`);
+          if (result) {
+            console.log(`Transaction for ${slug.name} complete`);
+            stopped = true;
+            return;
+          }
 
           if (err)
             return reject(err);
@@ -146,7 +151,7 @@ class Ethereum {
           if (diff <= 0)
             return reject(new Error(`Transaction for ${slug.name} wasn't processed within ${timeout} seconds`));
 
-          setTimeout(() => onCommitted(tx, timeout), 5000);
+          setTimeout(() => onCommitted(timeout), 5000);
         });
       }; // onCommitted
 
@@ -159,8 +164,9 @@ class Ethereum {
         (err, tx) => {
           if (err)
             return reject(err);
+          txHash = tx;
           console.log(`${slug.name} submitted in transaction ${tx}`);
-          onCommitted(tx, timeout);
+          onCommitted(timeout);
         });
     })
   } // eth_store
