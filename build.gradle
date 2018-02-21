@@ -52,7 +52,7 @@ task clean (dependsOn: [':back-end:clean', ':front-end:clean']) {
   description 'Clean everything'
 }
 
-task dockerBuild(type: CrossPlatformExec,
+task buildDocker(type: CrossPlatformExec,
                  dependsOn: [buildDist, ':back-end:installDist']) {
   group 'Top'
   description 'Build runnable Docker image'
@@ -60,6 +60,17 @@ task dockerBuild(type: CrossPlatformExec,
   commandLine 'docker', 'build', '--tag', dockerImageName, '.'
 }
 
-task dockerPush(type: CrossPlatformExec) {
+task pushDocker(type: CrossPlatformExec) {
+  group 'Util'
+  description "Push ${dockerImageName} to Docker Hub"
+
   commandLine 'docker', 'push', dockerImageName
+}
+
+task buildGethImage(type: CrossPlatformExec) {
+  group 'Util'
+  description 'Build Rinkeby network Ethereum client Docker image'
+
+  commandLine 'docker', 'build', '--tag', "${dockerOrgName}/rinkeby-client", '.'
+  workingDir './utils/rinkeby-client/'
 }
