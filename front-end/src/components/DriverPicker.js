@@ -8,8 +8,8 @@ class DriverPicker extends Component {
     super(props);
 
     this.drivers = {
-      'Guardtime': GuardtimeDriver(),
-      'Ethereum': EthereumDriver()
+      'Ethereum': EthereumDriver(),
+      'Guardtime': GuardtimeDriver()
     };
 
     this.onNewDriver = props.onNewDriver;
