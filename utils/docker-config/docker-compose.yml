@@ -1,0 +1,7 @@
+version: '3'
+
+services:
+  archangelweb:
+    image: archangeldlt/web
+    ports:
+      - "8000:5050"
