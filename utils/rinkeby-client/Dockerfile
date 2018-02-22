@@ -1,3 +1,3 @@
 FROM ethereum/client-go:alpine
 
-CMD ["--rinkeby"]
+CMD ["--rinkeby", "--rpc", "--rpccorsdomain=*", "--rpcaddr=0.0.0.0"]
