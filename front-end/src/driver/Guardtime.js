@@ -1,4 +1,4 @@
-import unirest from 'unirest';
+import superagent from 'superagent';
 import sha256 from './sha256-digest';
 
 class GuardtimeV2 {
@@ -79,26 +79,14 @@ class GuardtimeV2 {
   } // gt_post
 
   gt_(method, params, payload) {
-    return new Promise((resolve, reject) => {
-      unirest[method](`${this.guardtime_url}${params ? params : ''}`)
-        .headers({'Accept': 'application/json', 'Content-Type': 'application/json'})
-        .auth(this.username, this.password)
-        .send(payload)
-        .end(resp => {
-          if (!resp.error)
-            return resolve(resp.body)
-
-          reject(gtError(resp));
-        });
-    })
+    return superagent[method](`${this.guardtime_url}${params ? params : ''}`)
+      .set('Accept', 'application/json')
+      .set('Content-Type', 'application/json')
+      .auth(this.username, this.password)
+      .send(payload)
+      .then(resp => resp.body)
+      .catch(err => { throw err })
   } // gt_
 } // GuardtimeV2
-
-function gtError(resp) {
-  const error = new Error(resp.error)
-  error.status = resp.code;
-  error.data = resp.body;
-  return error;
-} // gtError
 
 export default GuardtimeV2;
