@@ -39,3 +39,9 @@ jar {
 ratpack {
   applicationName = 'archangel-web'
 }
+
+task prepApps(type: Delete) {
+  delete 'src/ratpack/monitor', 'src/ratpack/front-end'
+}
+
+clean.dependsOn prepApps
