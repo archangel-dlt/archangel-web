@@ -33,7 +33,7 @@ task buildMonitorForDist(type: Copy,
   into 'back-end/src/ratpack/monitor'
 }
 
-task buildDist(dependsOn: [buildFrontForDist, buildMonitorForDist, ':back-end:distTar']) {
+task buildDist(dependsOn: [buildFrontForDist, buildMonitorForDist, ':back-end:distTar', ':back-end:distZip' ]) {
   group 'Top'
   description 'Build everything, create distribution package'
 }
