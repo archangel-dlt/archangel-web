@@ -1,9 +1,24 @@
 # ArchangelDLT Demo Web Application
 
-The [Archangel-DLT Demo Web Application](http://159.65.54.117/) allows users to search data on and upload data to a
-blockchain. 
+This is a demonstrator for the ArchangelDLT project, aiming to showcase potential usage of Distributed Ledger Technology (a.k.a. Blockchains) for Archival and Memory Institutions.
 
-## Searching 
+## User's Manual
+
+The [Archangel-DLT Demo Web Application](http://159.65.54.117/) allows users to search data on and upload data to a
+blockchain. Using this demo, you can:
+
+* Upload a file, and have a signature hash and other information about the file stored in the blockchain, as a proof of concept of how a DLT could be used to guarantee integrity of resources kept by archival institutions
+* Search a given blockchain for a record of a file previously uploaded through any node using this system
+* [monitor blockchain transactions](http://159.65.54.117/monitor/index.html), as a way to demonstrate the distributed nature of the record storage.
+
+### Selecting a Blockchain
+
+The application can operate against two distinct and separate blockchains - 
+[Guardtime](https://guardtime.com/) and [Ethereum](https://www.ethereum.org/)
+
+A menu at the top-right of the page can be used to select either. See section "Supported Blockchains" below for more information.
+
+### Searching 
 
 * Select the **Search** tab, enter the term in the box and click the **Search** button
 * Any search results will be listed in reverse chronological order, showing filename, 
@@ -12,13 +27,13 @@ date, the [DROID](http://www.nationalarchives.gov.uk/information-management/mana
 file hash value, and any user provided comment.  If the result record was part 
 of an archive file (zip, tar, etc), the containing file's hash is also given. 
 
-## Uploading
+### Uploading
 
 * Select the **Upload** tab, and click and browse to select a file
 * The selected file will be uploaded characterised with DROID
 * Add any additional comments, then click the **Upload** button.
 
-## Blockchains
+## Supported Blockchains
 
 The application can operate against two distinct and separate blockchains - 
 [Guardtime](https://guardtime.com/) and [Ethereum](https://www.ethereum.org/)
