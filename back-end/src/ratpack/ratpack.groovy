@@ -1,9 +1,39 @@
 import ratpack.form.Form
+import ratpack.groovy.handling.GroovyContext
+import ratpack.groovy.handling.GroovyHandler
+import ratpack.http.TypedData
 
 import static archangeldlt.DroidWrapper.characterizeFile
 import static archangeldlt.DroidWrapper.convertExportToJson
 import static ratpack.groovy.Groovy.ratpack
 import static ratpack.jackson.Jackson.json
+import ratpack.http.client.HttpClient
+import ratpack.http.client.RequestSpec
+import ratpack.http.client.StreamedResponse
+
+class TinyProxyHandler extends GroovyHandler {
+  @Override
+  protected void handle(GroovyContext context) {
+    def request = context.request
+    def response = context.response
+
+    request.getBody().then { TypedData body ->
+      def proxyUri = new URI('http://localhost:8545')
+      def httpClient = context.get(HttpClient)
+
+      httpClient.requestStream(proxyUri) { RequestSpec spec ->
+        spec.method(request.method)
+
+        spec.body.type(body.contentType.type)
+        spec.body.bytes(body.bytes)
+
+        spec.headers.copy(request.headers)
+      }.then { StreamedResponse responseStream ->
+        responseStream.forwardTo(response)
+      }
+    }
+  }
+}
 
 def tenMegs = 1048576 * 10
 
@@ -63,5 +93,6 @@ ratpack {
         dir "front-end" indexFiles "index.html"
       }
     }
+    post("geth", new TinyProxyHandler())
   }
 }
