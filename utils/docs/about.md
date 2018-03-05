@@ -115,10 +115,14 @@ various amounts, but 3 Ether should be plenty.
 ## For the more adventurous - Running the application
 
 ### The easy option
-Don't. Use the hosted instance 
+Don't. Use one of the the hosted instances 
 
  * [Search and Upload](http://159.65.54.117/)
  * [Ethereum event monitor](http://159.65.54.117/monitor)
+
+ * [Search and Upload](http://139.162.253.192/)
+ * [Ethereum event monitor](http://139.162.253.192/monitor)
+
 
 ### The Docker option
 The application is available as a [Docker image](https://hub.docker.com/r/archangeldlt/web/) 
