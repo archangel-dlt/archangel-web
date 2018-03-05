@@ -32,20 +32,26 @@ class ReactEthereum extends Ethereum {
   ///////////////////////////////
   render() {
     return (
-      <div className="row col-md-12">
-        <label className="col-md-4 form-text">
-          <span className="float-right">Ethereum<br/>Provider</span>
-        </label>
-        <select className="col-md-8 form-control"
-                onChange={event => this.onProviderChange(event.target.value)}>
-          {
-            providers().map(
-              p => <option key={p.name} value={p.name}>{p.name}</option>
-            )
-          }
-        </select>
-        <br/>
-      </div>
+      <React.Fragment>
+        <div className="row col-md-12">
+          <label className="col-md-4 form-text">
+            <span className="float-right">Ethereum<br/>Provider</span>
+          </label>
+          <select className="col-md-8 form-control"
+                  onChange={event => this.onProviderChange(event.target.value)}>
+            {
+              providers().map(
+                p => <option key={p.name} value={p.name}>{p.name}</option>
+              )
+            }
+          </select>
+        </div>
+        { (!hasMetaMask && !hasMist) &&
+          <sup className="col-md-12"><span className="float-right">Install MetaMask plugin for
+            <a target='_blank' rel="noopener noreferrer" href='https://addons.mozilla.org/en-US/firefox/addon/ether-metamask/'>Firefox</a> and
+            <a target='_blank' rel="noopener noreferrer" href='https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en'>Chrome</a></span></sup>
+        }
+      </React.Fragment>
     );
   } // render
 } // class ReactEthereum
