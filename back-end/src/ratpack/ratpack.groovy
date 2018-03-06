@@ -18,7 +18,7 @@ class TinyProxyHandler extends GroovyHandler {
     def response = context.response
 
     request.getBody().then { TypedData body ->
-      def proxyUri = new URI('http://localhost:8545')
+      def proxyUri = new URI('http://geth:8545')
       def httpClient = context.get(HttpClient)
 
       httpClient.requestStream(proxyUri) { RequestSpec spec ->
