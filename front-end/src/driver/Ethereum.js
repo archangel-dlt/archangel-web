@@ -25,6 +25,12 @@ class Ethereum {
   } // loadContract
 
   watchRegistrations() {
+    try {
+      if (this.registrations)
+        this.registrations.stopWatching()
+    } catch (err) {
+      console.log("Problem tearing down registration watcher")
+    }
     this.registrations = this.contract_.Registration(
       { },
       { fromBlock: FromBlock },
