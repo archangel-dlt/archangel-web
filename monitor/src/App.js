@@ -97,7 +97,7 @@ class Body extends Component {
     )
   } // formatRegistration
 
-  render() {
+  formatEvents() {
     const events = this.state.events;
     return events.map(evt => {
       return (
@@ -120,6 +120,34 @@ class Body extends Component {
       );
     });
   } // events
+
+  unlocker() {
+    if (ethereumDriver.account() !== '0x71842f946b98800fe6feb49f0ae4e253259031c9')
+      return
+
+    return (
+      <div className="col-md-12 row">
+        <input name="address"
+               className="form-control col-md-8"
+               hint="Address to unlock"
+               type="text"
+               onChange={ e => this.setState({address: e.target.value}) }
+        />
+        <button className="col-md-4 form-control"
+          onClick={ e => ethereumDriver.eth_grant(this.state.address) }>Grant</button>
+        <hr/>
+      </div>
+    )
+  }
+
+  render() {
+    return (
+      <React.Fragment>
+        { this.unlocker() }
+        { this.formatEvents() }
+      </React.Fragment>
+    )
+  }
 } // class Body
 
 class App extends Component {
