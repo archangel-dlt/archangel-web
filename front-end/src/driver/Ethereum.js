@@ -5,6 +5,8 @@ const ArchangelAddress = '0x3507dCef171f6B7F36c56e35013d0785B150584F'.toLowerCas
 const FromBlock = 1378500;
 const NullId = '0x0000000000000000000000000000000000000000000000000000000000000000';
 
+const gasLimit = 750000
+
 class Ethereum {
   static get name() { return "Ethereum"; }
 
@@ -167,7 +169,7 @@ class Ethereum {
       this.contract_.store(id, slugStr,
         {
           from: account,
-          gas: 500000
+          gas: gasLimit
         },
         (err, tx) => {
           if (err)
