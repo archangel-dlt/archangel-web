@@ -3,7 +3,8 @@ import Ethereum from '../driver/Ethereum';
 import Web3 from "web3";
 
 const hasMetaMask = (typeof window.web3 !== 'undefined') &&
-  (window.web3.currentProvider.constructor.name.startsWith('Metamask'));
+  ((window.web3.currentProvider.constructor.name.startsWith('Metamask') ||
+    (window.web3.currentProvider.constructor.toString().indexOf('MetaMask') !== -1)));
 const hasMist = (typeof window.web3 !== 'undefined') &&
   (window.web3.currentProvider.constructor.name.startsWith('EthereumProvider'));
 
