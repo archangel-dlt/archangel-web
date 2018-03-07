@@ -37,11 +37,19 @@ class Body extends Component {
     super(props);
 
     this.state = {
-      events: []
+      events: [],
+      blockNumber: 'unknown'
     }
 
     ethereumDriver.watchEvents((evt) => this.event(evt));
   } // constructor
+
+  async blockNumber() {
+    const blockNo = await ethereumDriver.currentBlockNumber()
+    this.setState({
+      blockNumber: blockNo
+    });
+  } // blockNumber
 
   event(evt) {
     const events = this.state.events;
@@ -140,9 +148,20 @@ class Body extends Component {
     )
   }
 
+  currentBlock() {
+    setTimeout(() => this.blockNumber(), 5000)
+    const blockNumber = this.state.blockNumber
+    return (
+      <div className="col-md-12 row justify-content-end">
+        <strong>Current Block <a href={`http://rinkeby.etherscan.io/block/${blockNumber}`}>{ blockNumber }</a></strong>
+      </div>
+    )
+  }
+
   render() {
     return (
       <React.Fragment>
+        { this.currentBlock() }
         { this.unlocker() }
         { this.formatEvents() }
       </React.Fragment>
