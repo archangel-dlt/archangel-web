@@ -7,6 +7,13 @@ const hasMetaMask = (typeof window.web3 !== 'undefined') &&
 const hasMist = (typeof window.web3 !== 'undefined') &&
   (window.web3.currentProvider.constructor.name.startsWith('EthereumProvider'));
 
+const pathPrefix = (() => {
+  let path = window.location.pathname.replace('/index.html', '')
+  path = path.substring(0, path.lastIndexOf('/'))
+  return path.length === 1 ? path : `${path}/`
+})()
+const hosted = `${window.location.protocol}//${window.location.hostname}:${window.location.port}${pathPrefix}geth`
+
 function providers() {
   const p = []
 
@@ -15,6 +22,7 @@ function providers() {
   if (hasMist)
     p.push({name: 'Mist', provider: window.web3.currentProvider});
   p.push({name: 'Localhost', provider: new Web3.providers.HttpProvider('http://localhost:8545')});
+  p.push({name: hosted, provider: new Web3.providers.HttpProvider(hosted)});
 
   return p;
 } // providers

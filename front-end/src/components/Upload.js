@@ -30,7 +30,7 @@ class UploadBox extends Component {
     const file = files[0]
 
     superagent
-      .post('/upload')
+      .post('upload')
       .field('lastModified', file.lastModified)
       .attach('candidate', file)
       .then(response => this.fileCharacterised(response.body))
