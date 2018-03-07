@@ -14,8 +14,10 @@ def frontend_path = "${pathPrefix}front-end"
 def geth_path = "${pathPrefix}geth"
 def upload_path = "${frontend_path}/upload"
 
-def tenMegs = 1048576 * 10
-def uploadLimit = tenMegs
+def oneMeg = 1048576
+def tenMegs = oneMeg * 10
+def twentyFiveMegs = oneMeg * 25
+def uploadLimit = twentyFiveMegs
 
 ratpack {
   serverConfig { conf ->
