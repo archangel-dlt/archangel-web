@@ -156,11 +156,11 @@ class App extends Component {
       <div className="App">
         <Header/>
         <div className="App-body row">
-          <div className="col-md-2"/>
-          <div className="col-md-8">
+          <div className="col-md-1"/>
+          <div className="col-md-10">
             <Body/>
           </div>
-          <div className="col-md-2"/>
+          <div className="col-md-1"/>
         </div>
       </div>
     );

@@ -65,8 +65,8 @@ class App extends Component {
           </div>
         </header>
         <div className="App-body row">
-          <div className="col-md-2"/>
-          <div className="col-md-8">
+          <div className="col-md-1"/>
+          <div className="col-md-10">
             <Body
               ref={ body => {
                 this.body = body;
@@ -74,7 +74,7 @@ class App extends Component {
               } }
             />
           </div>
-          <div className="col-md-2"/>
+          <div className="col-md-1"/>
         </div>
       </div>
     );

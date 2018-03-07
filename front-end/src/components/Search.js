@@ -135,13 +135,15 @@ class SearchResults extends Component {
             </div>
             {
               record.parent_sha256_hash &&
-                <div className="row col-md-12">
-                  <div className="col-md-4"></div>
+                <div className="row col-md-12 ">
                   <div className="col-md-8">
                     Parent: <i><HashLink hash={record.parent_sha256_hash} searchFn={this.state.searchFn}/></i>
                   </div>
                 </div>
             }
+            <div className="row col-md-12">
+              <br/>
+            </div>
           </div>
         )
 
@@ -157,13 +159,21 @@ class SearchResults extends Component {
     return (
       <div>
         <div className="row">
-          <div className="col-md-12">Searched for <strong>{searchTerm}</strong></div>
+          <div className="col-md-12">
+            <span className="float-right">
+            {found ?
+              `${found} records found` :
+              "No records found"
+            }
+            </span>
+            Searched for <strong>{searchTerm}</strong>
+          </div>
         </div>
           {
             fetchResults.length ?
               <div className="row">
                 <hr className="col-md-12"/>
-                <div className="col-md-12">With matching key</div>
+                <div className="col-md-12"><u>With matching key</u></div>
               </div>
             :
               null
@@ -175,7 +185,7 @@ class SearchResults extends Component {
             searchResults.length ?
             <div className="row">
               <hr className="col-md-12"/>
-              <div className="col-md-12">With matching payload</div>
+              <div className="col-md-12"><u>With matching payload</u></div>
             </div>
             :
             null
@@ -186,17 +196,7 @@ class SearchResults extends Component {
         <div className="row">
           <hr className="col-md-12"/>
         </div>
-        <div className="row">
-          <div className="col-md-12">
-            <span className="float-right">
-            {found ?
-              `${found} records found` :
-              "No records found"
-            }
-            </span>
-          </div>
-        </div>
-      </div>
+     </div>
     )
   } // renderResults
 } // SearchResults
