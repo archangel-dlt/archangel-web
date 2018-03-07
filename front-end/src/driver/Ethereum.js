@@ -152,7 +152,7 @@ class Ethereum {
             return;
           }
 
-          if (err)
+          if (err && (err.message !== 'unknown transaction'))
             return reject(err);
 
           const diff = timeout.diff(DateTime.local(), 'seconds').values.seconds;
