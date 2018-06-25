@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 import EthereumDriver from '../driver-components/Ethereum';
-import GuardtimeDriver from '../driver-components/Guardtime';
 
 class DriverPicker extends Component {
   constructor(props) {
@@ -9,7 +8,6 @@ class DriverPicker extends Component {
 
     this.drivers = {
       'Ethereum': EthereumDriver(),
-      'Guardtime': GuardtimeDriver()
     };
 
     this.onNewDriver = props.onNewDriver;
@@ -27,6 +25,26 @@ class DriverPicker extends Component {
     this.onNewDriver(driver);
   } // onDriverChange
 
+  driverPickerUI() {
+    if (Object.keys(this.drivers).length <= 1)
+      return null;
+   return (
+      <div className="row col-md-12">
+        <label className="col-md-4 form-text">
+          <span className="float-right">Driver</span>
+        </label>
+        <select className="col-md-8 form-control"
+                onChange={event => this.onDriverChange(event.target.value)}>
+          {
+            Object.keys(this.drivers).map(
+              label => <option key={label} value={label}>{label}</option>
+            )
+          }
+        </select>
+      </div>
+    )
+  } // driverPickerUI
+
   driverUI() {
     const driver = this.state.driver;
     if (!driver)
@@ -38,19 +56,7 @@ class DriverPicker extends Component {
   render() {
     return (
       <div className="row">
-        <div className="row col-md-12">
-          <label className="col-md-4 form-text">
-            <span className="float-right">Driver</span>
-          </label>
-          <select className="col-md-8 form-control"
-                  onChange={event => this.onDriverChange(event.target.value)}>
-            {
-              Object.keys(this.drivers).map(
-                label => <option key={label} value={label}>{label}</option>
-              )
-            }
-          </select>
-        </div>
+        { this.driverPickerUI() }
         { this.driverUI() }
       </div>
     );
