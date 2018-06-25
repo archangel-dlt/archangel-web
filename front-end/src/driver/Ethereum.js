@@ -1,8 +1,4 @@
-import ArchangelABI from './ethereum/Archangel';
-import { DateTime } from 'luxon';
-
-const ArchangelAddress = '0x3507dCef171f6B7F36c56e35013d0785B150584F'.toLowerCase();
-const FromBlock = 1378500;
+const ArchangelContract = require('./ethereum/Archangel.json')
 const NullId = '0x0000000000000000000000000000000000000000000000000000000000000000';
 
 const gasLimit = 750000
@@ -15,30 +11,24 @@ class Ethereum {
   } // constructor
 
   ////////////////////////////////////////////
-  setup(web3) {
+  async setup(web3) {
     this.web3_ = web3;
-    this.loadContract();
-    this.watchRegistrations();
+
+    const networkId = (await this.web3_.eth.net.getId()).toString();
+    if (!ArchangelContract.networks[networkId]) {
+      alert(`Archangel Contract is not installed on this Ethereum network (id ${networkId})`);
+      return;
+    }
+
+    this.loadContract(networkId);
   } // setup
 
-  loadContract() {
-    const contractClass = this.web3_.eth.contract(ArchangelABI);
-    this.contract_ = contractClass.at(ArchangelAddress);
-  } // loadContract
-
-  watchRegistrations() {
-    try {
-      if (this.registrations)
-        this.registrations.stopWatching()
-    } catch (err) {
-      console.log("Problem tearing down registration watcher")
-    }
-    this.registrations = this.contract_.Registration(
-      { },
-      { fromBlock: FromBlock },
-      (err, evt) => console.log(evt)
+  loadContract(networkId) {
+    this.contract_ = new this.web3_.eth.Contract(
+      ArchangelContract.abi,
+      ArchangelContract.networks[networkId].address
     );
-  } // watchRegistrations
+  } // loadContract
 
   ////////////////////////////////////////////
   async store(droid_payloads, progress) {
@@ -87,14 +77,9 @@ class Ethereum {
   } // search
 
   ////////////////////////////////////////////
-  registrationLog() {
-    return new Promise((resolve, reject) => {
-      this.registrations.get((error, logs) => {
-        if (error)
-          return reject(error);
-        return resolve(logs.map(l => JSON.parse(l.args._payload)));
-      })
-    });
+  async registrationLog() {
+    const registrations = await this.contract_.getPastEvents('Registration');
+    return registrations;
   } // registrations
 
   ////////////////////////
@@ -189,15 +174,9 @@ class Ethereum {
     return this.eth_call_fetch('fetchPrevious', id);
   } // eth_fetch
 
-  eth_call_fetch(methodName, id) {
-    return new Promise((resolve, reject) => {
-      this.contract_[methodName].call(id,
-        (err, results) => {
-          if (err)
-            return reject(err);
-          resolve(results);
-        });
-    }); // eth_fetch
+  async eth_call_fetch(methodName, id) {
+    const results = await this.contract_.methods[methodName](id).call();
+    return [results[0], results[1]]
   } // eth_call_fetch
 
   currentBlockNumber() {

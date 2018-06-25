@@ -106,6 +106,7 @@ class SearchResults extends Component {
         </div>
         <div className="row">
           <div className="col-md-12">{ errors.message || errors.error }</div>
+          <div className="col-md-12">{ JSON.stringify(errors) }</div>
         </div>
       </div>
     )
