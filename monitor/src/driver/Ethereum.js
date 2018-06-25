@@ -1,7 +1,5 @@
-import ArchangelABI from './ethereum/Archangel';
-
-const ArchangelAddress = '0x3507dCef171f6B7F36c56e35013d0785B150584F'.toLowerCase();
-const FromBlock = 1378500;
+const ArchangelContract = require('./ethereum/Archangel.json')
+const FromBlock = 64000;
 
 class Ethereum {
   get resetEvent() { return "RESET"; }
@@ -12,16 +10,16 @@ class Ethereum {
   } // constructor
 
   ////////////////////////////////////////////
-  setup(web3) {
+  async setup(web3) {
     this.web3_ = web3;
-    this.loadContract();
-    if (this.eventCallback_)
-      this.watchEvents(this.eventCallback_);
+
+    const networkId = 3151;
+    this.loadContract(networkId);
   } // setup
 
-  loadContract() {
-    const contractClass = this.web3_.eth.contract(ArchangelABI);
-    this.contract_ = contractClass.at(ArchangelAddress);
+  loadContract(networkId) {
+    const contractClass = this.web3_.eth.contract(ArchangelContract.abi);
+    this.contract_ = contractClass.at(ArchangelContract.networks[networkId].address);
   } // loadContract
 
   watchEvents(callback) {

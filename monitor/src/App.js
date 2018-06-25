@@ -40,9 +40,11 @@ class Body extends Component {
       events: [],
       blockNumber: 'unknown'
     }
-
-    ethereumDriver.watchEvents((evt) => this.event(evt));
   } // constructor
+
+  componentDidMount() {
+    ethereumDriver.watchEvents((evt) => this.event(evt));
+  } // componentDidMount
 
   async blockNumber() {
     const blockNo = await ethereumDriver.currentBlockNumber()
@@ -130,7 +132,7 @@ class Body extends Component {
   } // events
 
   unlocker() {
-    if (ethereumDriver.account() !== '0x71842f946b98800fe6feb49f0ae4e253259031c9')
+    if (ethereumDriver.account() !== '0x9071fe4e16752193d03e9d0b2a5c0f4db5a3c70f')
       return
 
     return (
