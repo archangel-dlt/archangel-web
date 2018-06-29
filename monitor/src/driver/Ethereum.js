@@ -1,5 +1,5 @@
 const ArchangelContract = require('./ethereum/Archangel.json')
-const FromBlock = 64000;
+const FromBlock = 80380;
 
 class Ethereum {
   get resetEvent() { return "RESET"; }
