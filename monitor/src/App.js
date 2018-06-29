@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component, Fragment} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import './bootstrap/css/bootstrap.css';
@@ -22,10 +22,10 @@ function Logo() {
 function Header() {
   return (
     <header className="App-header row">
-      <div className="col-md-8">
+      <div className="col-8">
         <Logo/>
       </div>
-      <div className="col-md-4">
+      <div className="col-4">
         { ethereumDriver.render() }
       </div>
     </header>
@@ -81,29 +81,29 @@ class Body extends Component {
   } // formatEvent
 
   formatNoWrite(args) {
-    return (<div className="col-md-12">From {args._addr}</div>);
+    return (<div className="col-12">From {args._addr}</div>);
   } // formatNoWrite
 
   formatRegistration(args) {
     const record = JSON.parse(args._payload);
     return (
-      <div className="col-md-12 row">
-        <div className="row col-md-12">
-          <div className="col-md-8"><strong>{record.name}</strong></div>
-          <div className="col-md-2"><Puid fmt={record.puid}/></div>
-          <div className="col-md-2">{ prettysize(record.size, true) }</div>
+      <div className="col-12 row">
+        <div className="row col-12">
+          <div className="col-8"><strong>{record.name}</strong></div>
+          <div className="col-2"><Puid fmt={record.puid}/></div>
+          <div className="col-2">{ prettysize(record.size, true) }</div>
         </div>
-        <div className="row col-md-12">
-          <div className="col-md-8">{record.sha256_hash}</div>
-          <div className="col-md-4">Last Modified: {record.last_modified}</div>
+        <div className="row col-12">
+          <div className="col-8">{record.sha256_hash}</div>
+          <div className="col-4">Last Modified: {record.last_modified}</div>
         </div>
-        <div className="row col-md-12">
-          <div className="col-md-8">{record.comment}</div>
-          <div className="col-md-4">Uploaded: {record.timestamp}</div>
+        <div className="row col-12">
+          <div className="col-8">{record.comment}</div>
+          <div className="col-4">Uploaded: {record.timestamp}</div>
         </div>
         {
           record.parent_sha256_hash &&
-          <div className="col-md-12">Parent: <i>{record.parent_sha256_hash}</i></div>
+          <div className="col-12">Parent: <i>{record.parent_sha256_hash}</i></div>
         }
       </div>
     )
@@ -113,7 +113,7 @@ class Body extends Component {
     if (args._name === 'contract')
       this.contractOwner = args._addr;
 
-    return (<div className="col-md-12">To <strong>{args._name}</strong>, {args._addr}</div>);
+    return (<div className="col-12">To <strong>{args._name}</strong>, {args._addr}</div>);
   } // formatPermissionGranted
 
   formatEvents() {
@@ -122,10 +122,10 @@ class Body extends Component {
       return (
         <div key={evt.transactionHash}>
           <div className="row">
-            <div className="col-md-2">Block <a href={`https://rinkeby.etherscan.io/txs?block=${evt.blockNumber}`}>{evt.blockNumber}</a></div>
-            <div className="col-md-2"><strong>{evt.event}</strong></div>
-            <div className="col-md-5"></div>
-            <div className="col-md-3">
+            <div className="col-2">Block <a href={`https://rinkeby.etherscan.io/txs?block=${evt.blockNumber}`}>{evt.blockNumber}</a></div>
+            <div className="col-2"><strong>{evt.event}</strong></div>
+            <div className="col-5"></div>
+            <div className="col-3">
               <span className="float-right">
                 [<a href={`https://rinkeby.etherscan.io/tx/${evt.transactionHash}`}>Tx</a>]
               </span>
@@ -145,16 +145,29 @@ class Body extends Component {
       return
 
     return (
-      <div className="col-md-12 row">
-        <input name="address"
-               className="form-control col-md-8"
-               hint="Address to unlock"
-               type="text"
-               onChange={ e => this.setState({address: e.target.value}) }
-        />
-        <button className="col-md-4 form-control"
-          onClick={ e => ethereumDriver.eth_grant(this.state.address) }>Grant</button>
-        <hr/>
+      <div className="border border-primary row p-2">
+        <div className="row col-12">
+          <div className="col-2">Name</div>
+          <input name="name"
+                 className="form-control col"
+                 hint="Name"
+                 type="text"
+                 onChange={ e => this.setState({name: e.target.value}) }
+          />
+        </div>
+        <div className="row col-12">
+          <div className="col-2">Address</div>
+          <input name="address"
+                 className="form-control col"
+                 hint="Address to unlock"
+                 type="text"
+                 onChange={ e => this.setState({address: e.target.value}) }
+          />
+        </div>
+        <div className="row col-12 justify-content-end">
+          <button className="col-2 form-control btn-info"
+                onClick={ () => ethereumDriver.eth_grant(this.state.address, this.state.name) }>Grant</button>
+        </div>
       </div>
     )
   }
@@ -163,7 +176,7 @@ class Body extends Component {
     setTimeout(() => this.blockNumber(), 5000)
     const blockNumber = this.state.blockNumber
     return (
-      <div className="col-md-12 row justify-content-end">
+      <div className="col-12 row justify-content-end">
         <strong>Current Block <a href={`http://rinkeby.etherscan.io/block/${blockNumber}`}>{ blockNumber }</a></strong>
       </div>
     )
@@ -186,11 +199,11 @@ class App extends Component {
       <div className="App">
         <Header/>
         <div className="App-body row">
-          <div className="col-md-1"/>
-          <div className="col-md-10">
+          <div className="col-1"/>
+          <div className="col-10">
             <Body/>
           </div>
-          <div className="col-md-1"/>
+          <div className="col-1"/>
         </div>
       </div>
     );

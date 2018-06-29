@@ -44,12 +44,14 @@ class Ethereum {
     return (accounts.length !== 0) ? accounts[0].toLowerCase() : null
   }
 
-  eth_grant(addr) {
+  eth_grant(addr, name) {
     const account = this.account()
     if (!account)
       throw new Error('No Ethereum account available.  Have you unlocked MetaMask?')
 
-    this.contract_.grantPermission(addr,
+    this.contract_.grantPermission(
+      addr,
+      name,
       {
         from: account,
         gas: 500000
@@ -57,7 +59,7 @@ class Ethereum {
       (err, tx) => {
         if (err)
           return console.log(err)
-        console.log(`eth_grant(${addr} submitted in transaction ${tx}`);
+        console.log(`eth_grant(${addr},${name}) submitted in transaction ${tx}`);
       }
     );
   } // eth_store
