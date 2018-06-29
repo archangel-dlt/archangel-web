@@ -40,6 +40,8 @@ class Body extends Component {
       events: [],
       blockNumber: 'unknown'
     }
+
+    this.names = {}
   } // constructor
 
   componentDidMount() {
@@ -99,7 +101,7 @@ class Body extends Component {
         </div>
         <div className="row col-12">
           <div className="col-8">{record.comment}</div>
-          <div className="col-4">Uploaded: {record.timestamp}</div>
+          <div className="col-4">Uploaded by <strong>{this.names[args._addr]}</strong> at {record.timestamp} </div>
         </div>
         {
           record.parent_sha256_hash &&
@@ -112,6 +114,8 @@ class Body extends Component {
   formatPermissionGranted(args) {
     if (args._name === 'contract')
       this.contractOwner = args._addr;
+
+    this.names[args._addr] = args._name;
 
     return (<div className="col-12">To <strong>{args._name}</strong>, {args._addr}</div>);
   } // formatPermissionGranted
