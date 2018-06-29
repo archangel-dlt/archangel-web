@@ -73,6 +73,8 @@ class Body extends Component {
         return this.formatRegistration(args);
       case 'NoWritePermission':
         return this.formatNoWrite(args);
+      case 'PermissionGranted':
+        return this.formatPermissionGranted(args);
       default:
         return args.toString()
     }
@@ -107,6 +109,13 @@ class Body extends Component {
     )
   } // formatRegistration
 
+  formatPermissionGranted(args) {
+    if (args._name === 'contract')
+      this.contractOwner = args._addr;
+
+    return (<div className="col-md-12">To <strong>{args._name}</strong>, {args._addr}</div>);
+  } // formatPermissionGranted
+
   formatEvents() {
     const events = this.state.events;
     return events.map(evt => {
@@ -132,7 +141,7 @@ class Body extends Component {
   } // events
 
   unlocker() {
-    if (ethereumDriver.account() !== '0x9071fe4e16752193d03e9d0b2a5c0f4db5a3c70f')
+    if (ethereumDriver.account() !== this.contractOwner)
       return
 
     return (
