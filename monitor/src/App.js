@@ -1,10 +1,11 @@
-import React, {Component, Fragment} from 'react';
+import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import './bootstrap/css/bootstrap.css';
 import ReactEthereum from './driver-components/Ethereum';
 import prettysize from "./lib/prettysize";
 import Puid from "./lib/Puid";
+import Permissions from './ui/Permissions';
 
 const ethereumDriver = ReactEthereum();
 const maxEvents = 2000;
@@ -45,7 +46,7 @@ class Body extends Component {
   } // constructor
 
   componentDidMount() {
-    ethereumDriver.watchEvents((evt) => this.event(evt));
+    ethereumDriver.watchEvents(evt => this.event(evt));
   } // componentDidMount
 
   async blockNumber() {
@@ -61,17 +62,15 @@ class Body extends Component {
     if(events.unshift(evt) > maxEvents)
       events.pop();
 
-    if (evt === ethereumDriver.resetEvent)
-      events.length = 0;
-
     this.setState({
-      events: events
+      events: (evt !== ethereumDriver.resetEvent) ? events : [ ]
     })
   } // event
 
   formatEvent(name, args) {
     switch(name) {
       case 'Registration':
+      case 'Update':
         return this.formatRegistration(args);
       case 'NoWritePermission':
         return this.formatNoWrite(args);
@@ -144,38 +143,6 @@ class Body extends Component {
     });
   } // events
 
-  unlocker() {
-    if (ethereumDriver.account() !== this.contractOwner)
-      return
-
-    return (
-      <div className="border border-primary row p-2">
-        <div className="row col-12">
-          <div className="col-2">Name</div>
-          <input name="name"
-                 className="form-control col"
-                 hint="Name"
-                 type="text"
-                 onChange={ e => this.setState({name: e.target.value}) }
-          />
-        </div>
-        <div className="row col-12">
-          <div className="col-2">Address</div>
-          <input name="address"
-                 className="form-control col"
-                 hint="Address to unlock"
-                 type="text"
-                 onChange={ e => this.setState({address: e.target.value}) }
-          />
-        </div>
-        <div className="row col-12 justify-content-end">
-          <button className="col-2 form-control btn-info"
-                onClick={ () => ethereumDriver.eth_grant(this.state.address, this.state.name) }>Grant</button>
-        </div>
-      </div>
-    )
-  }
-
   currentBlock() {
     setTimeout(() => this.blockNumber(), 5000)
     const blockNumber = this.state.blockNumber
@@ -190,7 +157,7 @@ class Body extends Component {
     return (
       <React.Fragment>
         { this.currentBlock() }
-        { this.unlocker() }
+        <Permissions/>
         { this.formatEvents() }
       </React.Fragment>
     )
