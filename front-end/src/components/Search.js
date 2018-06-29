@@ -132,7 +132,7 @@ class SearchResults extends Component {
             </div>
             <div className="row col-md-12">
               <div className="col-md-8">{record.comment}</div>
-              <div className="col-md-4">Uploaded: {record.timestamp}</div>
+              <div className="col-md-4">Uploaded by <strong>{record.uploader}</strong> at {record.timestamp}</div>
             </div>
             {
               record.parent_sha256_hash &&

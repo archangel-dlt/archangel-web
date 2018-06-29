@@ -17,9 +17,12 @@ class Ethereum {
   async setup(web3) {
     this.web3_ = web3;
 
+    this.grants = { }
+
     const networkId = 3151;
     this.loadContract(networkId);
     this.watchRegistrations();
+    this.watchGrantPermissions();
   } // setup
 
   loadContract(networkId) {
@@ -28,18 +31,38 @@ class Ethereum {
   } // loadContract
 
   watchRegistrations() {
-    try {
-      if (this.registrations)
-        this.registrations.stopWatching()
-    } catch (err) {
-      console.log("Problem tearing down registration watcher")
-    }
+    stopWatching(this.registrations, 'Registration');
+    stopWatching(this.updates, 'Updates');
+
     this.registrations = this.contract_.Registration(
       { },
       { fromBlock: FromBlock },
       (err, evt) => console.log(evt)
     );
+    this.updates = this.contract_.Update(
+      { },
+      { fromBlock: FromBlock },
+      (err, evt) => console.log(evt)
+    );
   } // watchRegistrations
+
+  watchGrantPermissions() {
+    stopWatching(this.grantsWatcher, 'GrantPermission')
+
+    this.grantsWatcher = this.contract_.PermissionGranted(
+      { },
+      { fromBlock: FromBlock },
+      (err, evt) => {
+        if (evt) this.grants[evt.args._addr] = evt.args._name
+      }
+    );
+  } // watchGrantPermissions
+
+  ////////////////////////////////////////////
+  addressName(addr) {
+    const name = this.grants[addr]
+    return name ? name : 'unknown'
+  } // addressName
 
   ////////////////////////////////////////////
   async store(droid_payloads, progress) {
@@ -88,15 +111,30 @@ class Ethereum {
   } // search
 
   ////////////////////////////////////////////
-  async registrationLog() {
+  recordLog(watcher) {
     return new Promise((resolve, reject) => {
-      this.registrations.get((error, logs) => {
+      watcher.get((error, logs) => {
         if (error)
           return reject(error);
-        return resolve(logs.map(l => JSON.parse(l.args._payload)));
+
+        const payloads = logs
+          .map(l => { l.uploader = this.addressName(l.args._addr); return l; })
+          .map(l => { const p = JSON.parse(l.args._payload); p.uploader = l.uploader; return p; });
+
+        return resolve(payloads);
       })
     });
-  } // registrations
+  } // watcher
+
+  async registrationLog() {
+    const registrations = await this.recordLog(this.registrations);
+    const updates = await this.recordLog(this.updates);
+
+    registrations.push(...updates);
+
+    return registrations;
+  } // registrationLog
+
   ////////////////////////
   async eth_store(id, slug) {
     const slugStr = JSON.stringify(slug);
@@ -112,16 +150,19 @@ class Ethereum {
       const currentBlock = await this.currentBlockNumber();
       const noPermissionEvent = this.contract_.NoWritePermission({ fromBlock: currentBlock-1 });
       const registration = this.contract_.Registration({}, { fromBlock: currentBlock-1 });
+      const update = this.contract_.Update({}, { fromBlock: currentBlock-1 });
 
       const resolve = (results) => {
         noPermissionEvent.stopWatching();
         registration.stopWatching();
+        update.stopWatching();
         pResolve(results);
       } // resolve
 
       const reject = (err) => {
         noPermissionEvent.stopWatching();
         registration.stopWatching();
+        update.stopWatching();
         pReject(err);
       } // reject
 
@@ -134,14 +175,16 @@ class Ethereum {
           }
         });
 
-      registration.watch(
-        (error, result) => {
-          console.log(result)
-          if (!error && result && result.transactionHash === txHash) {
-            stopped = true;
-            resolve(`${slug.name} written to Ethereum`)
-          }
-        });
+      const txWritten = (error, result) => {
+        console.log(result)
+        if (!error && result && result.transactionHash === txHash) {
+          stopped = true;
+          resolve(`${slug.name} written to Ethereum`)
+        }
+      } // txWritten
+
+      registration.watch(txWritten);
+      update.watch(txWritten);
 
       const onCommitted = (timeout) => {
         this.web3_.eth.getTransactionReceipt(txHash, (err, result) => {
@@ -151,8 +194,8 @@ class Ethereum {
           if (result) {
             console.log(`Transaction for ${slug.name} complete`);
             stopped = true;
-            return;
-          }
+            return resolve(`Transaction for ${slug.name} complete, but could not determine outcome.`);
+          } // if ...
 
           if (err && (err.message !== 'unknown transaction'))
             return reject(err);
@@ -210,5 +253,14 @@ class Ethereum {
     })
   } // currentBlockNumber
 } // class Ethereum
+
+function stopWatching(watcher, label) {
+  try {
+    if (watcher)
+      watcher.stopWatching()
+  } catch (err) {
+    console.log(`Problem tearing down ${label} watcher`);
+  }
+} // stopWatching
 
 export default Ethereum;
