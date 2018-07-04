@@ -16,18 +16,18 @@ def dockerImageName = "${dockerOrgName}/web"
 
 ///////////////
 task buildFrontForDist(type: Copy,
-                       dependsOn: [':front-end:build', ':back-end:clean']) {
+                       dependsOn: [':ui:build', ':back-end:clean']) {
   group 'Top'
-  description 'Build front-end, ready to be bundled into back-end distribution package'
+  description 'Build ui, ready to be bundled into back-end distribution package'
 
-  from 'front-end/build'
+  from 'ui/build'
   into 'back-end/src/ratpack/front-end'
 }
 
 task buildMonitorForDist(type: Copy,
                          dependsOn: [':monitor:build', ':back-end:clean']) {
   group 'Top'
-  description 'Build front-end, ready to be bundled into back-end distribution package'
+  description 'Build ui, ready to be bundled into back-end distribution package'
 
   from 'monitor/build'
   into 'back-end/src/ratpack/monitor'
@@ -41,13 +41,13 @@ task buildDist(dependsOn: [buildFrontForDist, buildMonitorForDist, ':back-end:di
 task start(type: CrossPlatformExec,
            dependsOn: ['buildDist', ':back-end:installDist']) {
   group 'Top'
-  description 'Builds front-end and back-end, starts the server'
+  description 'Builds ui and back-end, starts the server'
 
   commandLine './archangel-web', '--web'
   workingDir './back-end/build/install/archangel-web/bin/'
 }
 
-task clean (dependsOn: [':back-end:clean', ':front-end:clean']) {
+task clean (dependsOn: [':back-end:clean', ':ui:clean']) {
   group 'Top'
   description 'Clean everything'
 }
