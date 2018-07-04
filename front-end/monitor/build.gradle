@@ -1,5 +1,5 @@
 task bootstrap(type: Exec) {
-  group 'Front-end'
+  group 'Monitor'
   description 'Install node modules'
 
   commandLine 'npm', 'install'
@@ -7,14 +7,14 @@ task bootstrap(type: Exec) {
 
 task build(type: Exec,
            dependsOn: [bootstrap]) {
-  group 'Front-end'
+  group 'Monitor'
   description 'Build production front-end application'
 
   commandLine 'npm', 'run', 'build'
 }
 
 task clean(type: Delete) {
-  group 'Front-end'
+  group 'Monitor'
   description 'Cleans up'
 
   delete 'build'

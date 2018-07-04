@@ -16,7 +16,7 @@ def dockerImageName = "${dockerOrgName}/web"
 
 ///////////////
 task buildFrontForDist(type: Copy,
-                       dependsOn: [':ui:build', ':back-end:clean']) {
+                       dependsOn: [':front-end:ui:build', ':back-end:clean']) {
   group 'Top'
   description 'Build ui, ready to be bundled into back-end distribution package'
 
@@ -25,7 +25,7 @@ task buildFrontForDist(type: Copy,
 }
 
 task buildMonitorForDist(type: Copy,
-                         dependsOn: [':monitor:build', ':back-end:clean']) {
+                         dependsOn: [':front-end:monitor:build', ':back-end:clean']) {
   group 'Top'
   description 'Build ui, ready to be bundled into back-end distribution package'
 

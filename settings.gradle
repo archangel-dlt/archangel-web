@@ -8,8 +8,8 @@
  * in the user guide at https://docs.gradle.org/3.3/userguide/multi_project_builds.html
  */
 
-include 'ui'
-include 'back-end'
-include 'monitor'
+include ':front-end:ui'
+include ':front-end:monitor'
+include ':back-end'
 
 rootProject.name = 'archangel-web'
