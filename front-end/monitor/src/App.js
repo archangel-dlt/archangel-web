@@ -76,8 +76,10 @@ class Body extends Component {
         return this.formatNoWrite(args);
       case 'PermissionGranted':
         return this.formatPermissionGranted(args);
+      case 'PermissionRemoved':
+        return this.formatPermissionRemoved(args);
       default:
-        return args.toString()
+        return JSON.stringify(args)
     }
   } // formatEvent
 
@@ -117,6 +119,10 @@ class Body extends Component {
     this.names[args._addr] = args._name;
 
     return (<div className="col-12">To <strong>{args._name}</strong>, {args._addr}</div>);
+  } // formatPermissionGranted
+
+  formatPermissionRemoved(args) {
+    return (<div className="col-12">From <strong>{args._name}</strong>, {args._addr}</div>);
   } // formatPermissionGranted
 
   formatEvents() {

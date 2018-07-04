@@ -1,4 +1,4 @@
-import React, { Component, PureComponent } from 'react';
+import React, {Component, Fragment} from 'react';
 import ReactEthereum from "../driver-components/Ethereum";
 
 const ethereumDriver = ReactEthereum();
@@ -55,22 +55,58 @@ class Granter extends Component {
   }
 } // Granter
 
-class GrantedList extends Component {
-  shouldComponentUpdate(nextProps) {
-    return Object.keys(nextProps).length !== Object.keys(this.props);
-  }
+class Degranter extends Component {
+  constructor(props) {
+    super(props);
+    this.driver = props.driver;
+    this.address = props.address;
+    this.contractOwner = props.owner;
+  } // constructor
 
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.owner === this.contractOwner)
+      return false;
+
+    this.contractOwner = nextProps.owner;
+    return true;
+  } // shouldComponentUpdate
+
+  render() {
+    if (this.driver.account() !== this.contractOwner)
+      return (<div/>)
+    if (this.address === this.contractOwner)
+      return (<div/>)
+
+    return (
+      <button className="col-1 form-control btn-sm btn-danger"
+              onClick={ () => this.driver.eth_remove(this.address) }>X</button>
+    )
+  }
+}
+
+class GrantedList extends Component {
   render() {
     return (
       <div className="border border-primary row p-2">
-        <div className="row col-12">
+        <div className="col-12">
           <strong>With Contract Write Permission</strong>
-          <ul>
+        </div>
+        <div className="row col-12">
           {
-            Object.values(this.props.grants)
-              .map(n => { return (<li>{n}</li>) })
+            Object.entries(this.props.grants)
+              .map(([address, name]) => {
+                return (
+                  <Fragment key={address}>
+                    <div className="col-11">{name}</div>
+                    <Degranter
+                      driver={this.props.driver}
+                      owner={this.props.owner}
+                      address={address}
+                    />
+                  </Fragment>
+                )
+              })
           }
-          </ul>
         </div>
       </div>
     )
@@ -127,7 +163,9 @@ class Permissions extends Component {
       <div className="row">
         <div className="col-6">
           <GrantedList
-            grants={this.state.grants}/>
+            grants={this.state.grants}
+            driver={ethereumDriver}
+            owner={this.state.contractOwner}/>
         </div>
         <div className="col-6">
           <Granter

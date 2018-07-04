@@ -64,6 +64,25 @@ class Ethereum {
     );
   } // eth_store
 
+  eth_remove(addr) {
+    const account = this.account()
+    if (!account)
+      throw new Error('No Ethereum account available.  Have you unlocked MetaMask?')
+
+    this.contract_.removePermission(
+      addr,
+      {
+        from: account,
+        gas: 500000
+      },
+      (err, tx) => {
+        if (err)
+          return console.log(err)
+        console.log(`eth_remove(${addr}) submitted in transaction ${tx}`);
+      }
+    );
+  } // eth_store
+
   currentBlockNumber() {
     return new Promise((resolve, reject) => {
       this.web3_.eth.getBlockNumber((err, result) => {
