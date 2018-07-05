@@ -1,0 +1,17 @@
+{
+  "name": "@archangeldlt/web-common",
+  "version": "1.0.0",
+  "description": "Common components for ArchangelDLT Web Applications",
+  "main": "lib/index.js",
+  "dependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-scripts": "1.1.1",
+    "web3": "0.20.6"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jez Higgins, jez@jezuk.co.uk",
+  "license": "MIT"
+}
