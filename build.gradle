@@ -47,7 +47,7 @@ task start(type: CrossPlatformExec,
   workingDir './back-end/build/install/archangel-web/bin/'
 }
 
-task clean (dependsOn: [':back-end:clean', ':ui:clean']) {
+task clean (dependsOn: [':back-end:clean', ':front-end:clean']) {
   group 'Top'
   description 'Clean everything'
 }

@@ -17,7 +17,12 @@ task build(type: Exec,
   commandLine 'npm', 'run', 'build'
 }
 
-task clean(type: Delete) {
+task cleanNodeModules(type: Exec) {
+  commandLine 'npm', 'run', 'clean'
+} 
+
+task clean(type: Delete,
+           dependsOn: [cleanNodeModules]) {
   group 'Front End'
   description 'Cleans up'
 

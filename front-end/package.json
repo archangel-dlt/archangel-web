@@ -20,5 +20,9 @@
   "workspaces": [
     "apps/*",
     "comps/*"
-  ]
+  ],
+  "dependencies": {
+    "react-dropzone": "^4.2.13",
+    "superagent": "^3.8.3"
+  }
 }
