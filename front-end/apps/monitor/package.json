@@ -1,0 +1,37 @@
+{
+  "name": "monitor",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@archangeldlt/web-common": "1.0.0",
+    "luxon": "^0.4.0",
+    "object-assign": "4.1.1",
+    "postcss-flexbugs-fixes": "3.2.0",
+    "postcss-loader": "2.0.8",
+    "promise": "8.0.1",
+    "raf": "3.4.0",
+    "react": "^16.2.0",
+    "react-dev-utils": "^5.0.0",
+    "react-dom": "^16.2.0",
+    "react-scripts": "2.0.0-next.b2fd8db8",
+    "web3": "0.20.6"
+  },
+  "scripts": {
+    "start": "node scripts/start.js",
+    "build": "node scripts/build.js",
+    "test": "node scripts/test.js --env=jsdom"
+  },
+  "homepage": ".",
+  "browserslist": {
+    "development": [
+      "last 2 chrome versions",
+      "last 2 firefox versions",
+      "last 2 edge versions"
+    ],
+    "production": [
+      ">0.25%",
+      "not op_mini all",
+      "ie 11"
+    ]
+  }
+}

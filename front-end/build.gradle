@@ -1,21 +1,25 @@
+task install(type: Exec) {
+  commandLine 'npm', 'install'
+}
+
 task bootstrap(type: Exec) {
-  group 'Monitor'
+  group 'Front End'
   description 'Install node modules'
 
-  commandLine 'npm', 'install'
+  commandLine 'npm', 'run', 'bootstrap'
 }
 
 task build(type: Exec,
            dependsOn: [bootstrap]) {
-  group 'Monitor'
+  group 'Front End'
   description 'Build production front-end application'
 
   commandLine 'npm', 'run', 'build'
 }
 
 task clean(type: Delete) {
-  group 'Monitor'
+  group 'Front End'
   description 'Cleans up'
 
-  delete 'build'
+  delete 'apps/monitor/build', 'apps/ui/build'
 }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import './bootstrap/css/bootstrap.css';
-import ReactEthereum from './driver-components/Ethereum';
+import { ReactEthereum } from '@archangeldlt/web-common';
 import prettysize from "./lib/prettysize";
 import Puid from "./lib/Puid";
 import Permissions from './ui/Permissions';

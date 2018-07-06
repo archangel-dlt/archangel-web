@@ -1,10 +1,10 @@
 import React from 'react';
 import Ethereum from '../driver/Ethereum';
-import Web3 from "web3";
+import Web3 from 'web3';
 
 const hasMetaMask = (typeof window.web3 !== 'undefined') &&
   ((window.web3.currentProvider.constructor.name.startsWith('Metamask') ||
-   (window.web3.currentProvider.constructor.toString().indexOf('MetaMask') !== -1)));
+    (window.web3.currentProvider.constructor.toString().indexOf('MetaMask') !== -1)));
 const hasMist = (typeof window.web3 !== 'undefined') &&
   (window.web3.currentProvider.constructor.name.startsWith('EthereumProvider'));
 
@@ -56,9 +56,9 @@ class ReactEthereum extends Ethereum {
           </select>
         </div>
         { (!hasMetaMask && !hasMist) &&
-          <sup className="col-md-12"><span className="float-right">Install MetaMask plugin for
-            <a target='_blank' rel="noopener noreferrer" href='https://addons.mozilla.org/en-US/firefox/addon/ether-metamask/'>Firefox</a> and
-            <a target='_blank' rel="noopener noreferrer" href='https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en'>Chrome</a></span></sup>
+        <sup className="col-md-12"><span className="float-right">Install MetaMask plugin for
+                <a target='_blank' rel="noopener noreferrer" href='https://addons.mozilla.org/en-US/firefox/addon/ether-metamask/'>Firefox</a> and
+                <a target='_blank' rel="noopener noreferrer" href='https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en'>Chrome</a></span></sup>
         }
       </React.Fragment>
     );

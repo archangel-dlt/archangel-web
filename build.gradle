@@ -15,25 +15,25 @@ def dockerOrgName = 'archangeldlt'
 def dockerImageName = "${dockerOrgName}/web"
 
 ///////////////
-task buildFrontForDist(type: Copy,
-                       dependsOn: [':front-end:ui:build', ':back-end:clean']) {
+task buildUIForDist(type: Copy,
+                    dependsOn: [':front-end:build', ':back-end:clean']) {
   group 'Top'
   description 'Build ui, ready to be bundled into back-end distribution package'
 
-  from 'ui/build'
+  from 'front-end/apps/ui/build'
   into 'back-end/src/ratpack/front-end'
 }
 
 task buildMonitorForDist(type: Copy,
-                         dependsOn: [':front-end:monitor:build', ':back-end:clean']) {
+                    dependsOn: [':front-end:build', ':back-end:clean']) {
   group 'Top'
-  description 'Build ui, ready to be bundled into back-end distribution package'
+  description 'Build monitor, ready to be bundled into back-end distribution package'
 
-  from 'monitor/build'
+  from 'front-end/apps/monitor/build'
   into 'back-end/src/ratpack/monitor'
 }
 
-task buildDist(dependsOn: [buildFrontForDist, buildMonitorForDist, ':back-end:distTar', ':back-end:distZip' ]) {
+task buildDist(dependsOn: [buildUIForDist, buildMonitorForDist, ':back-end:distTar', ':back-end:distZip' ]) {
   group 'Top'
   description 'Build everything, create distribution package'
 }

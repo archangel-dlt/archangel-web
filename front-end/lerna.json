@@ -1,9 +1,6 @@
 {
   "lerna": "2.11.0",
-  "packages": [
-    "ui",
-    "monitor",
-    "common"
-  ],
-  "version": "0.0.0"
+  "npmClient": "yarn",
+  "version": "0.0.0",
+  "useWorkspaces": true
 }

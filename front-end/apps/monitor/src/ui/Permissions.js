@@ -1,5 +1,5 @@
-import React, {Component, Fragment} from 'react';
-import ReactEthereum from "../driver-components/Ethereum";
+import React, { Component, Fragment } from 'react';
+import { ReactEthereum } from '@archangeldlt/web-common';
 
 const ethereumDriver = ReactEthereum();
 
