@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 
-import EthereumDriver from '../driver-components/Ethereum';
+import { ReactEthereum} from '@archangeldlt/web-common';
 
 class DriverPicker extends Component {
   constructor(props) {
     super(props);
 
     this.drivers = {
-      'Ethereum': EthereumDriver(),
+      'Ethereum': ReactEthereum(),
     };
 
     this.onNewDriver = props.onNewDriver;
