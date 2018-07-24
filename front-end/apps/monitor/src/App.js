@@ -3,8 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import './bootstrap/css/bootstrap.css';
 import { ReactEthereum } from '@archangeldlt/web-common';
-import prettysize from "./lib/prettysize";
-import { Puid } from '@archangeldlt/web-common';
+import { Puid, prettysize } from '@archangeldlt/web-common';
 import Permissions from './ui/Permissions';
 
 const ethereumDriver = ReactEthereum();
