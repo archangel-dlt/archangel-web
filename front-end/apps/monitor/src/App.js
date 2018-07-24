@@ -126,6 +126,16 @@ class Body extends Component {
 
   formatEvents() {
     const events = this.state.events;
+
+    const groupedEvents = new Map();
+    for (const event of events) {
+      const key = event.args._key || event;
+      const eventList = groupedEvents.get(key) || [ ]
+      eventList.unshift(event);
+      groupedEvents.delete(key);
+      groupedEvents.set(key, eventList);
+    } // for
+
     return events.map(evt => {
       return (
         <div key={evt.transactionHash}>
