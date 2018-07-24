@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import prettysize from '../lib/prettysize';
-import Puid from './Puid';
+import {Puid} from '@archangeldlt/web-common';
 import HashLink from './HashLink';
 
 class SearchBox extends Component {

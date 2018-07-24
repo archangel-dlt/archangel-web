@@ -4,7 +4,7 @@ import './App.css';
 import './bootstrap/css/bootstrap.css';
 import { ReactEthereum } from '@archangeldlt/web-common';
 import prettysize from "./lib/prettysize";
-import Puid from "./lib/Puid";
+import { Puid } from '@archangeldlt/web-common';
 import Permissions from './ui/Permissions';
 
 const ethereumDriver = ReactEthereum();

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
 import superagent from 'superagent';
 import prettysize from '../lib/prettysize';
-import Puid from './Puid';
+import {Puid} from '@archangeldlt/web-common';
 import {DateTime} from "luxon";
 
 class UploadBox extends Component {
