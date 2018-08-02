@@ -66,11 +66,3 @@ task pushDocker(type: CrossPlatformExec) {
 
   commandLine 'docker', 'push', dockerImageName
 }
-
-task buildGethImage(type: CrossPlatformExec) {
-  group 'Util'
-  description 'Build Rinkeby network Ethereum client Docker image'
-
-  commandLine 'docker', 'build', '--tag', "${dockerOrgName}/rinkeby-client", '.'
-  workingDir './utils/rinkeby-client/'
-}
