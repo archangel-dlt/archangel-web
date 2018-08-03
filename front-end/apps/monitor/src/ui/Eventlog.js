@@ -1,9 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import { ReactEthereum } from '@archangeldlt/web-common';
 import { Puid, prettysize } from '@archangeldlt/web-common';
 
-
-const ethereumDriver = ReactEthereum();
 const maxEvents = 2000;
 
 class Eventlog extends Component {
@@ -13,16 +10,17 @@ class Eventlog extends Component {
     this.state = {
       groupedEvents: new Map()
     }
+
+    this.driver = props.driver;
   } // constructor
 
   componentDidMount() {
-    ethereumDriver.watchEvents(evt => this.event(evt));
+    this.driver.watchEvents(evt => this.event(evt));
   } // componentDidMount
 
   event(evt) {
-    if (evt === ethereumDriver.resetEvent) {
+    if (evt === this.driver.resetEvent) {
       this.setState({
-        events: [ ],
         groupedEvents: new Map()
       });
       return;
@@ -89,7 +87,7 @@ class Eventlog extends Component {
         </div>
         <div className="row col-12">
           <div className="col-8">{record.comment}</div>
-          <div className="col-4">Uploaded by <strong>{ethereumDriver.addressName(args._addr)}</strong> at {record.timestamp} </div>
+          <div className="col-4">Uploaded by <strong>{this.driver.addressName(args._addr)}</strong> at {record.timestamp} </div>
         </div>
         {
           record.parent_sha256_hash &&

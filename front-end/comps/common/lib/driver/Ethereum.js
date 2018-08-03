@@ -12,6 +12,8 @@ class Ethereum {
 
   constructor(web3) {
     this.setup(web3);
+
+    this.eventCallbacks_ = [ ];
   } // constructor
 
   ////////////////////////////////////////////
@@ -23,6 +25,7 @@ class Ethereum {
     const networkId = 3151;
     this.loadContract(networkId);
 
+    this.startWatching();
     this.watchRegistrations();
     this.watchGrantPermissions();
   } // setup
@@ -33,20 +36,16 @@ class Ethereum {
   } // loadContract
 
   watchEvents(callback) {
-    if (!this.watcher_)
-      return this.startWatching(callback);
+    console.log("watchEvents");
 
-    this.watcher_.stopWatching(() => this.startWatching(callback));
+    this.eventCallbacks_.push(callback);
   } // watchEvents
 
-  startWatching(callback) {
-    this.eventCallback_ = callback;
-
-    this.eventCallback_(this.resetEvent);
+  startWatching() {
     this.watcher_ = this.contract_.allEvents(
       { fromBlock: FromBlock },
       // eslint-disable-next-line
-      (err, event) => { this.eventCallback_(event) }
+      (err, event) => { console.log(event); this.eventCallbacks_.forEach(fn => fn(event)) }
     );
   } // startWatching
 

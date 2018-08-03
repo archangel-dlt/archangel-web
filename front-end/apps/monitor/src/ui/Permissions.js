@@ -1,7 +1,4 @@
 import React, { Component, Fragment } from 'react';
-import { ReactEthereum } from '@archangeldlt/web-common';
-
-const ethereumDriver = ReactEthereum();
 
 class Granter extends Component {
   constructor(props) {
@@ -117,17 +114,18 @@ class Permissions extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      grants: { },
-      driver: ethereumDriver
+      grants: { }
     }
+
+    this.driver = props.driver;
   } // constructor
 
   componentDidMount() {
-    this.state.driver.watchEvents(evt => this.event(evt));
+    this.driver.watchEvents(evt => this.event(evt));
   } // componentDidMount
 
   event(evt) {
-    if (evt === ethereumDriver.resetEvent)
+    if (evt === this.driver.resetEvent)
       this.setState({
         grants: { },
         contractOwner: null
@@ -165,12 +163,12 @@ class Permissions extends Component {
         <div className="col-6">
           <GrantedList
             grants={this.state.grants}
-            driver={this.state.driver}
+            driver={this.driver}
             owner={this.state.contractOwner}/>
         </div>
         <div className="col-6">
           <Granter
-            driver={this.state.driver}
+            driver={this.driver}
             owner={this.state.contractOwner}/>
         </div>
       </div>

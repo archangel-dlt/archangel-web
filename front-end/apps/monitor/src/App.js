@@ -40,9 +40,9 @@ class Body extends Component {
           <Blocknumber driver={ethereumDriver}/>
         </div>
 
-        <Permissions/>
+        <Permissions driver={ethereumDriver} />
 
-        <EventLog/>
+        <EventLog driver={ethereumDriver} />
       </React.Fragment>
     )
   }
