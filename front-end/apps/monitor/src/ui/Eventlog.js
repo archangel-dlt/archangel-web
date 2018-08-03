@@ -13,8 +13,6 @@ class Eventlog extends Component {
     this.state = {
       groupedEvents: new Map()
     }
-
-    this.names = {}
   } // constructor
 
   componentDidMount() {
@@ -91,7 +89,7 @@ class Eventlog extends Component {
         </div>
         <div className="row col-12">
           <div className="col-8">{record.comment}</div>
-          <div className="col-4">Uploaded by <strong>{this.names[args._addr]}</strong> at {record.timestamp} </div>
+          <div className="col-4">Uploaded by <strong>{ethereumDriver.addressName(args._addr)}</strong> at {record.timestamp} </div>
         </div>
         {
           record.parent_sha256_hash &&
@@ -104,9 +102,6 @@ class Eventlog extends Component {
   formatPermissionGranted(args) {
     if (args._name === 'contract')
       this.contractOwner = args._addr;
-
-    this.names[args._addr] = args._name;
-
     return (<div className="col-12">To <strong>{args._name}</strong>, {args._addr}</div>);
   } // formatPermissionGranted
 

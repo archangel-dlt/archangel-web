@@ -18,7 +18,7 @@ class Ethereum {
   async setup(web3) {
     this.web3_ = web3;
 
-    this.grants = { }
+    this.grants = { };
 
     const networkId = 3151;
     this.loadContract(networkId);
@@ -49,6 +49,7 @@ class Ethereum {
       (err, event) => { this.eventCallback_(event) }
     );
   } // startWatching
+
   watchRegistrations() {
     stopWatching(this.registrations, 'Registration');
     stopWatching(this.updates, 'Updates');
@@ -88,7 +89,7 @@ class Ethereum {
   account() {
     const accounts = this.web3_.eth.accounts;
     return (accounts.length !== 0) ? accounts[0].toLowerCase() : null
-  }
+  } // addressName
 
   ////////////////////////////////////////////
   async store(droid_payloads, progress) {
