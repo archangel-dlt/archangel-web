@@ -5,6 +5,7 @@ import './bootstrap/css/bootstrap.css';
 import { ReactEthereum } from '@archangeldlt/web-common';
 import { Puid, prettysize } from '@archangeldlt/web-common';
 import Permissions from './ui/Permissions';
+import Blocknumber from './ui/Blocknumber';
 
 const ethereumDriver = ReactEthereum();
 const maxEvents = 2000;
@@ -38,7 +39,7 @@ class Body extends Component {
 
     this.state = {
       events: [],
-      blockNumber: 'unknown'
+      groupedEvents: new Map()
     }
 
     this.names = {}
@@ -48,22 +49,34 @@ class Body extends Component {
     ethereumDriver.watchEvents(evt => this.event(evt));
   } // componentDidMount
 
-  async blockNumber() {
-    const blockNo = await ethereumDriver.currentBlockNumber()
-    this.setState({
-      blockNumber: blockNo
-    });
-  } // blockNumber
-
   event(evt) {
+    if (evt === ethereumDriver.resetEvent) {
+      this.setState({
+        events: [ ],
+        groupedEvents: new Map()
+      });
+      return;
+    }
+
     const events = this.state.events;
 
     if(events.unshift(evt) > maxEvents)
       events.pop();
 
+    const groupedEvents = this.state.groupedEvents;
+    const key = evt.args._key || evt;
+    const eventList = groupedEvents.get(key) || [ ]
+    eventList.push(evt);
+    groupedEvents.set(key, eventList);
+
     this.setState({
-      events: (evt !== ethereumDriver.resetEvent) ? events : [ ]
-    })
+      events: events,
+      groupedEvents: groupedEvents
+    });
+
+    console.log(this.state.groupedEvents);
+
+
   } // event
 
   formatEvent(name, args) {
@@ -127,27 +140,12 @@ class Body extends Component {
   formatEvents() {
     const events = this.state.events;
 
-    const groupedEvents = new Map();
-    for (const event of events) {
-      const key = event.args._key || event;
-      const eventList = groupedEvents.get(key) || [ ]
-      eventList.unshift(event);
-      groupedEvents.delete(key);
-      groupedEvents.set(key, eventList);
-    } // for
-
     return events.map(evt => {
       return (
         <div key={evt.transactionHash}>
           <div className="row">
             <div className="col-2">Block <a href={`https://rinkeby.etherscan.io/txs?block=${evt.blockNumber}`}>{evt.blockNumber}</a></div>
-            <div className="col-2"><strong>{evt.event}</strong></div>
-            <div className="col-5"></div>
-            <div className="col-3">
-              <span className="float-right">
-                [<a href={`https://rinkeby.etherscan.io/tx/${evt.transactionHash}`}>Tx</a>]
-              </span>
-            </div>
+            <div className="col-10"><strong>{evt.event}</strong></div>
           </div>
           <div className="row">
             { this.formatEvent(evt.event, evt.args) }
@@ -158,21 +156,15 @@ class Body extends Component {
     });
   } // events
 
-  currentBlock() {
-    setTimeout(() => this.blockNumber(), 5000)
-    const blockNumber = this.state.blockNumber
-    return (
-      <div className="col-12 row justify-content-end">
-        <strong>Current Block <a href={`http://rinkeby.etherscan.io/block/${blockNumber}`}>{ blockNumber }</a></strong>
-      </div>
-    )
-  }
-
   render() {
     return (
       <React.Fragment>
-        { this.currentBlock() }
+        <div className="col-12 row justify-content-end">
+          <Blocknumber driver={ethereumDriver}/>
+        </div>
+
         <Permissions/>
+
         { this.formatEvents() }
       </React.Fragment>
     )
