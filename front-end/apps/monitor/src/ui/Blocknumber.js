@@ -8,6 +8,8 @@ class Blocknumber extends Component {
       blockNumber: 'Unknown',
       driver: props.driver
     }
+
+    this.blockNumber();
   } // constructor
 
   async blockNumber() {
@@ -15,12 +17,10 @@ class Blocknumber extends Component {
     this.setState({
       blockNumber: blockNo
     });
+    setTimeout(() => this.blockNumber(), 5000)
   } // blockNumber
 
   render() {
-    setTimeout(() => this.blockNumber(), 5000)
-    const blockNumber = this.state.blockNumber
-
     return (
       <strong>Current Block: { this.state.blockNumber }</strong>
     )
