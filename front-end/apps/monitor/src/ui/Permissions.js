@@ -117,12 +117,13 @@ class Permissions extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      grants: { }
+      grants: { },
+      driver: ethereumDriver
     }
   } // constructor
 
   componentDidMount() {
-    ethereumDriver.watchEvents(evt => this.event(evt));
+    this.state.driver.watchEvents(evt => this.event(evt));
   } // componentDidMount
 
   event(evt) {
@@ -164,12 +165,12 @@ class Permissions extends Component {
         <div className="col-6">
           <GrantedList
             grants={this.state.grants}
-            driver={ethereumDriver}
+            driver={this.state.driver}
             owner={this.state.contractOwner}/>
         </div>
         <div className="col-6">
           <Granter
-            driver={ethereumDriver}
+            driver={this.state.driver}
             owner={this.state.contractOwner}/>
         </div>
       </div>
