@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react';
+import React, { Component, Fragment } from 'react';
 import { ReactEthereum } from '@archangeldlt/web-common';
 import { Puid, prettysize } from '@archangeldlt/web-common';
 
@@ -35,15 +35,26 @@ class Eventlog extends Component {
     if(groupedEvents.size > maxEvents)
       groupedEvents.delete(groupedEvents.keys().next().value);
 
-    const key = evt.args._key || evt;
+    const key = this.groupKey(evt);
     const eventList = groupedEvents.get(key) || [ ]
     eventList.push(evt);
+    groupedEvents.delete(key);
     groupedEvents.set(key, eventList);
 
     this.setState({
       groupedEvents: groupedEvents
     });
   } // event
+
+  groupKey (evt) {
+    if (!evt.args)
+      return evt;
+    if (evt.args._key)
+      return evt.args._key;
+    if (evt.args._addr)
+      return evt.args._addr;
+    return evt;
+  } // groupKey
 
   formatEvent(name, args) {
     switch(name) {
@@ -105,18 +116,18 @@ class Eventlog extends Component {
 
   renderEvents(first, rest = []) {
     return (
-      <div key={first.transactionHash}>
-        <div className="row">
+      <Fragment key={first.transactionHash}>
+        <div className="row col-12">
           <div className="col-2">Block {first.blockNumber}</div>
           <div className="col-10"><strong>{first.event}</strong></div>
         </div>
-        <div className="row">
+        <div className="row col-12">
           { this.formatEvent(first.event, first.args) }
         </div>
         <div className="row offset-1 col-10">
           { rest.map(e => this.renderEvents(e)) }
         </div>
-      </div>
+      </Fragment>
     );
   } // renderEvents
 
