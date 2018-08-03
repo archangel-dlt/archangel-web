@@ -45,6 +45,7 @@ class Ethereum {
     this.eventCallback_(this.resetEvent);
     this.watcher_ = this.contract_.allEvents(
       { fromBlock: FromBlock },
+      // eslint-disable-next-line
       (err, event) => { this.eventCallback_(event) }
     );
   } // startWatching
@@ -55,12 +56,12 @@ class Ethereum {
     this.registrations = this.contract_.Registration(
       { },
       { fromBlock: FromBlock },
-      (err, evt) => console.log(evt)
+      () => { }
     );
     this.updates = this.contract_.Update(
       { },
       { fromBlock: FromBlock },
-      (err, evt) => console.log(evt)
+      () => { }
     );
   } // watchRegistrations
 
@@ -70,6 +71,7 @@ class Ethereum {
     this.grantsWatcher = this.contract_.PermissionGranted(
       { },
       { fromBlock: FromBlock },
+      // eslint-disable-next-line
       (err, evt) => {
         if (evt) this.grants[evt.args._addr] = evt.args._name
       }
