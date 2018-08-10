@@ -204,25 +204,18 @@ class SearchResults extends Component {
 class Search extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      driver: props.driver
-    };
 
     this.onSearch = this.onSearch.bind(this);
   } // constructors
 
-  componentWillReceiveProps(props) {
-    this.setState({
-      driver: props.driver
-    });
-  } // componentWillReceiveProps
+  get driver() { return this.props.driver; }
 
   onSearch(searchTerm) {
     this.resultsBox.clear();
-    this.state.driver.fetch(searchTerm)
+    this.driver.fetch(searchTerm)
       .then(results => this.resultsBox.setFetchResults(searchTerm, results, this.onSearch))
       .catch(error => this.resultsBox.setErrors(error));
-    this.state.driver.search(searchTerm)
+    this.driver.search(searchTerm)
       .then(results => this.resultsBox.setSearchResults(searchTerm, results, this.onSearch))
       .catch(error => this.resultsBox.setErrors(error));
   } // onSearch

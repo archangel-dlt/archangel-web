@@ -4,20 +4,19 @@ class Blocknumber extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      blockNumber: 'Unknown',
-      driver: props.driver
-    }
-
-    this.blockNumber();
+    this.state = { blockNumber: 'Unknown' };
   } // constructor
 
+  get driver() { return this.props.driver; }
+
+  componentDidMount() {
+    this.blockNumber();
+  } // componentDidMount
+
   async blockNumber() {
-    const blockNo = await this.state.driver.currentBlockNumber()
-    this.setState({
-      blockNumber: blockNo
-    });
-    setTimeout(() => this.blockNumber(), 5000)
+    const blockNo = await this.driver.currentBlockNumber()
+    this.setState({ blockNumber: blockNo });
+    setTimeout(() => this.blockNumber(), 5000);
   } // blockNumber
 
   render() {

@@ -6,9 +6,7 @@ class DriverPicker extends Component {
   constructor(props) {
     super(props);
 
-    this.drivers = {
-      'Ethereum': ReactEthereum(),
-    };
+    this.drivers = { 'Ethereum': ReactEthereum() };
 
     this.onNewDriver = props.onNewDriver;
 

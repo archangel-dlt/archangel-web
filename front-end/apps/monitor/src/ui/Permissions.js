@@ -113,12 +113,11 @@ class GrantedList extends Component {
 class Permissions extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      grants: { }
-    }
 
-    this.driver = props.driver;
+    this.state = {  grants: { } }
   } // constructor
+
+  get driver() { return this.props.driver; }
 
   componentDidMount() {
     this.driver.watchEvents(evt => this.event(evt));

@@ -7,12 +7,10 @@ class Eventlog extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      groupedEvents: new Map()
-    }
-
-    this.driver = props.driver;
+    this.state = { groupedEvents: new Map() }
   } // constructor
+
+  get driver() { return this.props.driver; }
 
   componentDidMount() {
     this.driver.watchEvents(evt => this.event(evt));
