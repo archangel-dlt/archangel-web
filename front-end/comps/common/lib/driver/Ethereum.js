@@ -45,7 +45,7 @@ class Ethereum {
     this.watcher_ = this.contract_.allEvents(
       { fromBlock: FromBlock },
       // eslint-disable-next-line
-      (err, event) => { console.log(event); this.eventCallbacks_.forEach(fn => fn(event)) }
+      (err, event) => this.eventCallbacks_.forEach(fn => fn(event))
     );
   } // startWatching
 
@@ -67,6 +67,7 @@ class Ethereum {
 
   watchGrantPermissions() {
     stopWatching(this.grantsWatcher, 'GrantPermission')
+    stopWatching(this.revokeWatcher, 'RevokePermission')
 
     this.grantsWatcher = this.contract_.PermissionGranted(
       { },
@@ -306,7 +307,7 @@ class Ethereum {
         console.log(`eth_remove(${addr}) submitted in transaction ${tx}`);
       }
     );
-  } // eth_store
+  } // eth_remove
 
   currentBlockNumber() {
     return new Promise((resolve, reject) => {
@@ -317,6 +318,16 @@ class Ethereum {
       })
     })
   } // currentBlockNumber
+
+  hasWritePermission() {
+    return new Promise((resolve, reject) => {
+      this.contract_.hasPermission(this.account(), (err, result) => {
+        if(err)
+          return reject(err);
+        resolve(result);
+      })
+    })
+  } // hasPermission
 } // class Ethereum
 
 function stopWatching(watcher, label) {

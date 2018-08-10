@@ -22,12 +22,32 @@ function Logo() {
 class Body extends Component {
   constructor(props) {
     super(props);
-    this.state = { driver: null };
+    this.state = {
+      driver: null,
+      account: null
+    };
   } // constructor
+
+  get driver() { return this.state.driver; }
+  get account() { return this.driver && this.state.driver.account(); }
 
   setDriver(driver) {
     this.setState({ driver: driver });
+
+    this.watchAccount();
   } // setDriver
+
+  watchAccount() {
+    const account = this.account;
+
+    if (this.state.account !== account) {
+      this.setState({ account: account });
+      this.state.driver.hasWritePermission()
+        .then(perm => this.setState({ canWrite: perm }));
+    }
+
+    setTimeout(() => this.watchAccount(), 2000);
+  } // watchAccount
 
   render() {
     const driver = this.state.driver;
@@ -36,14 +56,17 @@ class Body extends Component {
       <Tabs>
         <TabList>
           <Tab>Search</Tab>
-          <Tab>Upload</Tab>
+          { this.state.canWrite && <Tab>Upload</Tab> }
         </TabList>
         <TabPanel>
           <Search driver={driver}/>
         </TabPanel>
-        <TabPanel>
-          <Upload driver={driver}/>
-        </TabPanel>
+        {
+          this.state.canWrite &&
+          <TabPanel>
+            <Upload driver={driver}/>
+          </TabPanel>
+        }
       </Tabs>
     )
   } // render
