@@ -125,16 +125,23 @@ class Ethereum {
 
     const search = phrase.toLowerCase();
     const registrations = await this.registrationLog();
-    return registrations
-      .filter(
-        r =>
-          matches(r.payload, search) ||
-          matches(r.name, search) ||
-          matches(r.comment, search) ||
-          matches(r.parent_sha256_hash, search) ||
-          exact_match(r.puid, search)
-      )
-      .sort((lhs, rhs) => rhs.timestamp.localeCompare(lhs.timestamp))
+
+    const keys = registrations
+       .filter(r =>
+         matches(r.payload, search) ||
+         matches(r.name, search) ||
+         matches(r.comment, search) ||
+         matches(r.parent_sha256_hash, search) ||
+         exact_match(r.puid, search))
+       .reduce((acc, r) => acc.set(r.key, []), new Map());
+
+    const results = registrations
+      .filter(r => keys.has(r.key))
+      .sort((lhs, rhs) => rhs.timestamp.localeCompare(lhs.timestamp));
+
+    return Array.from(results
+      .reduce((acc, r) => { acc.get(r.key).push(r); return acc; }, keys)
+      .values());
   } // search
 
   ////////////////////////////////////////////
@@ -146,7 +153,12 @@ class Ethereum {
 
         const payloads = logs
           .map(l => { l.uploader = this.addressName(l.args._addr); return l; })
-          .map(l => { const p = JSON.parse(l.args._payload); p.uploader = l.uploader; return p; });
+          .map(l => {
+            const p = JSON.parse(l.args._payload);
+            p.key = l.args._key;
+            p.uploader = l.uploader;
+            return p;
+          });
 
         return resolve(payloads);
       })

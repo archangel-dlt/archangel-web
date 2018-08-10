@@ -52,24 +52,14 @@ class SearchResults extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      fetchResults: null,
       searchResults: null
     }
   } // constructor
 
   clear() {
-    this.setFetchResults(null, null);
     this.setSearchResults(null, null);
     this.setErrors(null);
   } // clear
-
-  setFetchResults(searchTerm, results, searchFn) {
-    this.setState({
-      searchTerm: searchTerm,
-      fetchResults: results,
-      searchFn: searchFn
-    });
-  } // setFetchResults
 
   setSearchResults(searchTerm, results, searchFn) {
     this.setState({
@@ -86,15 +76,15 @@ class SearchResults extends Component {
   } // setErrors
 
   render() {
-    const {searchTerm, fetchResults, searchResults, errors} = this.state;
+    const {searchTerm, searchResults, errors} = this.state;
 
-    if (!fetchResults && !searchResults && !errors)
+    if (!searchResults && !errors)
       return (<div/>)
 
     if (errors)
       return this.renderErrors(errors);
 
-    return this.renderResults(searchTerm, fetchResults, searchResults);
+    return this.renderResults(searchTerm, searchResults);
   } // render
 
   renderErrors(errors) {
@@ -111,51 +101,53 @@ class SearchResults extends Component {
     )
   } // renderErrors
 
-  renderResults(searchTerm, fetchResults, searchResults) {
-    fetchResults = fetchResults || []
-    searchResults = searchResults || []
+  renderResult(result) {
+    const record = result[0];
+    const prev = result.slice(1);
 
-    const found = fetchResults.length + searchResults.length;
-    const formatResult = record => {
-      if (record.sha256_hash)
-        return (
-          <div className="row" key={record.sha256_hash}>
-            <div className="row col-md-12">
-              <div className="col-md-8"><strong>{record.name}</strong></div>
-              <div className="col-md-2"><Puid fmt={record.puid}/></div>
+    return (
+      <div className="row" key={record.sha256_hash}>
+        <div className="row col-md-12">
+          <div className="col-md-7"><strong>{record.name}</strong></div>
+          <div className="col-md-5">
+            <div className="row">
+              <div className="col-md-3"><Puid fmt={record.puid}/></div>
               <div className="col-md-2">{ prettysize(record.size, true) }</div>
-            </div>
-            <div className="row col-md-12">
-              <div className="col-md-8"><HashLink hash={record.sha256_hash} searchFn={this.state.searchFn}/></div>
-              <div className="col-md-4">Last Modified: {record.last_modified}</div>
-            </div>
-            <div className="row col-md-12">
-              <div className="col-md-8">{record.comment}</div>
-              <div className="col-md-4">Uploaded by <strong>{record.uploader}</strong> at {record.timestamp}</div>
-            </div>
-            {
-              record.parent_sha256_hash &&
-                <div className="row col-md-12 ">
-                  <div className="col-md-8">
-                    Parent: <i><HashLink hash={record.parent_sha256_hash} searchFn={this.state.searchFn}/></i>
-                  </div>
-                </div>
-            }
-            <div className="row col-md-12">
-              <br/>
+              <div className="col-md">Last Modified: {record.last_modified}</div>
             </div>
           </div>
-        )
-
-      return (
-        <div className="row" key={record.timestamp}>
-          <div className="col-md-2">{record.id}</div>
-          <div className="col-md-7">{record.payload}</div>
-          <div className="col-md-3">{record.timestamp}</div>
         </div>
-      )
-    };
+        <div className="row col-md-12">
+          <div className="col-md-8">{record.comment}</div>
+          <div className="col-md-4"><strong>{record.uploader}</strong> at {record.timestamp}</div>
+        </div>
+        {
+          prev.map((v, i) => (
+            <div key={i} className="row col-md-12">
+              <div className="col-md-7 offset-md-1">{v.comment}</div>
+              <div className="col-md-3"><strong>{v.uploader}</strong> at {v.timestamp}</div>
+            </div>
+          ))
+        }
+        {
+          record.parent_sha256_hash &&
+          <div className="row col-md-12 ">
+            <div className="col-md-8">
+              Parent: <i><HashLink hash={record.parent_sha256_hash} searchFn={this.state.searchFn}/></i>
+            </div>
+          </div>
+        }
+        <div className="row col-md-12">
+          <br/>
+        </div>
+      </div>
+    )
+  };
 
+  renderResults(searchTerm, searchResults) {
+    searchResults = searchResults || []
+
+    const found = searchResults.length;
     return (
       <div>
         <div className="row">
@@ -166,32 +158,14 @@ class SearchResults extends Component {
               "No records found"
             }
             </span>
-            Searched for <strong>{searchTerm}</strong>
+            <h3>Searched for <strong>{searchTerm}</strong></h3>
           </div>
         </div>
+        <div className="row">
+          <br className="col-md-12"/>
+        </div>
           {
-            fetchResults.length ?
-              <div className="row">
-                <hr className="col-md-12"/>
-                <div className="col-md-12"><u>With matching key</u></div>
-              </div>
-            :
-              null
-          }
-          {
-            fetchResults.map(formatResult)
-          }
-          {
-            searchResults.length ?
-            <div className="row">
-              <hr className="col-md-12"/>
-              <div className="col-md-12"><u>With matching payload</u></div>
-            </div>
-            :
-            null
-          }
-          {
-            searchResults.map(formatResult)
+            searchResults.map(r => this.renderResult(r))
           }
         <div className="row">
           <hr className="col-md-12"/>
@@ -212,9 +186,9 @@ class Search extends Component {
 
   onSearch(searchTerm) {
     this.resultsBox.clear();
-    this.driver.fetch(searchTerm)
+    /*this.driver.fetch(searchTerm)
       .then(results => this.resultsBox.setFetchResults(searchTerm, results, this.onSearch))
-      .catch(error => this.resultsBox.setErrors(error));
+      .catch(error => this.resultsBox.setErrors(error));*/
     this.driver.search(searchTerm)
       .then(results => this.resultsBox.setSearchResults(searchTerm, results, this.onSearch))
       .catch(error => this.resultsBox.setErrors(error));
