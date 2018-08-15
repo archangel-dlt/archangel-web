@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
 import superagent from 'superagent';
 import { Puid, prettysize } from '@archangeldlt/web-common';
-import { DateTime } from "luxon";
 
 class UploadBox extends Component {
   constructor(props) {

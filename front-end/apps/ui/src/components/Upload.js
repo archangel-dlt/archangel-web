@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import UploadBox from './upload/UploadBox';
 import UploadResults from './upload/UploadResults';
+import SipInfo from './upload/SipInfo';
 import { DateTime } from 'luxon';
 
 class Upload extends Component {
@@ -23,7 +24,8 @@ class Upload extends Component {
 
   render() {
     return (
-      <div>
+      <div className='container-fluid'>
+        <SipInfo ref={sipInfo => this.sipInfo = sipInfo}/>
         <UploadBox onUpload={this.onUpload}/>
         <UploadResults ref={resultsBox => this.resultsBox = resultsBox}/>
       </div>
