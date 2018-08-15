@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
 import superagent from 'superagent';
 import { Puid, prettysize } from '@archangeldlt/web-common';
+import ReactDataGrid from 'react-data-grid';
 
 class UploadBox extends Component {
   constructor(props) {
@@ -90,20 +91,23 @@ class UploadBox extends Component {
     if (!payload || !payload.length)
       return
 
-    return ([
-      <div className="col-md-3"/>,
-      <div className="row col-md-8 form-control">
-        {
-          this.state.payload.map(item => (
-            <div id={item.name} className="row col-md-12 ">
-              <span className="col-md-8">{ item.name }</span>
-              <span className="col-md-2"><Puid fmt={ item.puid }/></span>
-              <span className="col-md-2">{ prettysize(item.size, true) }</span>
-            </div>
-          ))
-        }
-      </div>
-    ])
+    const columns = [
+      { key: 'uri', name: 'Path', resizable: true },
+      { key: 'name', name: 'File name', resizable: true },
+      { key: 'type', name: 'Type', resizable: true },
+      { key: 'puid', name: 'Puid', resizable: true },
+      { key: 'sha256_hash', name: 'Hash', resizable: true },
+      { key: 'size', name: 'Size', resizable: true },
+      { key: 'last_modified', name: 'Last Modified', resizable: true }
+    ];
+
+    return (
+      <ReactDataGrid
+        columns={columns}
+        rowGetter={i => payload[i]}
+        rowsCount={payload.length}
+        minHeight={200} />
+    );
   } // renderFileInfo
 
   render() {
