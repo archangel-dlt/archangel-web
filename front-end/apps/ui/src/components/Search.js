@@ -26,24 +26,26 @@ class SearchBox extends Component {
 
   render() {
     return (
-      <form className="form-group row" onSubmit={this.handleSubmit}>
-        <div className="row col-md-12">
-          <input
-            type="text"
-            className="form-control col-md-12"
-            placeholder="Search Archangel"
-            value={this.state.searchTerm}
-            onChange={this.handleChange}/>
-        </div>
-        <div className="row col-md-12">
-          <div className="col-md-10"/>
-          <button
-            type="submit"
-            className="btn btn-primary col-md-2"
-            disabled={!this.state.searchTerm}>Search
-          </button>
-        </div>
-      </form>
+      <div className='container-fluid'>
+        <form className="form-group row" onSubmit={this.handleSubmit}>
+          <div className="row col-md-12">
+            <input
+              type="text"
+              className="form-control col-md-12"
+              placeholder="Search Archangel"
+              value={this.state.searchTerm}
+              onChange={this.handleChange}/>
+          </div>
+          <div className="row col-md-12">
+            <div className="col-md-10"/>
+            <button
+              type="submit"
+              className="btn btn-primary col-md-2"
+              disabled={!this.state.searchTerm}>Search
+            </button>
+          </div>
+        </form>
+      </div>
     )
   } // react
 } // SearchBox
@@ -164,13 +166,13 @@ class SearchResults extends Component {
         <div className="row">
           <br className="col-md-12"/>
         </div>
-          {
-            searchResults.map(r => this.renderResult(r))
-          }
+        {
+          searchResults.map(r => this.renderResult(r))
+        }
         <div className="row">
           <hr className="col-md-12"/>
         </div>
-     </div>
+      </div>
     )
   } // renderResults
 } // SearchResults

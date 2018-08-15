@@ -105,43 +105,45 @@ class UploadBox extends Component {
 
   render() {
     return (
-      <form className="form-group row" onSubmit={this.handleSubmit}>
-        <div className="row col-md-12">
+      <div className='container-fluid'>
+        <form className="form-group row" onSubmit={this.handleSubmit}>
+          <div className="row col-md-12">
           <span className="form-text col-md-2">
             File
           </span>
-          <Dropzone onDrop={this.handleFileDrop}
-                    disabled={this.state.disableUpload}
-                    className="form-control col-md-10">
-            Drop a file here, or click to select a file
-          </Dropzone>
-        </div>
+            <Dropzone onDrop={this.handleFileDrop}
+                      disabled={this.state.disableUpload}
+                      className="form-control col-md-10">
+              Drop a file here, or click to select a file
+            </Dropzone>
+          </div>
 
-        <div className="row col-md-12">
-          <span className="col-md-12 text-center"><strong>{this.state.message}</strong></span>
-        </div>
+          <div className="row col-md-12">
+            <span className="col-md-12 text-center"><strong>{this.state.message}</strong></span>
+          </div>
 
-        { this.renderFileInfo() }
+          { this.renderFileInfo() }
 
-        <div className="row col-md-12">
+          <div className="row col-md-12">
           <span className="form-text col-md-2">
             Comment
           </span>
-          <textarea
-            className="form-control col-md-10"
-            value={this.state.comment}
-            onChange={this.handleCommentChange}
+            <textarea
+              className="form-control col-md-10"
+              value={this.state.comment}
+              onChange={this.handleCommentChange}
             />
-        </div>
-        <div className="row col-md-12">
-          <div className="col-md-10"/>
-          <button
-            type="submit"
-            className="btn btn-primary col-md-2"
-            disabled={!(this.state.payload)}>Upload
-          </button>
-        </div>
-      </form>
+          </div>
+          <div className="row col-md-12">
+            <div className="col-md-10"/>
+            <button
+              type="submit"
+              className="btn btn-primary col-md-2"
+              disabled={!(this.state.payload)}>Upload
+            </button>
+          </div>
+        </form>
+      </div>
     )
   } // render
 } // class UploadBox

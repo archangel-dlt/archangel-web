@@ -12,8 +12,8 @@ import Upload from './components/Upload';
 function Logo() {
   return (
     <div>
-      <img src={logo} className="App-logo float-left" alt="logo" />
-      <h1 className="App-title">Archangel-DLT</h1>
+      <img src={logo} className='App-logo float-left' alt='logo' />
+      <h1 className='App-title'>Archangel-DLT</h1>
       <p>For all your long term archive validation needs ...</p>
     </div>
   );
@@ -56,7 +56,7 @@ class Body extends Component {
       <Tabs>
         <TabList>
           <Tab>Search</Tab>
-          { this.state.canWrite && <Tab>Upload</Tab> }
+          { this.state.canWrite && <Tab className='react-tabs__tab offset-10'>Create SIP</Tab> }
         </TabList>
         <TabPanel>
           <Search driver={driver}/>
@@ -75,29 +75,29 @@ class Body extends Component {
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header row">
-          <div className="col-md-8">
+      <div className='App'>
+        <header className='App-header row'>
+          <div className='col-md-8'>
             <Logo/>
           </div>
-          <div className="col-md-4">
+          <div className='col-md-4'>
             <DriverPicker
               onNewDriver={ driver => this.body.setDriver(driver) }
               ref={ picker => this.picker = picker }
             />
           </div>
         </header>
-        <div className="App-body row">
-          <div className="col-md-1"/>
-          <div className="col-md-10">
-            <Body
-              ref={ body => {
-                this.body = body;
-                body.setDriver(this.picker.currentDriver);
-              } }
-            />
+        <div className='App-body container-fluid'>
+          <div className='flex-row'>
+            <div className='col-md-12'>
+              <Body
+                ref={ body => {
+                  this.body = body;
+                  body.setDriver(this.picker.currentDriver);
+                } }
+              />
+            </div>
           </div>
-          <div className="col-md-1"/>
         </div>
       </div>
     );
