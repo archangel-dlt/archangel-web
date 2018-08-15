@@ -203,14 +203,9 @@ class UploadResults extends Component {
 class Upload extends Component {
   constructor(props) {
     super(props);
-    this.driver = props.driver;
 
     this.onUpload = this.onUpload.bind(this);
   } // constructor
-
-  componentWillReceiveProps(props) {
-    this.driver = props.driver;
-  } // componentWillReceiveProps
 
   onUpload(payloads, comment) {
     const timestamp = DateTime.utc().toFormat('yyyy-MM-dd\'T\'HH:mm:ssZZ');
@@ -220,26 +215,8 @@ class Upload extends Component {
       item.timestamp = timestamp;
     });
 
-    this.driver.store(payloads, this.resultsBox);
+    this.props.driver.store(payloads, this.resultsBox);
   } // onUpload
-
-  /*uploadItem(payload, index) {
-    if (index === payload.length)
-      return;
-
-    const item = payload[index];
-    this.resultsBox.message(`Submitting ${item.name}`)
-    this.driver.store(item)
-      .then(msg => {
-        this.resultsBox.message(msg);
-        this.uploadItem(payload, index+1)
-      })
-      .catch(error => {
-        this.resultsBox.error(error);
-        this.uploadItem(payload, index+1)
-      });
-  } // uploadItem
-  */
 
   render() {
     return (
