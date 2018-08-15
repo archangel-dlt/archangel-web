@@ -1,13 +1,13 @@
 import Ethereum from './driver/Ethereum';
 import ReactEthereum from './driver-components/Ethereum';
-import Puid from './ui/Puid';
-import prettysize from './ui/prettysize';
 import Field from './ui/Field';
+import FileSizeFormatter from './ui/formatter/FileSize';
+import PuidFormatter from './ui/formatter/Puid';
 
 export {
   ReactEthereum,
   Ethereum,
-  Puid,
-  prettysize,
-  Field
+  Field,
+  FileSizeFormatter,
+  PuidFormatter
 };

@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from 'react';
-import { Puid, prettysize } from '@archangeldlt/web-common';
+import { PuidFormatter, FileSizeFormatter } from '@archangeldlt/web-common';
 import HashLink from './HashLink';
 import { Field } from '@archangeldlt/web-common';
 
@@ -107,8 +107,8 @@ class SearchResults extends Component {
           <div className='col-md-7'><strong>{record.name}</strong></div>
           <div className='col-md-5'>
             <div className='row'>
-              <div className='col-md-3'><Puid fmt={record.puid}/></div>
-              <div className='col-md-2'>{ prettysize(record.size, true) }</div>
+              <div className='col-md-3'><PuidFormatter value={record.puid}/></div>
+              <div className='col-md-2'><FileSizeFormatter value={record.size}/></div>
               <div className='col-md'>Last Modified: {record.last_modified}</div>
             </div>
           </div>
