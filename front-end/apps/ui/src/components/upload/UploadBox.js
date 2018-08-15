@@ -1,8 +1,19 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import Dropzone from 'react-dropzone';
 import superagent from 'superagent';
 import { Puid, prettysize } from '@archangeldlt/web-common';
 import ReactDataGrid from 'react-data-grid';
+import PropTypes from 'prop-types';
+
+class FileSize extends PureComponent {
+  static propTypes = {
+    value: PropTypes.number.isRequired
+  };
+
+  render() {
+    return prettysize(this.props.value, true);
+  }
+} // class FileSize
 
 class UploadBox extends Component {
   constructor(props) {
@@ -97,7 +108,7 @@ class UploadBox extends Component {
       { key: 'type', name: 'Type', resizable: true },
       { key: 'puid', name: 'Puid', resizable: true },
       { key: 'sha256_hash', name: 'Hash', resizable: true },
-      { key: 'size', name: 'Size', resizable: true },
+      { key: 'size', name: 'Size', resizable: true, formatter: FileSize },
       { key: 'last_modified', name: 'Last Modified', resizable: true }
     ];
 
