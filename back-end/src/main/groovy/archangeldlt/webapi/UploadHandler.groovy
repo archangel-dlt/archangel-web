@@ -22,7 +22,7 @@ class UploadHandler extends GroovyHandler {
       def lastModified = it['lastModified']
 
       File.createTempDir('archangel-droid', 'tmp').with { dir ->
-        println "Created directory ${dir.name}"
+        println "Created directory ${dir.absolutePath}"
         def file = new File(dir, candidate.fileName)
         println "Created file ${file.name}"
 
@@ -34,7 +34,7 @@ class UploadHandler extends GroovyHandler {
           file.setLastModified(Long.parseLong(lastModified))
 
         def csvExport = characterizeFile(file.absolutePath)
-        def jsonExport = convertExportToJson(csvExport)
+        def jsonExport = convertExportToJson(csvExport, dir.absolutePath)
 
         file.delete()
 

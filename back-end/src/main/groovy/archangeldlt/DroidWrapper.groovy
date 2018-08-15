@@ -41,10 +41,10 @@ class DroidWrapper {
     return csvExport
   } // characterizeFile
 
-  static def convertExportToJson(String csvExport) {
+  static def convertExportToJson(String csvExport, String tmpDirPath) {
     def csvReader = new CSVReader(new StringReader(csvExport), ',' as Character, '"' as Character)
     def columnNames = csvReader.readNext().collect { it.toString().trim() }
-    def desiredColumns = ['ID', 'PARENT_ID', 'NAME', 'SIZE', 'TYPE', 'LAST_MODIFIED', 'SHA256_HASH', 'PUID']
+    def desiredColumns = ['ID', 'PARENT_ID', 'URI', 'NAME', 'SIZE', 'TYPE', 'LAST_MODIFIED', 'SHA256_HASH', 'PUID']
 
     def json = csvReader.readAll().collect { line ->
       def index = 0
@@ -56,7 +56,7 @@ class DroidWrapper {
       }
     }
 
-    json = fixupJson(json)
+    json = fixupJson(json, tmpDirPath)
 
     return json
   } // convertExportToJson
@@ -67,7 +67,7 @@ class DroidWrapper {
     cmdLine.processExecution()
   } // droid
 
-  static private def fixupJson(def jsonArray) {
+  static private def fixupJson(def jsonArray, tmpDirPath) {
     def idToHash = jsonArray.collectEntries {
       [ (it['ID']): it['SHA256_HASH']]
     }
@@ -78,9 +78,10 @@ class DroidWrapper {
     for (def line : jsonArray) {
       def parent = line['PARENT_ID']
       line << [ PARENT_SHA256_HASH : parent ? idToHash[parent] : '' ]
-    }
 
-    jsonArray.removeAll { it['TYPE'] == 'Folder' }
+      def uri = line['URI']
+      line['URI'] = uri.replaceAll(tmpDirPath, '')
+    }
 
     return jsonArray
   } // fixupJson
