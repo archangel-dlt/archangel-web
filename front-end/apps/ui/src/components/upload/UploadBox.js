@@ -1,19 +1,8 @@
-import React, { Component, PureComponent } from 'react';
+import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
 import superagent from 'superagent';
 import { FileSizeFormatter, PuidFormatter } from '@archangeldlt/web-common';
 import ReactDataGrid from 'react-data-grid';
-import PropTypes from 'prop-types';
-
-class PuidLink extends PureComponent {
-  static propTypes = {
-    value: PropTypes.string.isRequired
-  };
-
-  render() {
-    return (<PuidFormatter value={ this.props.value }/>);
-  }
-}
 
 class UploadBox extends Component {
   constructor(props) {
@@ -31,20 +20,24 @@ class UploadBox extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   } // constructor
 
-  handleFileDrop(files) {
-    this.setState({
-      'disableUpload': true,
-      'message': 'Sending file to DROID for characterization ...'
-    })
+  async handleFileDrop(files) {
+    for(const file of files) {
+      this.setState({
+        'disableUpload': true,
+        'message': `Sending '${file.name}' to DROID for characterization ...`
+      })
 
-    const file = files[0]
+      try {
+        const response = await superagent
+          .post('upload')
+          .field('lastModified', file.lastModified)
+          .attach('candidate', file)
 
-    superagent
-      .post('upload')
-      .field('lastModified', file.lastModified)
-      .attach('candidate', file)
-      .then(response => this.fileCharacterised(response.body))
-      .catch(err => this.fileCharacterisationFailed(err))
+        this.fileCharacterised(response.body);
+      } catch (err) {
+        this.fileCharacterisationFailed(err);
+      }
+    } // for ...
   } // handleFileDrop
 
   fileCharacterised(droidInfo) {
@@ -125,24 +118,44 @@ class UploadBox extends Component {
     return (
       <form className="form-group container-fluid" onSubmit={this.handleSubmit}>
         <div className="row">
-          { this.renderFileInfo() }
-
-          <span className="form-text col-md-2">
-            File
-          </span>
+          <FileInfo payload={this.state.payload}/>
+        </div>
+        <div className="row">
+          <div className="col-md-10">{this.state.message}</div>
           <Dropzone onDrop={this.handleFileDrop}
                     disabled={this.state.disableUpload}
-                    className="form-control col-md-10">
-            Drop a file here, or click to select a file
+                    className="form-control btn btn-secondary col-md-2">
+            Add Files
           </Dropzone>
-        </div>
-
-        <div className="row">
-          <span className="col-md-12 text-center"><strong>{this.state.message}</strong></span>
         </div>
       </form>
     )
   } // render
 } // class UploadBox
+
+function FileInfo({payload}) {
+  if (!payload || !payload.length)
+    return null;
+
+  const columns = [
+    { key: 'uri', name: 'Path', resizable: true },
+    { key: 'name', name: 'File name', resizable: true },
+    { key: 'type', name: 'Type', resizable: true },
+    { key: 'puid', name: 'Puid', resizable: true, formatter: PuidFormatter },
+    { key: 'sha256_hash', name: 'Hash', resizable: true },
+    { key: 'size', name: 'Size', resizable: true, formatter: FileSizeFormatter },
+    { key: 'last_modified', name: 'Last Modified', resizable: true }
+  ];
+
+  const size = payload.length > 5 ? 500 : 200;
+
+  return (
+    <ReactDataGrid
+      columns={columns}
+      rowGetter={i => payload[i]}
+      rowsCount={payload.length}
+      minHeight={size} />
+  );
+} // renderFileInfo
 
 export default UploadBox;
