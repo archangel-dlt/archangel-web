@@ -8,7 +8,8 @@ class UploadBox extends Component {
     super(props);
     this.state = {
       disableUpload: false,
-      message: ''
+      message: '',
+      payload: [ ]
     };
 
     this.onUpload = props.onUpload;
@@ -21,8 +22,7 @@ class UploadBox extends Component {
   handleFileDrop(files) {
     this.setState({
       'disableUpload': true,
-      'message': 'Sending file to DROID for characterization ...',
-      'payload': null
+      'message': 'Sending file to DROID for characterization ...'
     })
 
     const file = files[0]
@@ -43,6 +43,7 @@ class UploadBox extends Component {
 
     const json = droidInfo.map(info => {
       const j = {
+        uri: info.URI,
         name: info.NAME,
         puid: info.PUID,
         sha256_hash: info.SHA256_HASH,
@@ -58,8 +59,10 @@ class UploadBox extends Component {
       return j;
     })
 
+    const payload = this.state.payload;
+    payload.push(...json);
     this.setState({
-      'payload': json
+      'payload': payload
     })
   } // fileCharacterised
 
@@ -83,7 +86,8 @@ class UploadBox extends Component {
   } // handleSubmit
 
   renderFileInfo() {
-    if (!this.state.payload)
+    const payload = this.state.payload;
+    if (!payload || !payload.length)
       return
 
     return ([
