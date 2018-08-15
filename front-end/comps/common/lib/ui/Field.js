@@ -21,11 +21,11 @@ class Field extends Component {
         <div className='container-fluid'>
           <div className='row'>
             {
-              this.props.title && <label className='col-md-2'>this.props.title</label>
+              this.props.title && <label className='col-md-2'>{this.props.title}</label>
             }
             <input
               type='text'
-              className='form-control col-md'
+              className={`form-control ${this.props.length === 'small' ? 'col-md-4' : 'col-md'}`}
               placeholder={this.props.placeholder}
               value={this.state.value}
               onChange={event => this.handleChange(event)}/>
