@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import { Puid, prettysize } from '@archangeldlt/web-common';
 import HashLink from './HashLink';
 
@@ -8,10 +8,6 @@ class SearchBox extends Component {
     this.state = {
       searchTerm: ''
     };
-    this.onSearch = props.onSearch;
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   } // constructor
 
   handleChange(event) {
@@ -20,21 +16,20 @@ class SearchBox extends Component {
 
   handleSubmit(event) {
     if (this.state.searchTerm)
-      this.onSearch(this.state.searchTerm);
+      this.props.onSearch(this.state.searchTerm);
     event.preventDefault();
   } // handleSubmit
 
   render() {
     return (
       <div className='container-fluid'>
-        <form className="form-group row" onSubmit={this.handleSubmit}>
+        <form className="form-group row" onSubmit={event => this.handleSubmit(event)}>
           <div className="row col-md-12">
             <input
               type="text"
               className="form-control col-md-12"
               placeholder="Search Archangel"
-              value={this.state.searchTerm}
-              onChange={this.handleChange}/>
+              onChange={event => this.handleChange(event)}/>
           </div>
           <div className="row col-md-12">
             <div className="col-md-10"/>
@@ -177,20 +172,11 @@ class SearchResults extends Component {
   } // renderResults
 } // SearchResults
 
-class Search extends Component {
-  constructor(props) {
-    super(props);
-
-    this.onSearch = this.onSearch.bind(this);
-  } // constructors
-
+class Search extends PureComponent {
   get driver() { return this.props.driver; }
 
   onSearch(searchTerm) {
     this.resultsBox.clear();
-    /*this.driver.fetch(searchTerm)
-      .then(results => this.resultsBox.setFetchResults(searchTerm, results, this.onSearch))
-      .catch(error => this.resultsBox.setErrors(error));*/
     this.driver.search(searchTerm)
       .then(results => this.resultsBox.setSearchResults(searchTerm, results, this.onSearch))
       .catch(error => this.resultsBox.setErrors(error));
@@ -199,7 +185,7 @@ class Search extends Component {
   render() {
     return (
       <div>
-        <SearchBox onSearch={this.onSearch}/>
+        <SearchBox onSearch={searchTerm => this.onSearch(searchTerm)}/>
         <SearchResults ref={resultsBox => this.resultsBox = resultsBox}/>
       </div>
     );
