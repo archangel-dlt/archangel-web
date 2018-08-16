@@ -79,10 +79,19 @@ class Upload extends Component {
   upload() {
     const timestamp = DateTime.utc().toFormat('yyyy-MM-dd\'T\'HH:mm:ssZZ');
     const { data, files } = this.state;
+    const strippedFiles = files.map(file => {
+      return {
+        type: file.type,
+        puid: file.puid,
+        sha256_hash: file.sha256_hash,
+        size: file.size,
+        last_modified: file.last_modified
+      }
+    })
 
     const payload = {
       data,
-      files,
+      files: strippedFiles,
       timestamp
     }
 
