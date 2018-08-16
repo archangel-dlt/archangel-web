@@ -37,10 +37,10 @@ class SipInfo extends PureComponent {
     return (
       <Fragment>
         <Field title='Citation Reference' length='small' onValue={v => this.update(citation, v)} disabled={this.props.readonly} initialValue={this.props.initialData.citation}/>
-        <hr/>
+        <br/>
         <Field title='Supplier' onValue={v => this.update(supplier, v)} disabled={this.props.readonly} initialValue={this.props.initialData.supplier}/>
         <Field title='Creator' onValue={v => this.update(creator, v)} disabled={this.props.readonly} initialValue={this.props.initialData.creator}/>
-        <hr/>
+        <br/>
         <Field title='Rights statement' onValue={v => this.update(rights, v)} disabled={this.props.readonly} initialValue={this.props.initialData.rights}/>
         <Field title='Held By' onValue={v => this.update(held, v)} disabled={this.props.readonly} initialValue={this.props.initialData.held}/>
       </Fragment>
