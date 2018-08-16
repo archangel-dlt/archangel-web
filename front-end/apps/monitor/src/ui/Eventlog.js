@@ -82,13 +82,13 @@ class Eventlog extends Component {
   formatSip({data, files, timestamp}, addr) {
     return (
       <Fragment>
-      <SipInfo initialData={data} readonly={true}/>
-      <div className='container-fluid'>
-        <div className='row'>
-          <div className='col-6 offset-2'>Contains {files.length} file{files.length > 1 ? 's' : '' }.</div>
-          <div className="col-4">Uploaded by <strong>{this.driver.addressName(addr)}</strong> at {timestamp} </div>
+        <SipInfo initialData={data} readonly={true}/>
+        <div className='container-fluid'>
+          <div className='row'>
+            <div className='col-6 offset-2'>Contains {files.length} file{files.length > 1 ? 's' : '' }.</div>
+            <div className="col-4">Uploaded by <strong>{this.driver.addressName(addr)}</strong> at {timestamp} </div>
+          </div>
         </div>
-      </div>
       </Fragment>
     )
   } // formatSip
