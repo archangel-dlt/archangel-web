@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
 import superagent from 'superagent';
-import { FileSizeFormatter, PuidFormatter } from '@archangeldlt/web-common';
-import ReactDataGrid from 'react-data-grid';
+import { FileList } from '@archangeldlt/web-common';
 
 class UploadBox extends Component {
   constructor(props) {
@@ -73,30 +72,6 @@ class UploadBox extends Component {
     })
   } // fileCharacterised
 
-  renderFileInfo() {
-    const payload = this.state.payload;
-    if (!payload || !payload.length)
-      return
-
-    const columns = [
-      { key: 'uri', name: 'Path', resizable: true },
-      { key: 'name', name: 'File name', resizable: true },
-      { key: 'type', name: 'Type', resizable: true },
-      { key: 'puid', name: 'Puid', resizable: true, formatter: PuidFormatter },
-      { key: 'sha256_hash', name: 'Hash', resizable: true },
-      { key: 'size', name: 'Size', resizable: true, formatter: FileSizeFormatter },
-      { key: 'last_modified', name: 'Last Modified', resizable: true }
-    ];
-
-    return (
-      <ReactDataGrid
-        columns={columns}
-        rowGetter={i => payload[i]}
-        rowsCount={payload.length}
-        minHeight={200} />
-    );
-  } // renderFileInfo
-
   render() {
     return (
       <div className="container-fluid">
@@ -110,41 +85,11 @@ class UploadBox extends Component {
           <div className="col-md-6 offset-md-4">{this.state.message}</div>
         </div>
         <div className="row">
-          <FileInfo payload={this.state.payload} readonly={this.props.readonly}/>
+          <FileList files={this.state.payload} readonly={this.props.readonly}/>
         </div>
       </div>
     )
   } // render
 } // class UploadBox
-
-function FileInfo({payload, readonly}) {
-  if (!payload || !payload.length)
-    return null;
-
-  const columns = [
-    { key: 'type', name: 'Type', resizable: true },
-    { key: 'puid', name: 'Puid', resizable: true, formatter: PuidFormatter },
-    { key: 'sha256_hash', name: 'Hash', resizable: true },
-    { key: 'size', name: 'Size', resizable: true, formatter: FileSizeFormatter },
-    { key: 'last_modified', name: 'Last Modified', resizable: true }
-  ];
-
-  if (!readonly) {
-    columns.unshift(
-      { key: 'uri', name: 'Path', resizable: true },
-      { key: 'name', name: 'File name', resizable: true },
-    )
-  }
-
-  const size = payload.length > 5 ? 500 : 200;
-
-  return (
-    <ReactDataGrid
-      columns={columns}
-      rowGetter={i => payload[i]}
-      rowsCount={payload.length}
-      minHeight={size} />
-  );
-} // renderFileInfo
 
 export default UploadBox;
