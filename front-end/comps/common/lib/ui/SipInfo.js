@@ -1,4 +1,4 @@
-import React, { PureComponent, Fragment } from 'react';
+import React, { PureComponent } from 'react';
 import Field from './Field';
 
 const citation = 'citation';
@@ -34,17 +34,29 @@ class SipInfo extends PureComponent {
   } // update
 
   render() {
-    return (
-      <Fragment>
-        <Field title='Citation Reference' length='small' onValue={v => this.update(citation, v)} disabled={this.props.readonly} initialValue={this.props.initialData.citation}/>
-        <br/>
-        <Field title='Supplier' onValue={v => this.update(supplier, v)} disabled={this.props.readonly} initialValue={this.props.initialData.supplier}/>
-        <Field title='Creator' onValue={v => this.update(creator, v)} disabled={this.props.readonly} initialValue={this.props.initialData.creator}/>
-        <br/>
-        <Field title='Rights statement' onValue={v => this.update(rights, v)} disabled={this.props.readonly} initialValue={this.props.initialData.rights}/>
-        <Field title='Held By' onValue={v => this.update(held, v)} disabled={this.props.readonly} initialValue={this.props.initialData.held}/>
-      </Fragment>
-    );
+    const fields = [
+      { title: 'Citation Reference', field: citation, length: 'small' },
+      { title: '--' },
+      { title: 'Supplier', field: supplier },
+      { title: 'Creator', field: creator },
+      { title: '--' },
+      { title: 'Rights Statement', field: rights },
+      { title: 'Held By', field: held }
+    ];
+
+    return fields.map((field, i) => {
+      if (field.title === '--')
+        return (<br key={i}/>)
+      return (
+        <Field
+          key={i}
+          title={field.title}
+          length={field.length}
+          onValue={v => this.update(field.field, v)}
+          disabled={this.props.readonly}
+          initialValue={this.props.initialData ? this.props.initialData[field.field] : null}/>
+      )
+    });
   } // render
 } // Class SipInfo
 
