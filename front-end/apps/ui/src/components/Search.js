@@ -1,7 +1,5 @@
-import React, { Component, PureComponent } from 'react';
-import { PuidFormatter, FileSizeFormatter } from '@archangeldlt/web-common';
-import HashLink from './HashLink';
-import { Field } from '@archangeldlt/web-common';
+import React, { Component, PureComponent, Fragment } from 'react';
+import { SipInfo, FileList, Field } from '@archangeldlt/web-common';
 
 class SearchBox extends Component {
   constructor(props) {
@@ -25,12 +23,12 @@ class SearchBox extends Component {
     return (
       <div className='container-fluid'>
         <form className='form-group row' onSubmit={event => this.handleSubmit(event)}>
-          <Field
-            className='row col-md-12'
-            placeholder='Search Archangel'
-            onValue={v => this.handleChange(v)}
-          />
-
+          <div className='row col-md-12'>
+              <Field
+              placeholder='Search Archangel'
+              onValue={v => this.handleChange(v)}
+            />
+          </div>
           <div className='row col-md-12'>
             <button
               type='submit'
@@ -99,44 +97,20 @@ class SearchResults extends Component {
 
   renderResult(result) {
     const record = result[0];
-    const prev = result.slice(1);
+    //const prev = result.slice(1);
 
     return (
-      <div className='row' key={record.sha256_hash}>
-        <div className='row col-md-12'>
-          <div className='col-md-7'><strong>{record.name}</strong></div>
-          <div className='col-md-5'>
-            <div className='row'>
-              <div className='col-md-3'><PuidFormatter value={record.puid}/></div>
-              <div className='col-md-2'><FileSizeFormatter value={record.size}/></div>
-              <div className='col-md'>Last Modified: {record.last_modified}</div>
-            </div>
+      <Fragment>
+        <SipInfo initialData={record.data} readonly={true}/>
+        <FileList files={record.files} readonly={true}/>
+        <div className='container-fluid'>
+          <div className='row'>
+            <div className='col-6 offset-2'>Contains {record.files.length} file{record.files.length > 1 ? 's' : '' }.</div>
+            <div className="col-4">Uploaded by <strong>{record.uploader}</strong> at {record.timestamp} </div>
           </div>
         </div>
-        <div className='row col-md-12'>
-          <div className='col-md-8'>{record.comment}</div>
-          <div className='col-md-4'><strong>{record.uploader}</strong> at {record.timestamp}</div>
-        </div>
-        {
-          prev.map((v, i) => (
-            <div key={i} className='row col-md-12'>
-              <div className='col-md-7 offset-md-1'>{v.comment}</div>
-              <div className='col-md-3'><strong>{v.uploader}</strong> at {v.timestamp}</div>
-            </div>
-          ))
-        }
-        {
-          record.parent_sha256_hash &&
-          <div className='row col-md-12 '>
-            <div className='col-md-8'>
-              Parent: <i><HashLink hash={record.parent_sha256_hash} searchFn={this.state.searchFn}/></i>
-            </div>
-          </div>
-        }
-        <div className='row col-md-12'>
-          <br/>
-        </div>
-      </div>
+        <hr/>
+      </Fragment>
     )
   };
 
@@ -150,8 +124,8 @@ class SearchResults extends Component {
           <div className='col-md-12'>
             <span className='float-right'>
             {found ?
-              `${found} records found` :
-              'No records found'
+              `${found} SIP${found>1 ? 's' : ''} found` :
+              'No SIPs found'
             }
             </span>
             <h3>Searched for <strong>{searchTerm}</strong></h3>
