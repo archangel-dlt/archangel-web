@@ -92,14 +92,8 @@ class Ethereum {
   } // addressName
 
   ////////////////////////////////////////////
-  async store(droid_payloads, progress) {
-    const uploads = droid_payloads.map(droid_payload => {
-      progress.message(`Submitting ${droid_payload.name}`);
-      return this.eth_store(droid_payload.sha256_hash, droid_payload)
-        .then(msg => progress.message(msg))
-        .catch(msg => progress.error(msg));
-    });
-    return Promise.all(uploads);
+  store(key, payload) {
+    return this.eth_store(key, payload);
   } // store
 
   async fetch(id) {
@@ -257,7 +251,7 @@ class Ethereum {
           if (err)
             return reject(err);
           txHash = tx;
-          console.log(`${slug.name} submitted in transaction ${tx}`);
+          console.log(`${id} submitted in transaction ${tx}`);
           onCommitted(timeout);
         });
     })
