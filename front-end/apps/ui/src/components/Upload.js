@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import UploadBox from './upload/UploadBox';
 import SipInfo from './upload/SipInfo';
+import { DateTime } from "luxon";
 
 function CreateBtn({disabled, visible, onClick}) {
   return (
@@ -46,9 +47,16 @@ class Upload extends Component {
     this.state = {
       step: 'creating',
       files: null,
-      data: null
+      data: null,
+      count: 0
     }
   } // constructor
+
+  reset() {
+    this.setState({ count: this.count + 1 });
+    this.updateCanCreate(null, null);
+  } // reset
+  get count() { return this.state.count; }
 
   onData(data) { this.updateCanCreate(data, this.state.files); }
   onFiles(files) { this.updateCanCreate(this.state.data, files); }
@@ -63,39 +71,59 @@ class Upload extends Component {
 
   onCreate() { this.setState({ step: 'canConfirm' }); }
   onBack() { this.setState({ step: 'canCreate' }); }
-  onConfirm() { this.setState({ step: 'uploading' }); }
+  onConfirm() {
+    this.setState({ step: 'uploading' });
+    this.upload();
+  } // onConfirm
 
-  get isCreating() { return this.state.step === 'canCreate' || this.state.step === 'creating'}
+  upload() {
+    const timestamp = DateTime.utc().toFormat('yyyy-MM-dd\'T\'HH:mm:ssZZ');
+    const { data, files } = this.state;
+
+    const payload = {
+      data,
+      files,
+      timestamp
+    }
+
+    this.props.driver.store(data.citation, payload)
+      .then(() => this.reset())
+      .catch(err => { alert(err); this.setState({ step: 'canConfirm' }); });
+  } // upload
+
+  get isCreating() { return (this.state.step === 'canCreate') || (this.state.step === 'creating') }
   get canCreate() { return this.state.step === 'canCreate'; }
-  get isConfirming() { return this.state.step === 'canConfirm' || this.state.step === 'uploading' }
+  get isConfirming() { return (this.state.step === 'canConfirm') || (this.state.step === 'uploading') }
   get canConfirm() { return this.state.step === 'canConfirm'; }
 
   render() {
     return (
-      <div className='container-fluid'>
-        <CreateBtn
-          disabled={!this.canCreate}
-          visible={this.isCreating}
-          onClick={() => this.onCreate()}/>
-        <ConfirmBtn
-          disabled={!this.canConfirm}
-          visible={this.isConfirming}
-          onClick={() => this.onConfirm()}
-          onBack={() => this.onBack()}/>
+      <Fragment>
+        <div className='container-fluid'>
+          <CreateBtn
+            disabled={!this.canCreate}
+            visible={this.isCreating}
+            onClick={() => this.onCreate()}/>
+          <ConfirmBtn
+            disabled={!this.canConfirm}
+            visible={this.isConfirming}
+            onClick={() => this.onConfirm()}
+            onBack={() => this.onBack()}/>
 
-        <SipInfo onData={data => this.onData(data)} readonly={this.isConfirming}/>
-        <hr/>
-        <UploadBox onFiles={files => this.onFiles(files)} readonly={this.isConfirming}/>
+          <SipInfo key={`sip-${this.count}`} onData={data => this.onData(data)} readonly={this.isConfirming}/>
+          <hr/>
+          <UploadBox key={`files-${this.count}`} onFiles={files => this.onFiles(files)} readonly={this.isConfirming}/>
 
-        <CreateBtn
-          disabled={!this.canCreate}
-          visible={this.isCreating}
-          onClick={() => this.onCreate()}/>
-        <ConfirmBtn
-          visible={this.canConfirm}
-          onClick={() => this.onConfirm()}
-          onBack={() => this.onBack()}/>
-      </div>
+          <CreateBtn
+            disabled={!this.canCreate}
+            visible={this.isCreating}
+            onClick={() => this.onCreate()}/>
+          <ConfirmBtn
+            visible={this.canConfirm}
+            onClick={() => this.onConfirm()}
+            onBack={() => this.onBack()}/>
+        </div>
+      </Fragment>
     )
   } // render
 } // class Upload

@@ -28,20 +28,23 @@ class UploadResults extends Component {
   } // error
 
   render() {
+    return null;
+    /*
     const {messages} = this.state;
 
     if (messages.length === 0)
       return (<div/>)
 
     return UploadResults.renderResults(messages);
+    */
   } // render
 
   static renderResults(messages) {
     return (
-      <div>
+      <div className='container-fluid'>
         {
-          messages.map(msg => (
-            <div className='row'>
+          messages.map((msg, i) => (
+            <div className='row' key={i}>
               <div className='col-md-12'>{msg}</div>
             </div>
           ))
