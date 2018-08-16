@@ -12,20 +12,17 @@ class UploadBox extends Component {
       message: '',
       payload: [ ]
     };
-
-    this.onUpload = props.onUpload;
-
-    this.handleFileDrop = this.handleFileDrop.bind(this);
-    this.handleCommentChange = this.handleCommentChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   } // constructor
 
+  get onFiles() { return this.props.onFiles; }
+  get files() { return this.state.payload; }
+
   async handleFileDrop(files) {
+    this.onFiles(null);
+    this.disableUpload();
+
     for(const file of files) {
-      this.setState({
-        'disableUpload': true,
-        'message': `Sending '${file.name}' to DROID for characterization ...`
-      })
+      this.message(`Sending '${file.name}' to DROID for characterization ...`);
 
       try {
         const response = await superagent
@@ -35,17 +32,22 @@ class UploadBox extends Component {
 
         this.fileCharacterised(response.body);
       } catch (err) {
-        this.fileCharacterisationFailed(err);
+        this.message(`File characterisation failed : ${err}`);
       }
     } // for ...
+
+    this.onFiles(this.state.payload);
+    this.enableUpload();
+    this.resetMessage();
   } // handleFileDrop
 
-  fileCharacterised(droidInfo) {
-    this.setState({
-      'disableUpload': false,
-      'message': ''
-    })
+  disableUpload() { this.setState({'disableUpload': true}); }
+  enableUpload() { this.setState({'disableUpload': false}); }
 
+  message(msg) { this.setState({'message': msg}); }
+  resetMessage() { this.message(''); }
+
+  fileCharacterised(droidInfo) {
     const json = droidInfo.map(info => {
       const j = {
         uri: info.URI,
@@ -70,25 +72,6 @@ class UploadBox extends Component {
       'payload': payload
     })
   } // fileCharacterised
-
-  fileCharacterisationFailed(err) {
-    this.setState({
-      'disableUpload': false,
-      'message': `File characterisation failed : ${err}`
-    })
-  } // fileCharacterisationFailed
-
-  handleCommentChange(event) {
-    this.setState({
-      'comment': event.target.value
-    });
-  } // update
-
-  handleSubmit(event) {
-    if (this.state.payload)
-      this.onUpload(this.state.payload, this.state.comment);
-    event.preventDefault();
-  } // handleSubmit
 
   renderFileInfo() {
     const payload = this.state.payload;
@@ -116,19 +99,20 @@ class UploadBox extends Component {
 
   render() {
     return (
-      <form className="form-group container-fluid" onSubmit={this.handleSubmit}>
+      <div className="container-fluid">
         <div className="row">
-          <FileInfo payload={this.state.payload}/>
-        </div>
-        <div className="row">
-          <div className="col-md-10">{this.state.message}</div>
-          <Dropzone onDrop={this.handleFileDrop}
+          <Dropzone onDrop={files => this.handleFileDrop(files)}
                     disabled={this.state.disableUpload}
+                    disabledClassName="disabled"
                     className="form-control btn btn-secondary col-md-2">
             Add Files
           </Dropzone>
+          <div className="col-md-6 offset-4">{this.state.message}</div>
         </div>
-      </form>
+        <div className="row">
+          <FileInfo payload={this.state.payload}/>
+        </div>
+      </div>
     )
   } // render
 } // class UploadBox

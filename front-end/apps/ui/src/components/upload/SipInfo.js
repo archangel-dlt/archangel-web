@@ -8,6 +8,15 @@ const rights = 'rights';
 const held = 'held';
 
 class SipInfo extends PureComponent {
+  get onData() { return this.props.onData; }
+
+  get dataReady() {
+    for (const f of [citation, supplier, creator, rights, held])
+      if (!this[f])
+        return false;
+    return true;
+  } // get
+
   get data() {
     return {
       [citation]: this[citation],
@@ -20,6 +29,8 @@ class SipInfo extends PureComponent {
 
   update(field, value) {
     this[field] = value
+
+    this.onData(this.dataReady ? this.data : null);
   } // update
 
   render() {
