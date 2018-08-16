@@ -121,12 +121,12 @@ class Ethereum {
     const registrations = await this.registrationLog();
 
     const keys = registrations
+       .filter(r => r.data)
        .filter(r =>
-         matches(r.payload, search) ||
-         matches(r.name, search) ||
-         matches(r.comment, search) ||
-         matches(r.parent_sha256_hash, search) ||
-         exact_match(r.puid, search))
+         matches(r.data.creator, search) ||
+         matches(r.data.supplier, search) ||
+         matches(r.data.held, search) ||
+         matches(r.data.citation, search))
        .reduce((acc, r) => acc.set(r.key, []), new Map());
 
     const results = registrations
