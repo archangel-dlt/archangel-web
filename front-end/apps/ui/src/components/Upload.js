@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import UploadBox from './upload/UploadBox';
-import SipInfo from './upload/SipInfo';
+import { SipInfo } from '@archangeldlt/web-common';
 import { DateTime } from "luxon";
 
 function CreateBtn({disabled, visible, onClick}) {
