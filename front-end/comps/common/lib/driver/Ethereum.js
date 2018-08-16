@@ -4,7 +4,7 @@ const ArchangelContract = require('./ethereum/Archangel.json')
 const FromBlock = 80380;
 const NullId = '0x0000000000000000000000000000000000000000000000000000000000000000';
 
-const gasLimit = 750000
+const gasLimit = 75000000;
 
 class Ethereum {
   get resetEvent() { return "RESET"; }
@@ -13,7 +13,7 @@ class Ethereum {
   constructor(web3) {
     this.setup(web3);
 
-    this.eventCallbacks_ = [ ];
+    this.eventCallbacks_ = [ (event) => console.log(event) ];
   } // constructor
 
   ////////////////////////////////////////////
