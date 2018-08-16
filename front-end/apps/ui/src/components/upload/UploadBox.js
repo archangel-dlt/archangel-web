@@ -100,36 +100,41 @@ class UploadBox extends Component {
   render() {
     return (
       <div className="container-fluid">
-        <div className="row">
+        <div className={"row " + (this.props.readonly ? 'd-none' : '')}>
           <Dropzone onDrop={files => this.handleFileDrop(files)}
                     disabled={this.state.disableUpload}
                     disabledClassName="disabled"
                     className="form-control btn btn-secondary col-md-2">
             Add Files
           </Dropzone>
-          <div className="col-md-6 offset-4">{this.state.message}</div>
+          <div className="col-md-6 offset-md-4">{this.state.message}</div>
         </div>
         <div className="row">
-          <FileInfo payload={this.state.payload}/>
+          <FileInfo payload={this.state.payload} readonly={this.props.readonly}/>
         </div>
       </div>
     )
   } // render
 } // class UploadBox
 
-function FileInfo({payload}) {
+function FileInfo({payload, readonly}) {
   if (!payload || !payload.length)
     return null;
 
   const columns = [
-    { key: 'uri', name: 'Path', resizable: true },
-    { key: 'name', name: 'File name', resizable: true },
     { key: 'type', name: 'Type', resizable: true },
     { key: 'puid', name: 'Puid', resizable: true, formatter: PuidFormatter },
     { key: 'sha256_hash', name: 'Hash', resizable: true },
     { key: 'size', name: 'Size', resizable: true, formatter: FileSizeFormatter },
     { key: 'last_modified', name: 'Last Modified', resizable: true }
   ];
+
+  if (!readonly) {
+    columns.unshift(
+      { key: 'uri', name: 'Path', resizable: true },
+      { key: 'name', name: 'File name', resizable: true },
+    )
+  }
 
   const size = payload.length > 5 ? 500 : 200;
 
