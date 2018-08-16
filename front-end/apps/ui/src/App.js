@@ -56,7 +56,7 @@ class Body extends Component {
       <Tabs>
         <TabList>
           <Tab>Search</Tab>
-          { this.state.canWrite && <Tab className='react-tabs__tab offset-10'>Create SIP</Tab> }
+          { this.state.canWrite && <Tab className='react-tabs__tab offset-10'>SIP</Tab> }
         </TabList>
         <TabPanel>
           <Search driver={driver}/>
