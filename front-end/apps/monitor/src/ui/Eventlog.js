@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Puid, prettysize } from '@archangeldlt/web-common';
+import { PuidFormatter, FileSizeFormatter, SipInfo } from '@archangeldlt/web-common';
 
 const maxEvents = 2000;
 
@@ -72,12 +72,34 @@ class Eventlog extends Component {
 
   formatRegistration(args) {
     const record = JSON.parse(args._payload);
+
+    if (record.name)
+      return this.formatOldRecord(record, args._addr);
+
+    return this.formatSip(record, args._addr);
+  } // formatRegistration
+
+  formatSip({data, files, timestamp}, addr) {
+    return (
+      <Fragment>
+      <SipInfo initialData={data} readonly={true}/>
+      <div className='container-fluid'>
+        <div className='row'>
+          <div className='col-6 offset-2'>Contains {files.length} file{files.length > 1 ? 's' : '' }.</div>
+          <div className="col-4">Uploaded by <strong>{this.driver.addressName(addr)}</strong> at {timestamp} </div>
+        </div>
+      </div>
+      </Fragment>
+    )
+  } // formatSip
+
+  formatOldRecord(record, addr) {
     return (
       <div className="col-12 row">
         <div className="row col-12">
           <div className="col-8"><strong>{record.name}</strong></div>
-          <div className="col-2"><Puid fmt={record.puid}/></div>
-          <div className="col-2">{ prettysize(record.size, true) }</div>
+          <div className="col-2"><PuidFormatter value={record.puid}/></div>
+          <div className="col-2"><FileSizeFormatter value={record.size}/></div>
         </div>
         <div className="row col-12">
           <div className="col-8">{record.sha256_hash}</div>
@@ -85,7 +107,7 @@ class Eventlog extends Component {
         </div>
         <div className="row col-12">
           <div className="col-8">{record.comment}</div>
-          <div className="col-4">Uploaded by <strong>{this.driver.addressName(args._addr)}</strong> at {record.timestamp} </div>
+          <div className="col-4">Uploaded by <strong>{this.driver.addressName(addr)}</strong> at {record.timestamp} </div>
         </div>
         {
           record.parent_sha256_hash &&
@@ -93,7 +115,7 @@ class Eventlog extends Component {
         }
       </div>
     )
-  } // formatRegistration
+  } // formatOldRecord
 
   formatPermissionGranted(args) {
     if (args._name === 'contract')
