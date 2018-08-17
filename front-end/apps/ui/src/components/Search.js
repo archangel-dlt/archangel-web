@@ -115,7 +115,8 @@ class SearchResults extends Component {
   };
 
   renderResults(searchTerm, searchResults) {
-    searchResults = searchResults || []
+    searchResults = searchResults || [];
+    searchResults.reverse();
 
     const found = searchResults.length;
     return (
