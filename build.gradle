@@ -43,7 +43,7 @@ task start(type: CrossPlatformExec,
   group 'Top'
   description 'Builds ui and back-end, starts the server'
 
-  commandLine './archangel-web', '--web'
+  commandLine './archangel-web'
   workingDir './back-end/build/install/archangel-web/bin/'
 }
 
