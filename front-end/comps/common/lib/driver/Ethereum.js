@@ -1,17 +1,25 @@
 import { DateTime } from 'luxon';
 
 const ArchangelContract = require('./ethereum/Archangel.json')
-const NetworkId = {
-  Rinkeby: 4,
-  Archangel: 3151
-};
-const FromBlock = {
-  Rinkeby: 2898300,
-  Archangel: 80380
-};
-const NullId = '0x0000000000000000000000000000000000000000000000000000000000000000';
 
-const gasLimit = 75000000;
+const Network = {
+  "4": {
+    id: 4,
+    name: 'Rinkeby',
+    fromBlock: 2898300,
+    gasLimit: 7000000,
+    gasPrice: 10*1e9
+  },
+  "3151": {
+    id: 3151,
+    name: 'Archangel',
+    fromBlock: 80380,
+    gasLimit: 75000000,
+    gasPrice: undefined
+  }
+}
+
+const NullId = '0x0000000000000000000000000000000000000000000000000000000000000000';
 
 class Ethereum {
   get resetEvent() { return "RESET"; }
@@ -23,21 +31,36 @@ class Ethereum {
     this.eventCallbacks_ = [ (event) => console.log(event) ];
   } // constructor
 
-  ////////////////////////////////////////////
-  async setup(web3, networkName = 'Rinkeby') {
+  //////////////////////////////////////////
+  async setup(web3) {
     this.web3_ = web3;
 
     this.grants = { };
 
-    const networkId = NetworkId[networkName];
-    this.loadContract(networkId);
+    this.network = await Ethereum.findNetwork(web3);
+    console.log(`Using ${this.network.name} network`);
 
-    this.fromBlock = FromBlock[networkName];
+    this.loadContract(this.network.id);
 
     this.startWatching();
     this.watchRegistrations();
     this.watchGrantPermissions();
   } // setup
+
+  static findNetwork(web3) {
+    return new Promise((resolve, reject) => {
+      web3.version.getNetwork((err, netId) => {
+        if (err)
+          return reject(err);
+        const network = Network[netId];
+        resolve(network);
+      })
+    });
+  } // findNetwork
+
+  get fromBlock() { return this.network.fromBlock; }
+  get gasLimit() { return this.network.gasLimit; }
+  get gasPrice() { return this.network.gasPrice; }
 
   loadContract(networkId) {
     const contractClass = this.web3_.eth.contract(ArchangelContract.abi);
@@ -253,7 +276,8 @@ class Ethereum {
       this.contract_.store.estimateGas(id, slugStr,
         {
           from: account,
-          gas: gasLimit
+          gas: this.gasLimit,
+          gasPrice: this.gasPrice
         },
         (err, gas) => {
           if (err)
@@ -265,7 +289,8 @@ class Ethereum {
       this.contract_.store(id, slugStr,
         {
           from: account,
-          gas: gasLimit
+          gas: this.gasLimit,
+          gasPrice: this.gasPrice
         },
         (err, tx) => {
           if (err)
