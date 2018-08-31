@@ -1,7 +1,14 @@
 import { DateTime } from 'luxon';
 
 const ArchangelContract = require('./ethereum/Archangel.json')
-const FromBlock = 80380;
+const NetworkId = {
+  Rinkeby: 4,
+  Archangel: 3151
+};
+const FromBlock = {
+  Rinkeby: 2898300,
+  Archangel: 80380
+};
 const NullId = '0x0000000000000000000000000000000000000000000000000000000000000000';
 
 const gasLimit = 75000000;
@@ -17,13 +24,15 @@ class Ethereum {
   } // constructor
 
   ////////////////////////////////////////////
-  async setup(web3) {
+  async setup(web3, networkName = 'Rinkeby') {
     this.web3_ = web3;
 
     this.grants = { };
 
-    const networkId = 3151;
+    const networkId = NetworkId[networkName];
     this.loadContract(networkId);
+
+    this.fromBlock = FromBlock[networkName];
 
     this.startWatching();
     this.watchRegistrations();
@@ -43,7 +52,7 @@ class Ethereum {
 
   startWatching() {
     this.watcher_ = this.contract_.allEvents(
-      { fromBlock: FromBlock },
+      { fromBlock: this.fromBlock },
       // eslint-disable-next-line
       (err, event) => this.eventCallbacks_.forEach(fn => fn(event))
     );
@@ -55,12 +64,12 @@ class Ethereum {
 
     this.registrations = this.contract_.Registration(
       { },
-      { fromBlock: FromBlock },
+      { fromBlock: this.fromBlock },
       () => { }
     );
     this.updates = this.contract_.Update(
       { },
-      { fromBlock: FromBlock },
+      { fromBlock: this.fromBlock },
       () => { }
     );
   } // watchRegistrations
@@ -71,7 +80,7 @@ class Ethereum {
 
     this.grantsWatcher = this.contract_.PermissionGranted(
       { },
-      { fromBlock: FromBlock },
+      { fromBlock: this.fromBlock },
       // eslint-disable-next-line
       (err, evt) => {
         if (evt) this.grants[evt.args._addr] = evt.args._name
@@ -240,6 +249,17 @@ class Ethereum {
           setTimeout(() => onCommitted(timeout), 5000);
         });
       }; // onCommitted
+
+      this.contract_.store.estimateGas(id, slugStr,
+        {
+          from: account,
+          gas: gasLimit
+        },
+        (err, gas) => {
+          if (err)
+            return console.log('Could not estimate gas', err);
+          console.log(`Gas estimate ${gas}`);
+        });
 
       const timeout = DateTime.local().plus({seconds: 60});
       this.contract_.store(id, slugStr,
