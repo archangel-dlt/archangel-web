@@ -147,8 +147,8 @@ class Ethereum {
   async search(phrase) {
     const matches = (field, search) =>
       field && field.toLowerCase().indexOf(search) !== -1;
-    const exact_match = (field, search) =>
-      field && field.toLowerCase() === search;
+    const file_hash_match = (files, search) =>
+      !!files.find(f => (f.sha256_hash === search));
 
     const search = phrase.toLowerCase();
     const registrations = await this.registrationLog();
@@ -159,7 +159,8 @@ class Ethereum {
          matches(r.data.creator, search) ||
          matches(r.data.supplier, search) ||
          matches(r.data.held, search) ||
-         matches(r.data.citation, search))
+         matches(r.data.citation, search) ||
+         file_hash_match(r.files, search))
        .reduce((acc, r) => acc.set(r.key, []), new Map());
 
     const results = registrations
