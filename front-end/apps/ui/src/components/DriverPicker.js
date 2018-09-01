@@ -12,8 +12,16 @@ class DriverPicker extends Component {
 
     const initialDriver = Object.keys(this.drivers)[0];
     const driver = this.drivers[initialDriver];
-    this.state = { driver: driver };
+    this.state = {
+      driver: driver,
+      settled: 0
+    };
+
+    this.waitToSettle();
   } // constructor
+
+  waitToSettle() { setTimeout(() => this.settled(), 1000); }
+  settled() { this.setState({ settled: this.state.settled + 1 }); }
 
   get currentDriver() { return this.state.driver; }
 
@@ -21,6 +29,7 @@ class DriverPicker extends Component {
     const driver = this.drivers[driverName];
     this.setState({ driver: driver });
     this.onNewDriver(driver);
+    this.waitToSettle();
   } // onDriverChange
 
   driverPickerUI() {

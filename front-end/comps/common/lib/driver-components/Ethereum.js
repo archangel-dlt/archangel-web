@@ -35,7 +35,7 @@ class ReactEthereum extends Ethereum {
 
   onProviderChange(key) {
     const provider = providers().filter(p => p.name === key)[0].provider;
-    this.setup(new Web3(provider))
+    this.setup(new Web3(provider));
   } // onProviderChange
 
   ///////////////////////////////
@@ -60,6 +60,7 @@ class ReactEthereum extends Ethereum {
                 <a target='_blank' rel="noopener noreferrer" href='https://addons.mozilla.org/en-US/firefox/addon/ether-metamask/'>Firefox</a> and
                 <a target='_blank' rel="noopener noreferrer" href='https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en'>Chrome</a></span></sup>
         }
+        <sub className="col-md-12"><span className="float-right">Connected to { this.networkName } network</span></sub>
       </React.Fragment>
     );
   } // render

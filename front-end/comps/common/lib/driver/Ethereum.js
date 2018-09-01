@@ -58,6 +58,7 @@ class Ethereum {
     });
   } // findNetwork
 
+  get networkName() { return this.network ? this.network.name : 'undetermined'; }
   get fromBlock() { return this.network.fromBlock; }
   get gasLimit() { return this.network.gasLimit; }
   get gasPrice() { return this.network.gasPrice; }
