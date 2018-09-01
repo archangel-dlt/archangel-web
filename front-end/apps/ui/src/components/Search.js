@@ -25,7 +25,7 @@ class SearchBox extends Component {
         <form className='form-group row' onSubmit={event => this.handleSubmit(event)}>
           <div className='row col-md-12'>
               <Field
-              placeholder='Search Archangel'
+              placeholder='Search Archangel - text search or file hash'
               onValue={v => this.handleChange(v)}
             />
           </div>
