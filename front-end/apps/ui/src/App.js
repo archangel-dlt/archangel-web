@@ -24,7 +24,8 @@ class Body extends Component {
     super(props);
     this.state = {
       driver: null,
-      account: null
+      account: null,
+      tabIndex: 0
     };
   } // constructor
 
@@ -53,29 +54,30 @@ class Body extends Component {
     const driver = this.state.driver;
 
     return (
-      <Tabs>
+      <Tabs
+          selectedIndex={this.state.tabIndex}
+          onSelect={tabIndex => this.setState({ tabIndex, sip: null })}
+      >
         <TabList>
           <Tab>Search</Tab>
           { this.state.canWrite &&
-          <Fragment>
             <Tab className='react-tabs__tab offset-9'>New SIP</Tab>
-            <Tab className='react-tabs__tab'>AIP</Tab>
-          </Fragment>
           }
-        </TabList>
+          { this.state.sip &&
+            <Tab className='react-tabs__tab'>AIP</Tab>
+          }
+          </TabList>
         <TabPanel>
-          <Search driver={driver} canWrite={this.state.canWrite}/>
+          <Search
+            driver={driver}
+            canWrite={this.state.canWrite}
+            onCreateAIP={sip => this.setState({ tabIndex: 2, sip: sip })}/>
         </TabPanel>
-        {
-          this.state.canWrite &&
-            <Fragment>
-              <TabPanel>
-                <CreateSIP driver={driver}/>
-              </TabPanel>
-              <TabPanel>
-                Something here
-              </TabPanel>
-            </Fragment>
+        { this.state.canWrite &&
+          <TabPanel><CreateSIP driver={driver}/></TabPanel>
+        }
+        { this.state.sip &&
+          <TabPanel>Something here</TabPanel>
         }
       </Tabs>
     )

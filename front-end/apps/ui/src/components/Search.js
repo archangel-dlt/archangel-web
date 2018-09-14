@@ -109,7 +109,9 @@ class SearchResults extends Component {
           </div>
           { (record.data.pack === 'sip' && this.props.canWrite) && (
             <div className='row'>
-              <button className='btn btn-primary offset-md-10 col-md-2'>
+              <button
+                  className='btn btn-primary offset-md-10 col-md-2'
+                  onClick={() => this.props.onCreateAIP(record)}>
                 Update SIP
               </button>
             </div>
@@ -168,7 +170,8 @@ class Search extends PureComponent {
         <SearchBox onSearch={searchTerm => this.onSearch(searchTerm)}/>
         <SearchResults
           ref={resultsBox => this.resultsBox = resultsBox}
-          canWrite={this.props.canWrite}/>
+          canWrite={this.props.canWrite}
+          onCreateAIP={sip => this.props.onCreateAIP(sip)}/>
       </div>
     );
   } // render
