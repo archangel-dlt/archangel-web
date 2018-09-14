@@ -34,8 +34,16 @@
   display: inline-block;
   border: 1px solid #aaaaaa;
   border-bottom: none;
+  border-radius: 5px 5px 0 0;
   position: relative;
   list-style: none;
   padding: 6px 12px;
   cursor: pointer
+}
+
+.react-tabs__tab--selected {
+  background: #fff;
+  color: black;
+  border: 2px solid #aaaaaa;
+  border-bottom: none;
 }

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
-import './App.css';
 import './bootstrap/css/bootstrap.css'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import './App.css';
 
 import DriverPicker from './components/DriverPicker';
 import Search from './components/Search';
