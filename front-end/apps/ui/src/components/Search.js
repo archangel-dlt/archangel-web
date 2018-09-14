@@ -112,7 +112,7 @@ class SearchResults extends Component {
               <button
                   className='btn btn-primary offset-md-10 col-md-2'
                   onClick={() => this.props.onCreateAIP(record)}>
-                Update SIP
+                Create AIP
               </button>
             </div>
           )}
