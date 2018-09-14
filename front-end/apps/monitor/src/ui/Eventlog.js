@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { PuidFormatter, FileSizeFormatter, SipInfo } from '@archangeldlt/web-common';
+import { PuidFormatter, FileSizeFormatter, PackageInfo } from '@archangeldlt/web-common';
 
 const maxEvents = 2000;
 
@@ -76,13 +76,13 @@ class Eventlog extends Component {
     if (record.name)
       return this.formatOldRecord(record, args._addr);
 
-    return this.formatSip(record, args._addr);
+    return this.formatPackage(record, args._addr);
   } // formatRegistration
 
-  formatSip({data, files, timestamp}, addr) {
+  formatPackage({data, files, timestamp}, addr) {
     return (
       <Fragment>
-        <SipInfo initialData={data} readonly={true}/>
+        <PackageInfo initialData={data} readonly={true}/>
         <div className='container-fluid'>
           <div className='row'>
             <div className='col-6 offset-2'>Contains {files.length} file{files.length > 1 ? 's' : '' }.</div>
@@ -91,7 +91,7 @@ class Eventlog extends Component {
         </div>
       </Fragment>
     )
-  } // formatSip
+  } // formatPackage
 
   formatOldRecord(record, addr) {
     return (

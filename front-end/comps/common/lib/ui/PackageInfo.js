@@ -10,7 +10,7 @@ const creator = 'creator';
 const rights = 'rights';
 const held = 'held';
 
-class PackageInfo extends PureComponent {
+class PackageFields extends PureComponent {
   constructor(props, fields) {
     super(props);
     this.fields = fields;
@@ -74,7 +74,7 @@ const aipFields = [
   ...sipFields
 ]
 
-class SipInfo extends PackageInfo {
+class SipInfo extends PackageFields {
   constructor(props) {
     super(props, sipFields);
     this[key] = uuid();
@@ -82,7 +82,7 @@ class SipInfo extends PackageInfo {
   }
 }
 
-class AipInfo extends PackageInfo {
+class AipInfo extends PackageFields {
   constructor(props) {
     super(props, aipFields);
     this[key] = this.props.initialData[key]
@@ -90,4 +90,10 @@ class AipInfo extends PackageInfo {
   }
 }
 
-export { SipInfo, AipInfo };
+function PackageInfo({ initialData }) {
+  if (initialData.pack === 'aip')
+    return (<AipInfo initialData={initialData} readonly={true}/>)
+  return (<SipInfo initialData={initialData} readonly={true}/>)
+}
+
+export { SipInfo, AipInfo, PackageInfo };
