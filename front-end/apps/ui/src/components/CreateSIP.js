@@ -40,7 +40,7 @@ function ConfirmBtn({disabled, visible, onClick, onBack}) {
 } // CreateBtn
 
 
-class Upload extends Component {
+class CreateSIP extends Component {
   constructor(props) {
     super(props);
 
@@ -137,4 +137,4 @@ class Upload extends Component {
   } // render
 } // class Upload
 
-export default Upload;
+export default CreateSIP;

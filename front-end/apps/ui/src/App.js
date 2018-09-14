@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import logo from './logo.svg';
 import './bootstrap/css/bootstrap.css'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
@@ -7,7 +7,7 @@ import './App.css';
 
 import DriverPicker from './components/DriverPicker';
 import Search from './components/Search';
-import Upload from './components/Upload';
+import CreateSIP from './components/CreateSIP';
 
 function Logo() {
   return (
@@ -56,16 +56,26 @@ class Body extends Component {
       <Tabs>
         <TabList>
           <Tab>Search</Tab>
-          { this.state.canWrite && <Tab className='react-tabs__tab offset-10'>New SIP</Tab> }
+          { this.state.canWrite &&
+          <Fragment>
+            <Tab className='react-tabs__tab offset-9'>New SIP</Tab>
+            <Tab className='react-tabs__tab'>AIP</Tab>
+          </Fragment>
+          }
         </TabList>
         <TabPanel>
-          <Search driver={driver}/>
+          <Search driver={driver} canWrite={this.state.canWrite}/>
         </TabPanel>
         {
           this.state.canWrite &&
-          <TabPanel>
-            <Upload driver={driver}/>
-          </TabPanel>
+            <Fragment>
+              <TabPanel>
+                <CreateSIP driver={driver}/>
+              </TabPanel>
+              <TabPanel>
+                Something here
+              </TabPanel>
+            </Fragment>
         }
       </Tabs>
     )

@@ -107,7 +107,7 @@ class SearchResults extends Component {
             <div className='col-6 offset-2'>Contains {record.files.length} file{record.files.length > 1 ? 's' : '' }.</div>
             <div className="col-4">Uploaded by <strong>{record.uploader}</strong> at {record.timestamp} </div>
           </div>
-          { record.data.pack === 'sip' && (
+          { (record.data.pack === 'sip' && this.props.canWrite) && (
             <div className='row'>
               <button className='btn btn-primary offset-md-10 col-md-2'>
                 Update SIP
@@ -166,7 +166,9 @@ class Search extends PureComponent {
     return (
       <div>
         <SearchBox onSearch={searchTerm => this.onSearch(searchTerm)}/>
-        <SearchResults ref={resultsBox => this.resultsBox = resultsBox}/>
+        <SearchResults
+          ref={resultsBox => this.resultsBox = resultsBox}
+          canWrite={this.props.canWrite}/>
       </div>
     );
   } // render
