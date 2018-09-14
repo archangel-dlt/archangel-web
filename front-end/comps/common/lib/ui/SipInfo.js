@@ -1,6 +1,9 @@
 import React, { PureComponent } from 'react';
 import Field from './Field';
+import uuid from 'uuid/v1';
 
+const key = 'key';
+const pack = 'pack';
 const citation = 'citation';
 const supplier = 'supplier';
 const creator = 'creator';
@@ -11,7 +14,7 @@ class SipInfo extends PureComponent {
   get onData() { return this.props.onData; }
 
   get dataReady() {
-    for (const f of [citation, supplier, creator, rights, held])
+    for (const f of [supplier, creator, rights, held])
       if (!this[f])
         return false;
     return true;
@@ -19,7 +22,9 @@ class SipInfo extends PureComponent {
 
   get data() {
     return {
-      [citation]: this[citation],
+      [key]: uuid(),
+      [pack]: 'sip',
+      // [citation]: this[citation],
       [supplier]: this[supplier],
       [creator]: this[creator],
       [rights]: this[rights],
@@ -35,8 +40,8 @@ class SipInfo extends PureComponent {
 
   render() {
     const fields = [
-      { title: 'Citation Reference', field: citation, length: 'small' },
-      { title: '--' },
+      // { title: 'Citation Reference', field: citation, length: 'small' },
+      // { title: '--' },
       { title: 'Supplier', field: supplier },
       { title: 'Creator', field: creator },
       { title: '--' },
