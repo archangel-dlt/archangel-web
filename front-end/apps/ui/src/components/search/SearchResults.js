@@ -109,13 +109,11 @@ class SearchResults extends Component {
       <div>
         <div className='row'>
           <div className='col-md-12'>
-            <span className='float-right'>
+            <h3>Searched for <strong>{searchTerm}</strong></h3>
             {found ?
               `${found} package${found>1 ? 's' : ''} found` :
               'No packages found'
             }
-            </span>
-            <h3>Searched for <strong>{searchTerm}</strong></h3>
           </div>
         </div>
         <div className='row'>
