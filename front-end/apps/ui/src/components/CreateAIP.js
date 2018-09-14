@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { SipInfo, FileList } from '@archangeldlt/web-common';
+import { AipInfo, FileList } from '@archangeldlt/web-common';
 import { DateTime } from "luxon";
 
 function CreateBtn({disabled, visible, onClick}) {
@@ -79,19 +79,9 @@ class CreateAIP extends Component {
   upload() {
     const timestamp = DateTime.utc().toFormat('yyyy-MM-dd\'T\'HH:mm:ssZZ');
     const { data, files } = this.state;
-    const strippedFiles = files.map(file => {
-      return {
-        type: file.type,
-        puid: file.puid,
-        sha256_hash: file.sha256_hash,
-        size: file.size,
-        last_modified: file.last_modified
-      }
-    })
-
     const payload = {
       data,
-      files: strippedFiles,
+      files,
       timestamp
     }
 
@@ -119,7 +109,7 @@ class CreateAIP extends Component {
             onClick={() => this.onConfirm()}
             onBack={() => this.onBack()}/>
 
-          <SipInfo initialData={this.state.data} readonly={this.isConfirming}/>
+          <AipInfo initialData={this.state.data} readonly={this.isConfirming} onData={data => this.onData(data)}/>
           <FileList files={this.state.files} readonly={true}/>
 
           <CreateBtn

@@ -1,5 +1,5 @@
 import React, { Component, PureComponent, Fragment } from 'react';
-import { SipInfo, FileList, Field } from '@archangeldlt/web-common';
+import { AipInfo, SipInfo, FileList, Field } from '@archangeldlt/web-common';
 
 class SearchBox extends Component {
   constructor(props) {
@@ -100,7 +100,11 @@ class SearchResults extends Component {
 
     return (
       <Fragment>
-        <SipInfo initialData={record.data} readonly={true}/>
+        {
+          record.data.pack === 'aip'
+            ? <AipInfo initialData={record.data} readonly={true}/>
+            : <SipInfo initialData={record.data} readonly={true}/>
+        }
         <FileList files={record.files} readonly={true}/>
         <div className='container-fluid'>
           <div className='row'>
