@@ -47,3 +47,40 @@
   border: 2px solid #aaaaaa;
   border-bottom: none;
 }
+
+.Collapsible__trigger {
+  display: block;
+  font-weight: 400;
+  text-decoration: none;
+  position: relative;
+  border: 1px solid white;
+  padding: 10px;
+}
+
+.Collapsible__trigger:after {
+  font-family: 'FontAwesome';
+  content: '\f107';
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: block;
+  transition: transform 300ms;
+}
+
+.Collapsible__trigger.is-open:after {
+  font-family: 'FontAwesome';
+  content: '\f107';
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: block;
+  transition: transform 300ms;
+  transform: rotateZ(180deg);
+}
+
+.SearchResult {
+  border: 1px solid #aaaaaa;
+  margin-bottom: 10px;
+}
+
+

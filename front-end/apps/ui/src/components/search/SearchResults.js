@@ -1,5 +1,31 @@
 import React, { Component, Fragment } from 'react';
-import { PackageInfo, FileList, Field } from '@archangeldlt/web-common';
+import Collapsible from 'react-collapsible';
+import { PackageInfo, FileList } from '@archangeldlt/web-common';
+
+function SearchResult({ record, canWrite, onCreateAIP }) {
+  return (
+    <Fragment>
+      <PackageInfo initialData={record.data}/>
+      <FileList files={record.files} readonly={true}/>
+      <div className='container-fluid'>
+        <div className='row'>
+          <div className='col-6 offset-2'>Contains {record.files.length} file{record.files.length > 1 ? 's' : '' }.</div>
+          <div className="col-4">Uploaded by <strong>{record.uploader}</strong> at {record.timestamp} </div>
+        </div>
+        { (record.data.pack === 'sip' && canWrite) && (
+          <div className='row'>
+            <button
+              className='btn btn-primary offset-md-10 col-md-2'
+              onClick={() => onCreateAIP(record)}>
+              Create AIP
+            </button>
+          </div>
+        )}
+      </div>
+      <hr/>
+    </Fragment>
+  );
+} // SearchResult
 
 class SearchResults extends Component {
   constructor(props) {
@@ -56,29 +82,21 @@ class SearchResults extends Component {
 
   renderResult(result) {
     const record = result[0];
-    //const prev = result.slice(1);
+    const prev = result.slice(1);
 
     return (
-      <Fragment>
-        <PackageInfo initialData={record.data}/>
-        <FileList files={record.files} readonly={true}/>
-        <div className='container-fluid'>
-          <div className='row'>
-            <div className='col-6 offset-2'>Contains {record.files.length} file{record.files.length > 1 ? 's' : '' }.</div>
-            <div className="col-4">Uploaded by <strong>{record.uploader}</strong> at {record.timestamp} </div>
-          </div>
-          { (record.data.pack === 'sip' && this.props.canWrite) && (
-            <div className='row'>
-              <button
-                className='btn btn-primary offset-md-10 col-md-2'
-                onClick={() => this.props.onCreateAIP(record)}>
-                Create AIP
-              </button>
-            </div>
-          )}
-        </div>
-        <hr/>
-      </Fragment>
+      <div className='SearchResult'>
+        <SearchResult
+          record={record}
+          canWrite={this.props.canWrite}
+          onCreateAip={this.props.onCreateAip}
+        />
+        {
+          (prev.length !== 0) && <Collapsible trigger='History'><small>
+            { prev.map( (r, i) => (<SearchResult record={r} key={i}/>)) }
+          </small></Collapsible>
+        }
+      </div>
     )
   };
 
