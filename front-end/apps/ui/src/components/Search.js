@@ -125,8 +125,8 @@ class SearchResults extends Component {
           <div className='col-md-12'>
             <span className='float-right'>
             {found ?
-              `${found} SIP${found>1 ? 's' : ''} found` :
-              'No SIPs found'
+              `${found} package${found>1 ? 's' : ''} found` :
+              'No packages found'
             }
             </span>
             <h3>Searched for <strong>{searchTerm}</strong></h3>
