@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import logo from './logo.svg';
 import './bootstrap/css/bootstrap.css'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
@@ -8,6 +8,7 @@ import './App.css';
 import DriverPicker from './components/DriverPicker';
 import Search from './components/Search';
 import CreateSIP from './components/CreateSIP';
+import CreateAIP from './components/CreateAIP';
 
 function Logo() {
   return (
@@ -71,13 +72,18 @@ class Body extends Component {
           <Search
             driver={driver}
             canWrite={this.state.canWrite}
-            onCreateAIP={sip => this.setState({ tabIndex: 2, sip: sip })}/>
+            onCreateAIP={sip => this.setState({ tabIndex: 2, sip: Object.assign({}, sip) })}/>
         </TabPanel>
         { this.state.canWrite &&
           <TabPanel><CreateSIP driver={driver}/></TabPanel>
         }
         { this.state.sip &&
-          <TabPanel>Something here</TabPanel>
+          <TabPanel>
+            <CreateAIP
+              driver={driver}
+              sip={this.state.sip}
+            />
+          </TabPanel>
         }
       </Tabs>
     )
