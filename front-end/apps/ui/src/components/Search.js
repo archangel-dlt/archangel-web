@@ -22,21 +22,20 @@ class SearchBox extends Component {
   render() {
     return (
       <div className='container-fluid'>
-        <form className='form-group row' onSubmit={event => this.handleSubmit(event)}>
-          <div className='row col-md-12'>
-              <Field
-              placeholder='Search Archangel - text search or file hash'
-              onValue={v => this.handleChange(v)}
-            />
-          </div>
-          <div className='row col-md-12'>
-            <button
-              type='submit'
-              className='btn btn-primary offset-md-10 col-md-2'
-              disabled={!this.state.searchTerm}>Search
-            </button>
-          </div>
-        </form>
+        <div className='row'>
+          <Field
+            className='col-md-12'
+            placeholder='Search Archangel - text search or file hash'
+            onValue={v => this.handleChange(v)}
+          />
+        </div>
+        <div className='row'>
+          <button
+            onClick={event => this.handleSubmit(event)}
+            className='btn btn-success offset-md-10 col-md-2'
+            disabled={!this.state.searchTerm}>Search
+          </button>
+        </div>
       </div>
     )
   } // react
@@ -108,6 +107,13 @@ class SearchResults extends Component {
             <div className='col-6 offset-2'>Contains {record.files.length} file{record.files.length > 1 ? 's' : '' }.</div>
             <div className="col-4">Uploaded by <strong>{record.uploader}</strong> at {record.timestamp} </div>
           </div>
+          { record.data.pack === 'sip' && (
+            <div className='row'>
+              <button className='btn btn-primary offset-md-10 col-md-2'>
+                Update SIP
+              </button>
+            </div>
+          )}
         </div>
         <hr/>
       </Fragment>
