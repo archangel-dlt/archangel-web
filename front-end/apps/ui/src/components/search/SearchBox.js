@@ -9,14 +9,13 @@ class SearchBox extends Component {
     };
   } // constructor
 
-  handleChange(value) {
+  updateSearchTerm(value) {
     this.setState({searchTerm: value});
   } // handleChange
 
-  handleSubmit(event) {
+  doSearch() {
     if (this.state.searchTerm)
       this.props.onSearch(this.state.searchTerm);
-    event.preventDefault();
   } // handleSubmit
 
   render() {
@@ -26,12 +25,13 @@ class SearchBox extends Component {
           <Field
             className='col-md-12'
             placeholder='Search Archangel - text search or file hash'
-            onValue={v => this.handleChange(v)}
+            onValue={v => this.updateSearchTerm(v)}
+            onEnter={() => this.doSearch() }
           />
         </div>
         <div className='row'>
           <button
-            onClick={event => this.handleSubmit(event)}
+            onClick={() => this.doSearch()}
             className='btn btn-success offset-md-10 col-md-2'
             disabled={!this.state.searchTerm}>Search
           </button>
