@@ -15,6 +15,11 @@ class Field extends Component {
       this.props.onValue(event.target.value);
   } // handleChange
 
+  handleKeyPress(event) {
+    if (event.key === 'Enter' && this.props.onEnter)
+      this.props.onEnter();
+  }
+
   render() {
     return (
       <div className={`container-fluid ${this.props.className}`}>
@@ -28,7 +33,8 @@ class Field extends Component {
             placeholder={this.props.placeholder}
             value={this.state.value}
             disabled={this.props.disabled}
-            onChange={event => this.handleChange(event)}/>
+            onChange={event => this.handleChange(event)}
+            onKeyPress={event => this.handleKeyPress(event)}/>
         </div>
       </div>
     )
