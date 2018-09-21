@@ -153,7 +153,7 @@ class Ethereum {
     const search = phrase.toLowerCase();
     const registrations = await this.registrationLog();
 
-    const keys = registrations
+    const results = registrations
        .filter(r => r.data)
        .filter(r =>
          matches(r.data.creator, search) ||
@@ -163,13 +163,12 @@ class Ethereum {
          file_hash_match(r.files, search))
        .reduce((acc, r) => acc.set(r.key, []), new Map());
 
-    const results = registrations
-      .filter(r => keys.has(r.key))
-      .sort((lhs, rhs) => rhs.timestamp.localeCompare(lhs.timestamp));
+    for (const k of results.keys()) {
+      const r = await this.fetch(k);
+      results.set(k, r)
+    }
 
-    return Array.from(results
-      .reduce((acc, r) => { acc.get(r.key).push(r); return acc; }, keys)
-      .values());
+    return Array.from(results.values());
   } // search
 
   ////////////////////////////////////////////
@@ -203,10 +202,10 @@ class Ethereum {
   } // registrationLog
 
   ////////////////////////
-  async eth_store(id, slug) {
+  eth_store(id, slug) {
     const slugStr = JSON.stringify(slug);
 
-    return new Promise(async (pResolve, pReject) => {
+    return new StorePromise(async (submitted, pResolve, pReject) => {
       const accounts = this.web3_.eth.accounts;
       if (accounts.length === 0)
         return pReject(new Error('No Ethereum account available.  Have you unlocked MetaMask?'))
@@ -298,6 +297,7 @@ class Ethereum {
           if (err)
             return reject(err);
           txHash = tx;
+          submitted(tx);
           console.log(`${id} submitted in transaction ${tx}`);
           onCommitted(timeout);
         });
@@ -391,5 +391,58 @@ function stopWatching(watcher, label) {
     console.log(`Problem tearing down ${label} watcher`);
   }
 } // stopWatching
+
+class ExtendedPromise {
+  constructor(action) {
+    this.extendedCallback = () => { };
+    this.catchCallback = () => { };
+
+    this.promise = null;
+    this.action = action;
+
+    setTimeout(() => this.startAction(), 100);
+  } // constructor
+
+  startAction() {
+    if (this.isThened)
+      return;
+
+    this.action(this.extendedCallback, () => { }, this.catchCallback);
+  } // startAction
+
+  get isThened() { return this.promise !== null; }
+
+  extended(extendedCb) {
+    this.extendedCallback = extendedCb;
+    return this;
+  } // extended
+
+  then(thenCb) {
+    const promise = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        this.action(e => this.extendedCallback(e),
+          resolve,
+          reject);
+      }, 10)
+    });
+    this.promise = promise.then(thenCb);
+    return this.promise;
+  } // then
+
+  catch(catchCb) {
+    this.catchCallback = catchCb;
+    return this;
+  }
+} // ExtendedPromise
+
+class StorePromise extends ExtendedPromise {
+  constructor(action) {
+    super(action);
+  } // constructor
+
+  transaction(transactionCb) {
+    return this.extended(transactionCb);
+  } // transaction
+}
 
 export default Ethereum;

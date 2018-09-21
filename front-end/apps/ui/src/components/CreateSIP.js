@@ -96,7 +96,7 @@ class CreateSIP extends Component {
     }
 
     this.props.driver.store(data.key, payload)
-      .then(() => this.reset())
+      .transaction(() => this.reset())
       .catch(err => { alert(err); this.setState({ step: 'canConfirm' }); });
   } // upload
 
