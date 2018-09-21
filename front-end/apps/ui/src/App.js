@@ -9,6 +9,8 @@ import DriverPicker from './components/DriverPicker';
 import Search from './components/Search';
 import CreateSIP from './components/CreateSIP';
 import CreateAIP from './components/CreateAIP';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function Logo() {
   return (
@@ -113,6 +115,14 @@ class App extends Component {
                   this.body = body;
                   body.setDriver(this.picker.currentDriver);
                 } }
+              />
+              <ToastContainer
+                position={ toast.POSITION.BOTTOM_RIGHT }
+                autoClose='5000'
+                newestOnTop
+                closeOnClick
+                pauseOnHove
+                hideProgressBar
               />
             </div>
           </div>

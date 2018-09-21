@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import Dropzone from 'react-dropzone';
 import superagent from 'superagent';
 import { FileList } from '@archangeldlt/web-common';
+import { toast } from 'react-toastify';
 
 class UploadBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
       disableUpload: false,
-      message: '',
       payload: [ ]
     };
   } // constructor
@@ -20,8 +20,10 @@ class UploadBox extends Component {
     this.onFiles(null);
     this.disableUpload();
 
+    let c = 0;
     for(const file of files) {
-      this.message(`Sending '${file.name}' to DROID for characterization ...`);
+      const prefix = `File ${++c} of ${files.length}: `;
+      const toastId = toast(`${prefix}Sending '${file.name}' to DROID for characterization ...`, { autoClose: 12000 });
 
       try {
         const response = await superagent
@@ -29,22 +31,20 @@ class UploadBox extends Component {
           .field('lastModified', file.lastModified)
           .attach('candidate', file)
 
+        toast.update(toastId, { render: `${prefix}${file.name} characterized`, autoClose: 5000 });
         this.fileCharacterised(response.body);
       } catch (err) {
-        this.message(`File characterisation failed : ${err}`);
+        toast.dismiss(toastId);
+        toast.error(`${prefix}Could not characterize ${file.name} : ${err.message}`);
       }
     } // for ...
 
     this.onFiles(this.state.payload);
     this.enableUpload();
-    this.resetMessage();
   } // handleFileDrop
 
   disableUpload() { this.setState({'disableUpload': true}); }
   enableUpload() { this.setState({'disableUpload': false}); }
-
-  message(msg) { this.setState({'message': msg}); }
-  resetMessage() { this.message(''); }
 
   fileCharacterised(droidInfo) {
     const json = droidInfo.map(info => {
@@ -82,7 +82,6 @@ class UploadBox extends Component {
                     className="form-control btn btn-secondary col-md-2">
             Add Files
           </Dropzone>
-          <div className="col-md-6 offset-md-4">{this.state.message}</div>
         </div>
         <div className="row">
           <FileList files={this.state.payload} readonly={this.props.readonly}/>
