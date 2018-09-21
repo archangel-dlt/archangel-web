@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { AipInfo, FileList } from '@archangeldlt/web-common';
 import { DateTime } from "luxon";
+import { toast } from 'react-toastify'
 
 function CreateBtn({disabled, visible, onClick}) {
   return (
@@ -86,8 +87,13 @@ class CreateAIP extends Component {
     }
 
     this.props.driver.store(data.key, payload)
-      .then(() => this.reset())
-      .catch(err => { alert(err); this.setState({ step: 'canConfirm' }); });
+      .transaction(() => { toast('AIP submitted'); this.reset(); })
+      .then(() => toast.success('AIP written to blockchain'))
+      .catch(err => {
+        toast.error(`${err}`);
+        if (this.isConfirming)
+          this.setState({ step: 'canConfirm' });
+      });
   } // upload
 
   get isCreating() { return (this.state.step === 'canCreate') || (this.state.step === 'creating') }

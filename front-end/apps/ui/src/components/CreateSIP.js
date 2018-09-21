@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import UploadBox from './upload/UploadBox';
 import { SipInfo } from '@archangeldlt/web-common';
-import { DateTime } from "luxon";
+import { DateTime } from 'luxon';
+import { toast } from 'react-toastify'
 
 function CreateBtn({disabled, visible, onClick}) {
   return (
@@ -96,8 +97,13 @@ class CreateSIP extends Component {
     }
 
     this.props.driver.store(data.key, payload)
-      .transaction(() => this.reset())
-      .catch(err => { alert(err); this.setState({ step: 'canConfirm' }); });
+      .transaction(() => { toast('SIP submitted'); this.reset(); })
+      .then(() => toast.success('SIP written to blockchain'))
+      .catch(err => {
+        toast.error(`${err}`);
+        if (this.isConfirming)
+          this.setState({ step: 'canConfirm' });
+      });
   } // upload
 
   get isCreating() { return (this.state.step === 'canCreate') || (this.state.step === 'creating') }

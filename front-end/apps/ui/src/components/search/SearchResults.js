@@ -89,11 +89,11 @@ class SearchResults extends Component {
         <SearchResult
           record={record}
           canWrite={this.props.canWrite}
-          onCreateAip={this.props.onCreateAip}
+          onCreateAIP={this.props.onCreateAIP}
         />
         {
           (prev.length !== 0) && <Collapsible trigger='History'><small>
-            { prev.map( (r, i) => (<SearchResult record={r} key={i}/>)) }
+            { prev.map( (r, i) => (<SearchResult record={r} key={i} />)) }
           </small></Collapsible>
         }
       </div>
