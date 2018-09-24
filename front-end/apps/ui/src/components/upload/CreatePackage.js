@@ -3,13 +3,13 @@ import { DateTime } from 'luxon';
 import { toast } from 'react-toastify'
 
 class CreatePackage extends Component {
-  constructor(props) {
+  constructor(props, files = null, data = null) {
     super(props);
 
     this.state = {
       step: 'creating',
-      files: null,
-      data: null,
+      files: files,
+      data: data,
       count: 0
     }
   } // constructor

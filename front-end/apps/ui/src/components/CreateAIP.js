@@ -3,6 +3,10 @@ import { AipInfo, FileList } from '@archangeldlt/web-common';
 import CreatePackage from './upload/CreatePackage';
 
 class CreateAIP extends CreatePackage {
+  constructor(props) {
+    super(props, props.sip.files, props.sip.data);
+  } // constructor
+
   get type() { return 'AIP'; }
 
   preparePayload(timestamp, data, files) {
