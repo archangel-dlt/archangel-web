@@ -1,6 +1,4 @@
 import React, { Component, Fragment } from 'react';
-import UploadBox from './UploadBox';
-import { SipInfo } from '@archangeldlt/web-common';
 import { DateTime } from 'luxon';
 import { toast } from 'react-toastify'
 
