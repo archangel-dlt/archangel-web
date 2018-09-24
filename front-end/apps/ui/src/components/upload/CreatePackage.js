@@ -1,55 +1,17 @@
 import React, { Component, Fragment } from 'react';
-import { AipInfo, FileList } from '@archangeldlt/web-common';
-import { DateTime } from "luxon";
+import UploadBox from './UploadBox';
+import { SipInfo } from '@archangeldlt/web-common';
+import { DateTime } from 'luxon';
 import { toast } from 'react-toastify'
 
-function CreateBtn({disabled, visible, onClick}) {
-  return (
-    <div className={'container-fluid ' + (!visible ? 'd-none' : '')}>
-      <div className="row">
-        <button
-          type="submit"
-          disabled={disabled}
-          className="btn btn-primary offset-md-10 col-md-2"
-          onClick={onClick}
-        >Create AIP &raquo;&raquo;</button>
-      </div>
-    </div>
-  );
-} // CreateBtn
-
-function ConfirmBtn({disabled, visible, onClick, onBack}) {
-  return (
-    <div className={'container-fluid ' + (!visible ? 'd-none' : '')}>
-      <div className="row">
-        <button
-          type="submit"
-          disabled={disabled}
-          className="btn btn-secondary col-md-2"
-          onClick={onBack}
-        >&laquo;&laquo; Back</button>
-        <button
-          type="submit"
-          disabled={disabled}
-          className="btn btn-success offset-md-8 col-md-2"
-          onClick={onClick}
-        >Upload AIP</button>
-      </div>
-    </div>
-  );
-} // CreateBtn
-
-
-class CreateAIP extends Component {
+class CreatePackage extends Component {
   constructor(props) {
     super(props);
 
-    console.log('CreateAIP')
-    console.log(props)
     this.state = {
       step: 'creating',
-      files: props.sip.files,
-      data: props.sip.data,
+      files: null,
+      data: null,
       count: 0
     }
   } // constructor
@@ -61,6 +23,7 @@ class CreateAIP extends Component {
   get count() { return this.state.count; }
 
   onData(data) { this.updateCanCreate(data, this.state.files); }
+  onFiles(files) { this.updateCanCreate(this.state.data, files); }
   updateCanCreate(data, files) {
     const ready = (data !== null && files !== null)
     this.setState({
@@ -80,15 +43,12 @@ class CreateAIP extends Component {
   upload() {
     const timestamp = DateTime.utc().toFormat('yyyy-MM-dd\'T\'HH:mm:ssZZ');
     const { data, files } = this.state;
-    const payload = {
-      data,
-      files,
-      timestamp
-    }
+
+    const payload = this.preparePayload(timestamp, data, files);
 
     this.props.driver.store(data.key, payload)
-      .transaction(() => { toast('AIP submitted'); this.reset(); })
-      .then(() => toast.success('AIP written to blockchain'))
+      .transaction(() => { toast(`${this.type} submitted`); this.reset(); })
+      .then(() => toast.success(`${this.type} written to blockchain`))
       .catch(err => {
         toast.error(`${err}`);
         if (this.isConfirming)
@@ -108,19 +68,55 @@ class CreateAIP extends Component {
           <CreateBtn
             disabled={!this.canCreate}
             visible={this.isCreating}
-            onClick={() => this.onCreate()}/>
+            onClick={() => this.onCreate()}>Create {this.type}</CreateBtn>
           <ConfirmBtn
             disabled={!this.canConfirm}
             visible={this.isConfirming}
             onClick={() => this.onConfirm()}
-            onBack={() => this.onBack()}/>
+            onBack={() => this.onBack()}>Upload {this.type}</ConfirmBtn>
 
-          <AipInfo initialData={this.state.data} readonly={this.isConfirming} onData={data => this.onData(data)}/>
-          <FileList files={this.state.files} readonly={true}/>
+          { this.renderForm() }
+
         </div>
       </Fragment>
     )
   } // render
-} // class CreateSIP.js
+} // class CreatePackage
 
-export default CreateAIP;
+function CreateBtn({disabled, visible, onClick, children}) {
+  return (
+    <div className={'container-fluid ' + (!visible ? 'd-none' : '')}>
+      <div className="row">
+        <button
+          type="submit"
+          disabled={disabled}
+          className="btn btn-primary offset-md-10 col-md-2"
+          onClick={onClick}
+        >{children} &raquo;&raquo;</button>
+      </div>
+    </div>
+  );
+} // CreateBtn
+
+function ConfirmBtn({disabled, visible, onClick, onBack, children}) {
+  return (
+    <div className={'container-fluid ' + (!visible ? 'd-none' : '')}>
+      <div className="row">
+        <button
+          type="submit"
+          disabled={disabled}
+          className="btn btn-secondary col-md-2"
+          onClick={onBack}
+        >&laquo;&laquo; Back</button>
+        <button
+          type="submit"
+          disabled={disabled}
+          className="btn btn-success offset-md-8 col-md-2"
+          onClick={onClick}
+        >{children}</button>
+      </div>
+    </div>
+  );
+} // CreateBtn
+
+export default CreatePackage;
