@@ -213,24 +213,20 @@ class Ethereum {
 
       let stopped = false;
       let txHash = null;
-      const currentBlock = await this.currentBlockNumber();
-      const noPermissionEvent = this.contract_.NoWritePermission({ fromBlock: currentBlock-1 });
-      const registration = this.contract_.Registration({}, { fromBlock: currentBlock-1 });
-      const update = this.contract_.Update({}, { fromBlock: currentBlock-1 });
+      const startBlock = await this.currentBlockNumber();
+      const blockOut = 6;
+      const noPermissionEvent = this.contract_.NoWritePermission({ fromBlock: startBlock-1 });
+      const registration = this.contract_.Registration({}, { fromBlock: startBlock-1 });
+      const update = this.contract_.Update({}, { fromBlock: startBlock-1 });
 
-      const resolve = (results) => {
+      const completed = (fn, param) => {
         noPermissionEvent.stopWatching();
         registration.stopWatching();
         update.stopWatching();
-        pResolve(results);
-      } // resolve
-
-      const reject = (err) => {
-        noPermissionEvent.stopWatching();
-        registration.stopWatching();
-        update.stopWatching();
-        pReject(err);
-      } // reject
+        fn(param);
+      };
+      const resolve = results => completed(pResolve, results);
+      const reject = err => completed(pReject, err);
 
       noPermissionEvent.watch(
         (error, result) => {
@@ -252,8 +248,8 @@ class Ethereum {
       registration.watch(txWritten);
       update.watch(txWritten);
 
-      const onCommitted = (timeout) => {
-        this.web3_.eth.getTransactionReceipt(txHash, (err, result) => {
+      const onCommitted = () => {
+        this.web3_.eth.getTransactionReceipt(txHash, async (err, result) => {
           if (stopped)
             return;
 
@@ -266,11 +262,11 @@ class Ethereum {
           if (err && (err.message !== 'unknown transaction'))
             return reject(err);
 
-          const diff = timeout.diff(DateTime.local(), 'seconds').values.seconds;
-          if (diff <= 0)
-            return reject(new Error(`Transaction for ${slug.name} wasn't processed within ${timeout} seconds`));
+          const block = await this.currentBlockNumber()
+          if (block >= (startBlock + blockOut))
+            return reject(new Error(`Transaction for ${slug.name} wasn't processed within ${blockOut} blocks`));
 
-          setTimeout(() => onCommitted(timeout), 5000);
+          setTimeout(onCommitted, 5000);
         });
       }; // onCommitted
 
@@ -286,7 +282,6 @@ class Ethereum {
           console.log(`Gas estimate ${gas}`);
         });
 
-      const timeout = DateTime.local().plus({seconds: 60});
       this.contract_.store(id, slugStr,
         {
           from: account,
@@ -299,7 +294,7 @@ class Ethereum {
           txHash = tx;
           submitted(tx);
           console.log(`${id} submitted in transaction ${tx}`);
-          onCommitted(timeout);
+          onCommitted();
         });
     })
   } // eth_store
