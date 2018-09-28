@@ -9,6 +9,15 @@ class CreateAIP extends CreatePackage {
 
   get type() { return 'AIP'; }
 
+  reset() {
+    this.setState({ count: this.count + 1 });
+    this.updateCanCreate(null, null);
+    if (this.props.onSubmit)
+      this.props.onSubmit();
+  } // reset
+
+  get count() { return this.state.count; }
+
   preparePayload(timestamp, data, files) {
     const payload = {
       data,

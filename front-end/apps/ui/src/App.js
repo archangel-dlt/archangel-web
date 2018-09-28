@@ -84,6 +84,7 @@ class Body extends Component {
             <CreateAIP
               driver={driver}
               sip={this.state.sip}
+              onSubmit={() => this.setState({ tabIndex: 0, sip: null })}
             />
           </TabPanel>
         }
