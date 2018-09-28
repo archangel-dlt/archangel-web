@@ -431,10 +431,6 @@ class ExtendedPromise {
 } // ExtendedPromise
 
 class StorePromise extends ExtendedPromise {
-  constructor(action) {
-    super(action);
-  } // constructor
-
   transaction(transactionCb) {
     return this.extended(transactionCb);
   } // transaction
