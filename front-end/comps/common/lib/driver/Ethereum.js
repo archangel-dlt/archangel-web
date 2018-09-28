@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon';
 
 const ArchangelContract = require('./ethereum/Archangel.json')
 
