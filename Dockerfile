@@ -1,4 +1,4 @@
-FROM openjdk:alpine
+FROM openjdk:11
 
 CMD ["archangel-web/bin/archangel-web"]
 
