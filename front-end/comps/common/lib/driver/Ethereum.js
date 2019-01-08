@@ -147,7 +147,7 @@ class Ethereum {
     const matches = (field, search) =>
       field && field.toLowerCase().indexOf(search) !== -1;
     const file_hash_match = (files, search) =>
-      !!files.find(f => (f.sha256_hash === search));
+      files && !!files.find(f => (f.sha256_hash === search));
 
     const search = phrase.toLowerCase();
     const registrations = await this.registrationLog();

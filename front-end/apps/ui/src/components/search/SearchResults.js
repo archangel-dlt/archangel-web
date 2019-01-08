@@ -3,13 +3,15 @@ import Collapsible from 'react-collapsible';
 import { PackageInfo, FileList } from '@archangeldlt/web-common';
 
 function SearchResult({ record, canWrite, onCreateAIP }) {
+  const noOfFiles = record.files ? record.files.length : 0
+
   return (
     <Fragment>
       <PackageInfo initialData={record.data}/>
       <FileList files={record.files} readonly={true}/>
       <div className='container-fluid'>
         <div className='row'>
-          <div className='col-6 offset-2'>Contains {record.files.length} file{record.files.length > 1 ? 's' : '' }.</div>
+          <div className='col-6 offset-2'>Contains {noOfFiles} file{noOfFiles > 1 ? 's' : '' }.</div>
           <div className="col-4">Uploaded by <strong>{record.uploader}</strong> at {record.timestamp} </div>
         </div>
         { (record.data.pack === 'sip' && canWrite) && (
