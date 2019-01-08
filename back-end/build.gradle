@@ -3,24 +3,25 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'io.ratpack:ratpack-gradle:1.5.1'
+    classpath 'io.ratpack:ratpack-gradle:1.5.4'
+    classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.0'
   }
 }
 
-plugins {
-  id 'io.ratpack.ratpack-groovy' version '1.5.1'
-}
+apply plugin: 'io.ratpack.ratpack-groovy'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 repositories {
   mavenCentral()
+  jcenter()
 }
 
 dependencies {
-  compile 'org.codehaus.groovy:groovy-all:2.4.13'
+  compile 'org.codehaus.groovy:groovy-all:2.5.5'
   compile 'org.apache.ant:ant-compress:1.5' // 1.4 has a bad pom
   compile 'uk.gov.nationalarchives:droid:6.4'
   compile 'uk.gov.nationalarchives:droid-command-line:6.4'
-  compile 'io.ratpack:ratpack-groovy:1.5.1'
+  compile 'io.ratpack:ratpack-groovy:1.6.0'
   runtime 'org.slf4j:slf4j-simple:1.7.25'
   runtime 'org.slf4j:slf4j-log4j12:1.7.25'
 }
@@ -34,6 +35,12 @@ jar {
   }
 
   mainClassName = 'archangeldlt.Archangel'
+}
+
+shadowJar {
+  baseName = 'archangeldlt'
+  classifier = null
+  mergeServiceFiles('META-INF/spring.*')
 }
 
 ratpack {
