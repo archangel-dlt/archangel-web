@@ -32,7 +32,7 @@ class CreateAIP extends CreatePackage {
     return (
       <Fragment>
         <AipInfo initialData={this.state.data} readonly={this.isConfirming} onData={data => this.onData(data)}/>
-        <FileList files={this.state.files} readonly={true}/>
+        <FileList files={this.state.files} showPath={false}/>
       </Fragment>
     )
   } // renderForm

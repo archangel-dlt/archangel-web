@@ -3,7 +3,7 @@ import ReactDataGrid from 'react-data-grid';
 import FileSizeFormatter from './formatter/FileSize';
 import PuidFormatter from './formatter/Puid';
 
-function FileList({files, readonly}) {
+function FileList({files, showPath}) {
   if (!files || !files.length)
     return null;
 
@@ -15,9 +15,9 @@ function FileList({files, readonly}) {
     { key: 'last_modified', name: 'Last Modified', resizable: true }
   ];
 
-  if (!readonly) {
+  if (showPath) {
     columns.unshift(
-      { key: 'uri', name: 'Path', resizable: true },
+      { key: 'path', name: 'Path', resizable: true },
       { key: 'name', name: 'File name', resizable: true },
     )
   }

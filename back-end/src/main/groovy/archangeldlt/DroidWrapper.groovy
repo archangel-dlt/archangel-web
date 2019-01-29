@@ -19,8 +19,8 @@ class DroidWrapper {
     def globalContext = cmdLine.context
     def globalConfig = globalContext.globalConfig
     def props = globalConfig.properties
-    props.setProperty(DroidGlobalProperty.GENERATE_HASH.getName(), true)
-    props.setProperty(DroidGlobalProperty.HASH_ALGORITHM.getName(), "sha256")
+    props.setProperty(DroidGlobalProperty.GENERATE_HASH.name, true)
+    props.setProperty(DroidGlobalProperty.HASH_ALGORITHM.name, "sha256")
     props.save()
   } // setupDroid
 
@@ -80,7 +80,8 @@ class DroidWrapper {
       line << [ PARENT_SHA256_HASH : parent ? idToHash[parent] : '' ]
 
       def uri = line['URI']
-      line['URI'] = uri.replaceAll(tmpDirPath, '')
+      line << [ 'PATH' : uri.replaceAll(tmpDirPath, '') ]
+      line.remove('URI')
     }
 
     return jsonArray

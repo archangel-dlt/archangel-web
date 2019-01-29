@@ -167,7 +167,14 @@ class Ethereum {
       results.set(k, r)
     }
 
-    return Array.from(results.values());
+    const records = Array.from(results.values());
+    for (const record of records) {
+      for (const r of record) {
+        const files = r.files
+        r.hasFilenames = !!(files && files.find(f => f.path || f.name))
+      }
+    }
+    return records
   } // search
 
   ////////////////////////////////////////////

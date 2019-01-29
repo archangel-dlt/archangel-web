@@ -84,7 +84,7 @@ class UploadBox extends Component {
           </Dropzone>
         </div>
         <div className="row">
-          <FileList files={this.state.payload} readonly={this.props.readonly}/>
+          <FileList files={this.state.payload} showPath={!this.props.readonly}/>
         </div>
       </div>
     )
