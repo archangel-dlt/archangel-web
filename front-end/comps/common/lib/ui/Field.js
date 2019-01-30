@@ -29,7 +29,7 @@ class Field extends Component {
           }
           <input
             type='text'
-            className={`form-control ${this.props.length === 'small' ? 'col-md-4' : 'col-md'}`}
+            className={`form-control ${this.props.size === 'small' ? 'col-md-4' : 'col-md'}`}
             placeholder={this.props.placeholder}
             value={this.state.value}
             disabled={this.props.disabled}

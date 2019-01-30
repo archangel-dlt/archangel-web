@@ -51,7 +51,7 @@ class PackageFields extends PureComponent {
         <Field
           key={i}
           title={field.title}
-          length={field.length}
+          size={field.length}
           onValue={v => this.update(field.field, v)}
           disabled={this.props.readonly}
           initialValue={this.props.initialData ? this.props.initialData[field.field] : null}/>
