@@ -49,7 +49,7 @@ class UploadBox extends Component {
   fileCharacterised(droidInfo) {
     const json = droidInfo.map(info => {
       const j = {
-        uri: info.URI,
+        path: info.PATH,
         name: info.NAME,
         puid: info.PUID,
         sha256_hash: info.SHA256_HASH,
