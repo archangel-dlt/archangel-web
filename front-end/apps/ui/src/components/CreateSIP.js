@@ -6,9 +6,17 @@ import CreatePackage from './upload/CreatePackage';
 class CreateSIP extends CreatePackage {
   get type() { return 'SIP'; }
 
+  onIncludeFilenames(includeFilenames) {
+    this.setState({
+      includeFilenames: includeFilenames
+    })
+  } // onIncludeFilenames
+
   preparePayload(timestamp, data, files) {
     const strippedFiles = files.map(file => {
       return {
+        path: file.path,
+        name: file.name,
         type: file.type,
         puid: file.puid,
         sha256_hash: file.sha256_hash,
@@ -16,6 +24,13 @@ class CreateSIP extends CreatePackage {
         last_modified: file.last_modified
       }
     });
+
+    if (!this.state.includeFilenames) {
+      strippedFiles.forEach(file => {
+        delete file.path
+        delete file.name
+      })
+    }
 
     const payload = {
       data,
@@ -31,7 +46,10 @@ class CreateSIP extends CreatePackage {
       <Fragment>
         <SipInfo key={`sip-${this.count}`} onData={data => this.onData(data)} readonly={this.isConfirming}/>
         <hr/>
-        <UploadBox key={`files-${this.count}`} onFiles={files => this.onFiles(files)} readonly={this.isConfirming}/>
+        <UploadBox key={`files-${this.count}`}
+                   onFiles={files => this.onFiles(files)}
+                   onIncludeFilenames={includeFilenames => this.onIncludeFilenames(includeFilenames)}
+                   readonly={this.isConfirming}/>
       </Fragment>
     )
   }

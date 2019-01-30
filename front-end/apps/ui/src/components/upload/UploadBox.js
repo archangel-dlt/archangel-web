@@ -8,11 +8,13 @@ class UploadBox extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      includeFilenames: true,
       disableUpload: false,
       payload: [ ]
     };
   } // constructor
 
+  get onIncludeFilenames() { return this.props.onIncludeFilenames }
   get onFiles() { return this.props.onFiles; }
   get files() { return this.state.payload; }
 
@@ -40,6 +42,7 @@ class UploadBox extends Component {
     } // for ...
 
     this.onFiles(this.state.payload);
+    this.onIncludeFilenames(this.state.includeFilenames)
     this.enableUpload();
   } // handleFileDrop
 
@@ -72,6 +75,12 @@ class UploadBox extends Component {
     })
   } // fileCharacterised
 
+  toggleIncludeFilenames(enabled) {
+    this.setState({
+      'includeFilenames': enabled
+    })
+  } // toggleIncludeFilenames
+
   render() {
     return (
       <div className="container-fluid">
@@ -83,8 +92,16 @@ class UploadBox extends Component {
             Add Files
           </Dropzone>
         </div>
+        <div className="offset-md-10 col-md-2">
+          <input name="includeFilenames"
+                 type="checkbox"
+                 enabled={!this.props.readonly}
+                 checked={this.state.includeFilenames}
+                 onChange={evt => this.toggleIncludeFilenames(evt.checked)}/>
+          <label>&nbsp;&nbsp;Include filenames</label>
+        </div>
         <div className="row">
-          <FileList files={this.state.payload} showPath={!this.props.readonly}/>
+          <FileList files={this.state.payload} showPath={!this.props.readonly || this.state.includeFilenames}/>
         </div>
       </div>
     )
