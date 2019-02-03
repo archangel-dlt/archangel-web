@@ -5,6 +5,8 @@ import CreatePackage from './upload/CreatePackage';
 class CreateAIP extends CreatePackage {
   constructor(props) {
     super(props, props.sip.files, props.sip.data);
+    this.hasFilenames = props.sip.hasFilenames
+    this.hasUuid = props.sip.hasUuid
   } // constructor
 
   get type() { return 'AIP'; }
@@ -32,7 +34,7 @@ class CreateAIP extends CreatePackage {
     return (
       <Fragment>
         <AipInfo initialData={this.state.data} readonly={this.isConfirming} onData={data => this.onData(data)}/>
-        <FileList files={this.state.files} showPath={false}/>
+        <FileList files={this.state.files} showPath={this.hasFilenames} showUuid={this.hasUuid}/>
       </Fragment>
     )
   } // renderForm
