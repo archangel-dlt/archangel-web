@@ -145,9 +145,17 @@ class Ethereum {
 
   async search(phrase) {
     const matches = (field, search) =>
-      field && field.toLowerCase().indexOf(search) !== -1;
+      field && (field.toLowerCase().indexOf(search) !== -1);
     const file_hash_match = (files, search) =>
-      files && !!files.find(f => (f.sha256_hash === search));
+      files && !!files.find(f => (f.sha256_hash && (f.sha256_hash.toLowerCase() === search)));
+    const file_uuid_match = (files, search) =>
+      files && !!files.find(f => (f.uuid && (f.uuid.toLowerCase() === search)));
+    const file_name_match = (files, search) =>
+      files && !!files.find(f => (f.path && (f.path.toLowerCase().indexOf(search) !== -1)));
+    const file_match = (files, search) =>
+      file_hash_match(files, search) ||
+      file_uuid_match(files, search) ||
+      file_name_match(files, search)
 
     const search = phrase.toLowerCase();
     const registrations = await this.registrationLog();
@@ -159,7 +167,7 @@ class Ethereum {
          matches(r.data.supplier, search) ||
          matches(r.data.held, search) ||
          matches(r.data.citation, search) ||
-         file_hash_match(r.files, search))
+         file_match(r.files, search))
        .reduce((acc, r) => acc.set(r.key, []), new Map());
 
     for (const k of results.keys()) {
