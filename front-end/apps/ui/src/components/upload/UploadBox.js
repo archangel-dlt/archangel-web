@@ -57,7 +57,8 @@ class UploadBox extends Component {
         puid: info.PUID,
         sha256_hash: info.SHA256_HASH,
         size: info.SIZE,
-        type: info.TYPE
+        type: info.TYPE,
+        uuid: info.UUID
       };
 
       if (info.LAST_MODIFIED)
@@ -101,7 +102,7 @@ class UploadBox extends Component {
           <label>&nbsp;&nbsp;Include filenames</label>
         </div>
         <div className="row">
-          <FileList files={this.state.payload} showPath={!this.props.readonly || this.state.includeFilenames}/>
+          <FileList files={this.state.payload} showPath={!this.props.readonly || this.state.includeFilenames} showUuid={true}/>
         </div>
       </div>
     )

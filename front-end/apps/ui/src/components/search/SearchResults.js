@@ -8,7 +8,7 @@ function SearchResult({ record, canWrite, onCreateAIP }) {
   return (
     <Fragment>
       <PackageInfo initialData={record.data}/>
-      <FileList files={record.files} showPath={record.hasFilenames}/>
+      <FileList files={record.files} showPath={record.hasFilenames} showUuid={record.hasUuid}/>
       <div className='container-fluid'>
         <div className='row'>
           <div className='col-6 offset-2'>Contains {noOfFiles} file{noOfFiles > 1 ? 's' : '' }.</div>

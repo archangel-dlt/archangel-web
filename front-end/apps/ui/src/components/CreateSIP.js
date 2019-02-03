@@ -21,7 +21,8 @@ class CreateSIP extends CreatePackage {
         puid: file.puid,
         sha256_hash: file.sha256_hash,
         size: file.size,
-        last_modified: file.last_modified
+        last_modified: file.last_modified,
+        uuid: file.uuid
       }
     });
 

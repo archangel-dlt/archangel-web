@@ -82,6 +82,8 @@ class DroidWrapper {
       def uri = line['URI']
       line << [ 'PATH' : uri.replaceAll(tmpDirPath, '') ]
       line.remove('URI')
+
+      line << [ 'UUID' : UUID.randomUUID().toString() ]
     }
 
     return jsonArray

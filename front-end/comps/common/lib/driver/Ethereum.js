@@ -172,6 +172,7 @@ class Ethereum {
       for (const r of record) {
         const files = r.files
         r.hasFilenames = !!(files && files.find(f => f.path || f.name))
+        r.hasUuid = !!(files && files.find(f => f.uuid))
       }
     }
     return records
