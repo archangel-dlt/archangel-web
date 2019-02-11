@@ -5,7 +5,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import './App.css';
 
-import DriverPicker from './components/DriverPicker';
+import { ArchangelDriver, ArchangelProviderPicker } from '@archangeldlt/web-common';
 import Search from './components/Search';
 import CreateSIP from './components/CreateSIP';
 import CreateAIP from './components/CreateAIP';
@@ -21,6 +21,8 @@ function Logo() {
     </div>
   );
 } // Logo
+
+const ethereumDriver = ArchangelDriver();
 
 class Body extends Component {
   constructor(props) {
@@ -102,10 +104,7 @@ class App extends Component {
             <Logo/>
           </div>
           <div className='col-md-4'>
-            <DriverPicker
-              onNewDriver={ driver => this.body.setDriver(driver) }
-              ref={ picker => this.picker = picker }
-            />
+            <ArchangelProviderPicker driver={ethereumDriver}/>
           </div>
         </header>
         <div className='App-body container-fluid'>
@@ -114,12 +113,12 @@ class App extends Component {
               <Body
                 ref={ body => {
                   this.body = body;
-                  body.setDriver(this.picker.currentDriver);
+                  body.setDriver(ethereumDriver);
                 } }
               />
               <ToastContainer
                 position={ toast.POSITION.BOTTOM_RIGHT }
-                autoClose='5000'
+                autoClose={ 5000 }
                 newestOnTop
                 closeOnClick
                 pauseOnHove

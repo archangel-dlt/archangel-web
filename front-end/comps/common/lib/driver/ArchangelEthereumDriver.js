@@ -20,12 +20,12 @@ const Network = {
 
 const NullId = '0x0000000000000000000000000000000000000000000000000000000000000000';
 
-class Ethereum {
+class ArchangelEthereumDriver {
   get resetEvent() { return "RESET"; }
   static get name() { return "Ethereum"; }
 
   constructor(web3) {
-    this.setup(web3);
+    this.ready = this.setup(web3);
 
     this.eventCallbacks_ = [ (event) => console.log(event) ];
   } // constructor
@@ -36,7 +36,7 @@ class Ethereum {
 
     this.grants = { };
 
-    this.network = await Ethereum.findNetwork(web3);
+    this.network = await ArchangelEthereumDriver.findNetwork(web3);
     console.log(`Using ${this.network.name} network`);
 
     this.loadContract(this.network.id);
@@ -451,4 +451,4 @@ class StorePromise extends ExtendedPromise {
   } // transaction
 }
 
-export default Ethereum;
+export default ArchangelEthereumDriver;

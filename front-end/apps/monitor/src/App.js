@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import './bootstrap/css/bootstrap.css';
-import { ReactEthereum } from '@archangeldlt/web-common';
+import { ArchangelDriver, ArchangelProviderPicker } from '@archangeldlt/web-common';
 import Permissions from './ui/Permissions';
 import Blocknumber from './ui/Blocknumber';
 import EventLog from './ui/Eventlog';
 
-const ethereumDriver = ReactEthereum();
+const ethereumDriver = ArchangelDriver();
 
 function Logo() {
   return (
@@ -26,7 +26,7 @@ function Header() {
         <Logo/>
       </div>
       <div className="col-4">
-        { ethereumDriver.render() }
+        <ArchangelProviderPicker driver={ethereumDriver}/>
       </div>
     </header>
   );
