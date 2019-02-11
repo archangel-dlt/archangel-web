@@ -163,6 +163,7 @@ class ArchangelEthereumDriver {
     const results = registrations
        .filter(r => r.data)
        .filter(r =>
+         matches(r.data.collection, search) ||
          matches(r.data.creator, search) ||
          matches(r.data.supplier, search) ||
          matches(r.data.held, search) ||

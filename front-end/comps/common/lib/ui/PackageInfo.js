@@ -4,6 +4,7 @@ import uuid from 'uuid/v1';
 
 const key = 'key';
 const pack = 'pack';
+const title = 'collection';
 const citation = 'citation';
 const supplier = 'supplier';
 const creator = 'creator';
@@ -47,6 +48,11 @@ class PackageFields extends PureComponent {
     return this.fields.map((field, i) => {
       if (field.title === '--')
         return (<br key={i}/>)
+
+      const value = this.props.initialData ? this.props.initialData[field.field] : null
+      if (field.optional && !value)
+        return (<span key={i}/>)
+
       return (
         <Field
           key={i}
@@ -54,13 +60,15 @@ class PackageFields extends PureComponent {
           size={field.length}
           onValue={v => this.update(field.field, v)}
           disabled={this.props.readonly}
-          initialValue={this.props.initialData ? this.props.initialData[field.field] : null}/>
+          initialValue={value}/>
       )
     });
   } // render
 } // Class SipInfo
 
 const sipFields = [
+  { title: 'Title/Collection', field: title, optional: true },
+  { title: '--'},
   { title: 'Supplier', field: supplier },
   { title: 'Creator', field: creator },
   { title: '--' },
