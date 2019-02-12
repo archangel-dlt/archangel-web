@@ -96,7 +96,7 @@ class UploadBox extends Component {
         <div className="offset-md-10 col-md-2">
           <input name="includeFilenames"
                  type="checkbox"
-                 enabled={!this.props.readonly}
+                 enabled={(!this.props.readonly).toString()}
                  checked={this.state.includeFilenames}
                  onChange={evt => this.toggleIncludeFilenames(evt.checked)}/>
           <label>&nbsp;&nbsp;Include filenames</label>
