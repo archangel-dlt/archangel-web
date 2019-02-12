@@ -22,7 +22,6 @@ dependencies {
   compile 'uk.gov.nationalarchives:droid:6.4'
   compile 'uk.gov.nationalarchives:droid-command-line:6.4'
   compile 'io.ratpack:ratpack-groovy:1.6.0'
-  runtime 'org.slf4j:slf4j-simple:1.7.25'
   runtime 'org.slf4j:slf4j-log4j12:1.7.25'
 }
 
