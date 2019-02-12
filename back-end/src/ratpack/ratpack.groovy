@@ -3,9 +3,12 @@ import archangeldlt.webapi.UploadHandler
 import archangeldlt.webapi.PreservicaImportHandler
 
 import static ratpack.groovy.Groovy.ratpack
+import org.slf4j.LoggerFactory
 
 def findPrefix() {
-  def p = System.getenv('HANDLER_PREFIX')
+  def p = System.getProperty('handler.prefix')
+  if (!p)
+    p = System.getenv('HANDLER_PREFIX')
   return p ? "${p}/" : ""
 } // findPrefix
 
@@ -24,6 +27,11 @@ def uploadLimit = twentyFiveMegs
 ratpack {
   serverConfig { conf ->
     conf.maxContentLength(uploadLimit)
+
+    def logger = LoggerFactory.getLogger("RatpackServer")
+    logger.info(pathPrefix ? "Path prefix ${pathPrefix}" : "No path prefix")
+    logger.info("Available endpoints")
+    [monitor_path, frontend_path, upload_path, preservica_path].forEach { logger.info("  /${it}") }
   }
 
   handlers {

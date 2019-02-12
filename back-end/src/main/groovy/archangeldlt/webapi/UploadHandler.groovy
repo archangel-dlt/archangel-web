@@ -6,10 +6,13 @@ import ratpack.groovy.handling.GroovyHandler
 import static archangeldlt.DroidWrapper.characterizeFile
 import static archangeldlt.DroidWrapper.convertExportToJson
 import static ratpack.jackson.Jackson.json
+import org.slf4j.LoggerFactory
 
 class UploadHandler extends GroovyHandler {
   @Override
   protected void handle(GroovyContext context) {
+    def logger = LoggerFactory.getLogger("Upload")
+
     def form = context.parse Form
     form.then {
       def candidate = it.file('candidate')
@@ -18,12 +21,12 @@ class UploadHandler extends GroovyHandler {
         return
       }
 
+      logger.info "Uploaded ${candidate.fileName}"
+
       def lastModified = it['lastModified']
 
       File.createTempDir('archangel-droid', 'tmp').with { dir ->
-        println "Created directory ${dir.absolutePath}"
         def file = new File(dir, candidate.fileName)
-        println "Created file ${file.name}"
 
         file.withOutputStream { os ->
           candidate.writeTo(os)
@@ -38,6 +41,7 @@ class UploadHandler extends GroovyHandler {
         file.delete()
 
         context.render json(jsonExport)
+        logger.info "   characterisation complete"
 
         dir.delete()
       } // File.createTempDir

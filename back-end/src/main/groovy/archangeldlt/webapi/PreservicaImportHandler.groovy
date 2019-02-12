@@ -8,6 +8,7 @@ import javax.xml.transform.TransformerFactory
 import javax.xml.transform.stream.StreamResult
 import javax.xml.transform.stream.StreamSource
 import static ratpack.jackson.Jackson.json
+import org.slf4j.LoggerFactory
 
 class PreservicaImportHandler extends GroovyHandler {
   @Override
@@ -19,6 +20,8 @@ class PreservicaImportHandler extends GroovyHandler {
         context.render "No file uploaded"
         return
       }
+
+      def logger = LoggerFactory.getLogger("Import")
 
       File.createTempDir('archangel-droid', 'tmp').with { dir ->
         def file = new File(dir, sip.fileName)
@@ -33,6 +36,7 @@ class PreservicaImportHandler extends GroovyHandler {
         file.delete()
 
         context.render json(sipJson)
+        logger.info "Preservica SIP imported"
 
         dir.delete()
       } // File.createTempDir
