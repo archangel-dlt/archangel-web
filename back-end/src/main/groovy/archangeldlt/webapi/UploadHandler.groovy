@@ -3,7 +3,6 @@ package archangeldlt.webapi
 import ratpack.form.Form
 import ratpack.groovy.handling.GroovyContext
 import ratpack.groovy.handling.GroovyHandler
-
 import static archangeldlt.DroidWrapper.characterizeFile
 import static archangeldlt.DroidWrapper.convertExportToJson
 import static ratpack.jackson.Jackson.json

@@ -1,5 +1,6 @@
 import archangeldlt.webapi.GethProxyHandler
 import archangeldlt.webapi.UploadHandler
+import archangeldlt.webapi.PreservicaImportHandler
 
 import static ratpack.groovy.Groovy.ratpack
 
@@ -13,6 +14,7 @@ def monitor_path = "${pathPrefix}monitor"
 def frontend_path = "${pathPrefix}front-end"
 def geth_path = "${pathPrefix}geth"
 def upload_path = "${frontend_path}/upload"
+def preservica_path = "${frontend_path}/import-preservica"
 
 def oneMeg = 1048576
 def tenMegs = oneMeg * 10
@@ -45,5 +47,6 @@ ratpack {
 
     post(upload_path, new UploadHandler())
     post(geth_path, new GethProxyHandler())
+    post(preservica_path, new PreservicaImportHandler())
   }
 }
