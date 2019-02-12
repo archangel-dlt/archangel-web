@@ -82,7 +82,7 @@ class Eventlog extends Component {
   formatPackage({data, files, timestamp}, addr) {
     return (
       <Fragment>
-        <PackageInfo initialData={data} readonly={true}/>
+        <PackageInfo initialData={data}/>
         <div className='container-fluid'>
           <div className='row'>
             <div className='col-6 offset-2'>Contains {files ? files.length : 'no'} file{files ? (files.length > 1 ? 's' : '') : 's' }.</div>

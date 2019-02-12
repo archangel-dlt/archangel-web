@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import Field from './Field';
 import uuid from 'uuid/v1';
+import cloneDeep from 'lodash.clonedeep';
 
 const key = 'key';
 const pack = 'pack';
@@ -14,10 +15,18 @@ const held = 'held';
 class PackageFields extends PureComponent {
   constructor(props, fields) {
     super(props);
-    this.fields = fields;
+    this.fields = cloneDeep(fields);
 
     if (this.props.initialData)
       this.fieldNames.forEach(name => this[name] = this.props.initialData[name]);
+
+    if (this.props.display) {
+      const t = this.fields.findIndex(f => f.field === title)
+      const condition = () => !!this.props.initialData[title]
+      this.fields[t].condition = condition
+      if (this.fields[t+1].title === '--')
+        this.fields[t+1].condition = condition
+    }
   }
 
   get onData() { return this.props.onData; }
@@ -46,12 +55,13 @@ class PackageFields extends PureComponent {
 
   render() {
     return this.fields.map((field, i) => {
+      if (field.condition && !field.condition())
+        return (<span key={i}/>)
+
       if (field.title === '--')
         return (<br key={i}/>)
 
       const value = this.props.initialData ? this.props.initialData[field.field] : null
-      if (field.optional && !value)
-        return (<span key={i}/>)
 
       return (
         <Field
@@ -67,7 +77,7 @@ class PackageFields extends PureComponent {
 } // Class SipInfo
 
 const sipFields = [
-  { title: 'Title/Collection', field: title, optional: true },
+  { title: 'Title/Collection', field: title },
   { title: '--'},
   { title: 'Supplier', field: supplier },
   { title: 'Creator', field: creator },
@@ -100,8 +110,8 @@ class AipInfo extends PackageFields {
 
 function PackageInfo({ initialData }) {
   if (initialData.pack === 'aip')
-    return (<AipInfo initialData={initialData} readonly={true}/>)
-  return (<SipInfo initialData={initialData} readonly={true}/>)
+    return (<AipInfo initialData={initialData} readonly={true} display={true}/>)
+  return (<SipInfo initialData={initialData} readonly={true} display={true}/>)
 }
 
 export { SipInfo, AipInfo, PackageInfo };

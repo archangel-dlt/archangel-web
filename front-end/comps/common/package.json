@@ -4,6 +4,7 @@
   "description": "Common components for ArchangelDLT Web Applications",
   "main": "lib/index.js",
   "dependencies": {
+    "lodash.clonedeep": "^4.5.0",
     "web3": "0.20.6"
   },
   "scripts": {

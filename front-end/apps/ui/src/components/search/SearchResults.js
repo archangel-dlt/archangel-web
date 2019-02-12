@@ -87,7 +87,7 @@ class SearchResults extends Component {
     const prev = result.slice(1);
 
     return (
-      <div className='SearchResult'>
+      <div className='SearchResult' key={record.data.key}>
         <SearchResult
           record={record}
           canWrite={this.props.canWrite}
