@@ -58,6 +58,7 @@ class CreateSIP extends CreatePackage {
 
       const { data, files } = response.body
       this.sipInfo.setData(data)
+      this.uploadBox.setFiles(files)
       toast.update(toastId, { render: `${sipFile.name} imported`, autoClose: 5000 });
     } catch (err) {
       toast.dismiss(toastId);
@@ -82,7 +83,9 @@ class CreateSIP extends CreatePackage {
         <UploadBox key={`files-${this.count}`}
                    onFiles={files => this.onFiles(files)}
                    onIncludeFilenames={includeFilenames => this.onIncludeFilenames(includeFilenames)}
-                   readonly={this.isConfirming}/>
+                   readonly={this.isConfirming}
+                   ref={upload => this.uploadBox = upload}
+        />
         <ImportBtn visible={this.isCreating}
                    disabled={this.state.disableImport}
                    onClick={file => this.importPreservicaSIP(file)}/>

@@ -18,6 +18,13 @@ class UploadBox extends Component {
   get onFiles() { return this.props.onFiles; }
   get files() { return this.state.payload; }
 
+  setFiles(files) {
+    this.setState({
+      payload: files,
+      external: true
+    })
+  }
+
   async handleFileDrop(files) {
     this.onFiles(null);
     this.disableUpload();
@@ -85,7 +92,7 @@ class UploadBox extends Component {
   render() {
     return (
       <div className="container-fluid">
-        <div className={"row " + (this.props.readonly ? 'd-none' : '')}>
+        <div className={"row " + ((this.props.readonly || this.state.external) ? 'd-none' : '')}>
           <Dropzone onDrop={files => this.handleFileDrop(files)}
                     disabled={this.state.disableUpload}
                     disabledClassName="disabled"
