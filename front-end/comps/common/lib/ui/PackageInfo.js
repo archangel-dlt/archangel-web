@@ -47,6 +47,13 @@ class PackageFields extends PureComponent {
     return d;
   } // data
 
+  setData(data) {
+    for (const n of this.fieldNames) {
+      if (data[n]) {
+        this[`${n}-field`].setValue(data[n])
+      }
+    }
+  }
   update(field, value) {
     this[field] = value
 
@@ -69,6 +76,7 @@ class PackageFields extends PureComponent {
           title={field.title}
           size={field.length}
           onValue={v => this.update(field.field, v)}
+          ref={f => this[`${field.field}-field`] = f}
           disabled={this.props.readonly}
           initialValue={value}/>
       )

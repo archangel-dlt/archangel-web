@@ -35,6 +35,7 @@ class CreatePackage extends Component {
   onBack() { this.setState({ step: 'canCreate' }); }
   onConfirm() {
     this.setState({ step: 'uploading' });
+    this.setState({ step: 'uploading' });
     this.upload();
   } // onConfirm
 

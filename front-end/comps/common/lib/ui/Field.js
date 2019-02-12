@@ -9,6 +9,14 @@ class Field extends Component {
     }
   } // constructor
 
+  setValue(value) {
+    this.handleChange({
+      target: {
+        value: value
+      }
+    })
+  }
+
   handleChange(event) {
     this.setState({value: event.target.value});
     if (this.props.onValue)
