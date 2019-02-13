@@ -11,11 +11,18 @@ const Network = {
   },
   "3151": {
     id: 3151,
-    name: 'Archangel',
+    name: 'Archangel-Dev',
     fromBlock: 80380,
     gasLimit: 75000000,
     gasPrice: undefined
-  }
+  },
+  "53419": {
+    id: 53419,
+    name: 'Archangel User Study',
+    fromBlock: 1,
+    gasLimit: 83886080,
+    gasPrice: undefined
+}
 }
 
 const NullId = '0x0000000000000000000000000000000000000000000000000000000000000000';

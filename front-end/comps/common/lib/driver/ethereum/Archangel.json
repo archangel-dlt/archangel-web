@@ -10401,6 +10401,12 @@
       "links": {},
       "address": "0xdfacfbd00a7cefc913a46c32f824f1a78ffe1417",
       "transactionHash": "0xc18c2f045ab209884089da5e58beed8f8836d8bab0dfc62312b7215934a9fab4"
+    },
+    "53419": {
+      "events": {},
+      "links": {},
+      "address": "0xf68e8324254895bdc712355aa2aa2e5f557818fd",
+      "transactionHash": "0x15b430779f3515225940747ca953e8263b53daa4387d55ceee65d750ccd98768"
     }
   },
   "schemaVersion": "2.0.0",
