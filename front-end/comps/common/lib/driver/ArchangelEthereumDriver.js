@@ -185,15 +185,12 @@ class ArchangelEthereumDriver {
          }, new Map()
        );
 
-    //for (const k of results.keys()) {
-    //  const r = await this.fetch(k);
-    //  results.set(k, r)
-    //}
-
+    const userAddress = this.account()
     const records = Array.from(results.values());
     for (const record of records) {
       for (const r of record) {
         const files = r.files
+        r.owned = (userAddress === r.addr)
         r.hasFilenames = !!(files && files.find(f => f.path || f.name))
         r.hasUuid = !!(files && files.find(f => f.uuid))
       }
@@ -213,6 +210,7 @@ class ArchangelEthereumDriver {
           .map(l => {
             const p = JSON.parse(l.args._payload);
             p.key = l.args._key;
+            p.addr = l.args._addr;
             p.uploader = l.uploader;
             return p;
           });

@@ -14,7 +14,7 @@ function SearchResult({ record, canWrite, onCreateAIP }) {
           <div className='col-6 offset-2'>Contains {noOfFiles} file{noOfFiles > 1 ? 's' : '' }.</div>
           <div className="col-4">Uploaded by <strong>{record.uploader}</strong> at {record.timestamp} </div>
         </div>
-        { (record.data.pack === 'sip' && canWrite) && (
+        { (record.data.pack === 'sip' && record.owned && canWrite) && (
           <div className='row'>
             <button
               className='btn btn-primary offset-md-10 col-md-2'
