@@ -9,7 +9,7 @@ function FileList({files, showPath, showUuid}) {
 
   const columns = [
     { key: 'type', name: 'Type', resizable: true },
-    { key: 'puid', name: 'Puid', resizable: true, formatter: PuidFormatter },
+    { key: 'puid', name: 'PUID', resizable: true, formatter: PuidFormatter },
     { key: 'size', name: 'Size', resizable: true, formatter: FileSizeFormatter },
     { key: 'last_modified', name: 'Last Modified', resizable: true },
     { key: 'sha256_hash', name: 'Hash', resizable: true }
