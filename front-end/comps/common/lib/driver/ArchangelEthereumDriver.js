@@ -176,12 +176,19 @@ class ArchangelEthereumDriver {
          matches(r.data.held, search) ||
          matches(r.data.citation, search) ||
          file_match(r.files, search))
-       .reduce((acc, r) => acc.set(r.key, []), new Map());
+       .reduce((acc, r) => {
+           if (acc.has(r.key))
+             acc.get(r.key).unshift(r)
+           else
+             acc.set(r.key, [r])
+           return acc
+         }, new Map()
+       );
 
-    for (const k of results.keys()) {
-      const r = await this.fetch(k);
-      results.set(k, r)
-    }
+    //for (const k of results.keys()) {
+    //  const r = await this.fetch(k);
+    //  results.set(k, r)
+    //}
 
     const records = Array.from(results.values());
     for (const record of records) {
