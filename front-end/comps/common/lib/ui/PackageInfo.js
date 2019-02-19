@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, {Fragment, PureComponent} from 'react';
 import Field from './Field';
 import uuid from 'uuid/v1';
 import cloneDeep from 'lodash.clonedeep';
@@ -60,7 +60,7 @@ class PackageFields extends PureComponent {
     this.onData(this.dataReady ? this.data : null);
   } // update
 
-  render() {
+  renderFields() {
     return this.fields.map((field, i) => {
       if (field.condition && !field.condition())
         return (<span key={i}/>)
@@ -81,7 +81,14 @@ class PackageFields extends PureComponent {
           initialValue={value}/>
       )
     });
-  } // render
+  } // renderFields
+
+  render() {
+    return (<Fragment>
+
+      { this.renderFields() }
+    </Fragment>)
+  }
 } // Class SipInfo
 
 const sipFields = [

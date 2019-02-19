@@ -7,6 +7,21 @@ function SearchResult({ record, canWrite, onCreateAIP }) {
 
   return (
     <Fragment>
+      <div className={`container-fluid`}>
+        <div className='row'>
+          <div className='col form-control'>
+            <strong>{record.data.pack.toUpperCase()}</strong> - { record.key }
+          </div>
+          { (record.data.pack === 'sip' && record.owned && canWrite) && (
+              <button
+                className='btn btn-primary col-md-2'
+                onClick={() => onCreateAIP(record)}>
+                Create AIP
+              </button>
+          )}
+        </div>
+      </div>
+      <p/>
       <PackageInfo initialData={record.data}/>
       <FileList files={record.files} showPath={record.hasFilenames} showUuid={record.hasUuid}/>
       <div className='container-fluid'>
@@ -14,15 +29,6 @@ function SearchResult({ record, canWrite, onCreateAIP }) {
           <div className='col-6 offset-2'>Contains {noOfFiles} file{noOfFiles > 1 ? 's' : '' }.</div>
           <div className="col-4">Uploaded by <strong>{record.uploader}</strong> at {record.timestamp} </div>
         </div>
-        { (record.data.pack === 'sip' && record.owned && canWrite) && (
-          <div className='row'>
-            <button
-              className='btn btn-primary offset-md-10 col-md-2'
-              onClick={() => onCreateAIP(record)}>
-              Create AIP
-            </button>
-          </div>
-        )}
       </div>
       <hr/>
     </Fragment>
