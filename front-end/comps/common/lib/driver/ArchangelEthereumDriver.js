@@ -22,7 +22,7 @@ const Network = {
     fromBlock: 1,
     gasLimit: 83886080,
     gasPrice: undefined
-}
+  }
 }
 
 const NullId = '0x0000000000000000000000000000000000000000000000000000000000000000';

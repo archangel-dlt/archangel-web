@@ -95,7 +95,7 @@ const sipFields = [
 ];
 
 const aipFields = [
-  { title: 'Citation Reference', field: citation, length: 'small' },
+  { title: 'Catalogue Reference', field: citation, length: 'small' },
   { title: '--' },
   ...sipFields
 ]
