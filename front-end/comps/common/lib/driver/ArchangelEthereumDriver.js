@@ -151,6 +151,8 @@ class ArchangelEthereumDriver {
   } // fetch
 
   async search(phrase) {
+    const exact_match = (field, search) =>
+      field && (field.toLowerCase() === search)
     const matches = (field, search) =>
       field && (field.toLowerCase().indexOf(search) !== -1);
     const file_hash_match = (files, search) =>
@@ -170,6 +172,7 @@ class ArchangelEthereumDriver {
     const results = registrations
        .filter(r => r.data)
        .filter(r =>
+         exact_match(r.data.key, search) ||
          matches(r.data.collection, search) ||
          matches(r.data.citation, search) ||
          matches(r.data.ref, search) ||
