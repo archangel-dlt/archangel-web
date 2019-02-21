@@ -7,6 +7,10 @@ import { toast } from "react-toastify";
 import superagent from "superagent";
 
 class CreateSIP extends CreatePackage {
+  constructor(props) {
+    super(props, [], null);
+  } // constructor
+
   get type() { return 'SIP'; }
 
   onIncludeFilenames(includeFilenames) {
