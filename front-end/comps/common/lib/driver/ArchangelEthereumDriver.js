@@ -171,10 +171,12 @@ class ArchangelEthereumDriver {
        .filter(r => r.data)
        .filter(r =>
          matches(r.data.collection, search) ||
-         matches(r.data.creator, search) ||
-         matches(r.data.supplier, search) ||
-         matches(r.data.held, search) ||
          matches(r.data.citation, search) ||
+         matches(r.data.ref, search) ||
+         matches(r.data.supplier, search) ||
+         matches(r.data.creator, search) ||
+         matches(r.data.rights, search) ||
+         matches(r.data.held, search) ||
          file_match(r.files, search))
        .reduce((acc, r) => {
            if (acc.has(r.key))

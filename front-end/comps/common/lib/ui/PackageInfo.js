@@ -7,6 +7,7 @@ const key = 'key';
 const pack = 'pack';
 const title = 'collection';
 const citation = 'citation';
+const localRef = 'ref';
 const supplier = 'supplier';
 const creator = 'creator';
 const rights = 'rights';
@@ -93,6 +94,7 @@ class PackageFields extends PureComponent {
 
 const sipFields = [
   { title: 'Title/Collection', field: title },
+  { title: 'Local Reference', field: localRef },
   { title: '--'},
   { title: 'Supplier', field: supplier },
   { title: 'Creator', field: creator },
