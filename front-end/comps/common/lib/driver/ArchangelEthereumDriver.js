@@ -21,7 +21,7 @@ const Network = {
     name: 'Archangel User Study',
     fromBlock: 1,
     gasLimit: 83886080,
-    gasPrice: undefined
+    gasPrice: 10*1e9
   }
 }
 
