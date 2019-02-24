@@ -87,14 +87,6 @@ class PackageFields extends PureComponent {
 
   render() {
     return (<Fragment>
-      <div className={`container-fluid`}>
-        <div className='row'>
-          <div className='col form-control'>
-            <strong>{this.pack.toUpperCase()}</strong> - { this.key }
-          </div>
-        </div>
-      </div>
-      <p/>
       { this.renderFields() }
     </Fragment>)
   }

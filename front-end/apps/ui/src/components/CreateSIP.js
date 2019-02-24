@@ -87,6 +87,14 @@ class CreateSIP extends CreatePackage {
     const showImport = this.canImport && this.isCreating
     return (
       <Fragment>
+        <div className={`container-fluid`} hidden={showImport}>
+          <div className='row'>
+            <div className='col form-control'>
+              <strong>SIP</strong> - { this.sipInfo && this.sipInfo.key }
+            </div>
+          </div>
+        </div>
+        <p/>
         <SipInfo key={`sip-${this.count}`}
                  onData={data => this.onData(data)}
                  readonly={this.isConfirming}
