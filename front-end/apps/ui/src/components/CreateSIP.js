@@ -49,6 +49,11 @@ class CreateSIP extends CreatePackage {
     return payload;
   } // preparePayload
 
+  onFiles(files) {
+    super.onFiles(files)
+    this.hideImport()
+  }
+
   async importPreservicaSIP(sipFile) {
     this.disableImport();
 
@@ -64,18 +69,22 @@ class CreateSIP extends CreatePackage {
       this.sipInfo.setData(data)
       this.uploadBox.setFiles(files)
       toast.update(toastId, { render: `${sipFile.name} imported`, autoClose: 5000 });
+      this.hideImport();
     } catch (err) {
       toast.dismiss(toastId);
       toast.error(`Could not import ${sipFile.name} : ${err.message}`);
+      this.enableImport();
     }
-
-    this.enableImport();
   }
 
   disableImport() { this.setState({'disableImport': true}); }
   enableImport() { this.setState({'disableImport': false}); }
+  hideImport() { this.setState({'hideImport': true}); }
+
+  get canImport() { return !this.state.hideImport }
 
   renderForm() {
+    const showImport = this.canImport && this.isCreating
     return (
       <Fragment>
         <SipInfo key={`sip-${this.count}`}
@@ -90,7 +99,7 @@ class CreateSIP extends CreatePackage {
                    readonly={this.isConfirming}
                    ref={upload => this.uploadBox = upload}
         />
-        <ImportBtn visible={this.isCreating}
+        <ImportBtn visible={showImport}
                    disabled={this.state.disableImport}
                    onClick={file => this.importPreservicaSIP(file)}/>
       </Fragment>
@@ -99,11 +108,12 @@ class CreateSIP extends CreatePackage {
 } // class CreateSIP
 
 function ImportBtn({visible, disabled, onClick}) {
+  if (!visible)
+    return null;
   return (
     <Dropzone onDrop={files => onClick(files[0])}
               disabled={disabled}
               disabledClassName="disabled"
-              visible={visible}
               className="form-control btn btn-outline-info col-md-2">
       Import Preservica SIP
     </Dropzone>

@@ -7,14 +7,6 @@ function SearchResult({ record }) {
 
   return (
     <Fragment>
-      <div className={`container-fluid`}>
-        <div className='row'>
-          <div className='col form-control'>
-            <strong>{record.data.pack.toUpperCase()}</strong> - { record.key }
-          </div>
-        </div>
-      </div>
-      <p/>
       <PackageInfo initialData={record.data}/>
       <FileList files={record.files} showPath={record.hasFilenames} showUuid={record.hasUuid}/>
       <div className='container-fluid'>
