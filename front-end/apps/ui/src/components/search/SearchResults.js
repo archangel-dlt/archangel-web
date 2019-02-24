@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import Collapsible from 'react-collapsible';
 import { PackageInfo, FileList } from '@archangeldlt/web-common';
 
-function SearchResult({ record, canWrite, onCreateAIP }) {
+function SearchResult({ record }) {
   const noOfFiles = record.files ? record.files.length : 0
 
   return (
@@ -12,13 +12,6 @@ function SearchResult({ record, canWrite, onCreateAIP }) {
           <div className='col form-control'>
             <strong>{record.data.pack.toUpperCase()}</strong> - { record.key }
           </div>
-          { (record.data.pack === 'sip' && record.owned && canWrite) && (
-              <button
-                className='btn btn-primary col-md-2'
-                onClick={() => onCreateAIP(record)}>
-                Create AIP
-              </button>
-          )}
         </div>
       </div>
       <p/>
