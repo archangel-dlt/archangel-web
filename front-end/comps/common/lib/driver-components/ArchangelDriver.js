@@ -14,27 +14,40 @@ const pathPrefix = (() => {
 })()
 const hosted = `${window.location.protocol}//${window.location.hostname}:${window.location.port}${pathPrefix}geth`
 
+async function enableMetamaskAccounts(){
+  if (window.ethereum) {
+    window.web3 = new Web3(window.ethereum);
+    try {
+        // Request account access if needed
+        await window.ethereum.enable();
+    } catch (error) {
+        console.log("Access denied to metamask accounts:", error);
+    }
+  }
+
+  return window.web3.currentProvider;
+}
+
 function providers() {
   const p = []
 
   if (hasMetaMask)
-    p.push({name: 'MetaMask', provider: window.web3.currentProvider});
+    p.push({name: 'MetaMask', getProvider: enableMetamaskAccounts});
   if (hasMist)
-    p.push({name: 'Mist', provider: window.web3.currentProvider});
-  p.push({name: 'Localhost', provider: new Web3.providers.HttpProvider('http://localhost:8545')});
-  p.push({name: hosted, provider: new Web3.providers.HttpProvider(hosted)});
+    p.push({name: 'Mist', getProvider: () => window.web3.currentProvider});
+  p.push({name: 'Localhost', getProvider: () => new Web3.providers.HttpProvider('http://localhost:8545')});
+  p.push({name: hosted, getProvider: () => new Web3.providers.HttpProvider(hosted)});
 
   return p;
 } // providers
 
 class ArchangelProvider extends ArchangelEthereumDriver {
   constructor() {
-    super(new Web3(providers()[0].provider));
+    super(new Web3(providers()[0].getProvider()));
   } // constructor
 
   onProviderChange(key) {
-    const provider = providers().filter(p => p.name === key)[0].provider;
-    return this.setup(new Web3(provider))
+    return this.setup(new Web3(providers().filter(p => p.name === key)[0].getProvider()))
   } // onProviderChange
 
   get metaMaskAvailable() { return hasMetaMask }
