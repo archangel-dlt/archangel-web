@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { PuidFormatter, FileSizeFormatter, PackageInfo } from '@archangeldlt/web-common';
 
-const maxEvents = 2000;
+const maxEvents = 20;
 
 class Eventlog extends Component {
   constructor(props) {
@@ -71,7 +71,7 @@ class Eventlog extends Component {
   } // formatNoWrite
 
   formatRegistration(args) {
-    const record = JSON.parse(args._payload);
+    const record = this.driver.unwrapPayload(args._payload);
 
     if (record.name)
       return this.formatOldRecord(record, args._addr);

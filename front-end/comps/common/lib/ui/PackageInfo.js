@@ -5,7 +5,7 @@ import cloneDeep from 'lodash.clonedeep';
 
 const key = 'key';
 const pack = 'pack';
-const title = 'collection';
+const collection = 'collection';
 const citation = 'citation';
 const localRef = 'ref';
 const supplier = 'supplier';
@@ -22,11 +22,13 @@ class PackageFields extends PureComponent {
       this.fieldNames.forEach(name => this[name] = this.props.initialData[name]);
 
     if (this.props.display) {
-      const t = this.fields.findIndex(f => f.field === title)
-      const condition = () => !!this.props.initialData[title]
-      this.fields[t].condition = condition
-      if (this.fields[t+1].title === '--')
-        this.fields[t+1].condition = condition
+      const c = this.fields.findIndex(f => f.field === collection)
+      if (c !== -1) {
+        const condition = () => !!this.props.initialData[collection]
+        this.fields[c].condition = condition
+        if (this.fields[c + 1].title === '--')
+          this.fields[c + 1].condition = condition
+      }
     }
   }
 
@@ -93,7 +95,7 @@ class PackageFields extends PureComponent {
 } // Class SipInfo
 
 const sipFields = [
-  { title: 'Title/Collection', field: title },
+  { title: 'Title/Collection', field: collection },
   { title: 'Local Reference', field: localRef },
   { title: '--'},
   { title: 'Supplier', field: supplier },
@@ -125,10 +127,25 @@ class AipInfo extends PackageFields {
   }
 }
 
+const otherFields = [
+  { title: 'Title', field: 'title' },
+  { title: 'Type', field: 'pack' },
+]
+
+class OtherPack extends PackageFields {
+  constructor(props) {
+    super(props, otherFields)
+    this[key] = this.props.initialData[key]
+    this[pack] = 'other';
+  }
+}
+
 function PackageInfo({ initialData }) {
   if (initialData.pack === 'aip')
     return (<AipInfo initialData={initialData} readonly={true} display={true}/>)
-  return (<SipInfo initialData={initialData} readonly={true} display={true}/>)
+  if (initialData.pack === 'sip')
+    return (<SipInfo initialData={initialData} readonly={true} display={true}/>)
+  return (<OtherPack initialData={initialData} readonly={true} display={true}/>)
 }
 
 export { SipInfo, AipInfo, PackageInfo };

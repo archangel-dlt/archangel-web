@@ -53,6 +53,10 @@ class ArchangelProvider extends ArchangelEthereumDriver {
   get metaMaskAvailable() { return hasMetaMask }
   get mistAvailable() { return hasMist }
   get providers() { return providers() }
+
+  unwrapPayload(payload) {
+    return ArchangelEthereumDriver.unwrapPayload(payload);
+  }
 } // class ArchangelProvider
 
 function ArchangelDriver() {

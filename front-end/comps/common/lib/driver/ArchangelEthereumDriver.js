@@ -1,4 +1,4 @@
-
+import LZString from 'lz-string';
 const ArchangelContract = require('./ethereum/Archangel.json')
 
 const Network = {
@@ -30,6 +30,21 @@ const NullId = '0x00000000000000000000000000000000000000000000000000000000000000
 class ArchangelEthereumDriver {
   get resetEvent() { return "RESET"; }
   static get name() { return "Ethereum"; }
+
+  static unwrapPayload(payload) {
+    try {
+      return JSON.parse(payload);
+    } catch (e) { }
+
+    try {
+      const expanded = LZString.decompressFromUTF16(payload);
+      return JSON.parse(expanded);
+    } catch (e) { }
+
+    throw new Error(`Bad payload : ${payload}`);
+  }
+
+
 
   constructor(web3) {
     this.ready = this.setup(web3);
@@ -140,11 +155,11 @@ class ArchangelEthereumDriver {
     if (!payload)
       return [];
 
-    const results = [ JSON.parse(payload) ];
+    const results = [ ArchangelEthereumDriver.unwrapPayload(payload) ];
 
     while (prev !== NullId) {
       [payload, prev] = await this.eth_fetchPrevious(prev);
-      results.push(JSON.parse(payload));
+      results.push(ArchangelEthereumDriver.unwrapPayload(payload));
     }
 
     return results;
@@ -213,7 +228,7 @@ class ArchangelEthereumDriver {
         const payloads = logs
           .map(l => { l.uploader = this.addressName(l.args._addr); return l; })
           .map(l => {
-            const p = JSON.parse(l.args._payload);
+            const p = ArchangelEthereumDriver.unwrapPayload(l.args._payload);
             p.key = l.args._key;
             p.addr = l.args._addr;
             p.uploader = l.uploader;

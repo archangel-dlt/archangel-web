@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
+    "lz-string": "^1.4.4",
     "web3": "0.20.6"
   },
   "scripts": {
